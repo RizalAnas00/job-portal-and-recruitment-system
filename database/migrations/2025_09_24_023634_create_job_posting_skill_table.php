@@ -11,27 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('applications', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_job_seeker');
+        Schema::create('job_posting_skill', function (Blueprint $table) {
             $table->unsignedBigInteger('id_job_posting');
-            $table->timestamp('application_date')->useCurrent();
-            $table->enum('status', ['pending', 'reviewed', 'accepted', 'rejected'])->default('pending');
-            $table->text('cover_letter')->nullable();
+            $table->unsignedBigInteger('id_skill');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('id_job_seeker')
-                ->references('id')->on('job_seekers')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->primary(['id_job_posting', 'id_skill']);
 
             $table->foreign('id_job_posting')
                 ->references('id')->on('job_postings')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 
-            $table->index(['id_job_seeker', 'id_job_posting']);
+            $table->foreign('id_skill')
+                ->references('id')->on('skills')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->index(['id_job_posting']);
+            $table->index(['id_skill']);
         });
     }
 
@@ -40,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('applications');
+        Schema::dropIfExists('job_posting_skill');
     }
 };

@@ -27,18 +27,8 @@ class Company extends Model
         'password',
     ];
 
-    // public function jobPostings()
-    // {
-    //     return $this->hasMany(JobPosting::class);
-    // }
-
-    // public function notifications()
-    // {
-    //     return $this->hasMany(Notification::class);
-    // }
-
-    // public function companySubscription()
-    // {
-    //     return $this->hasOne(CompanySubscription::class);
-    // }
+    public function jobPostings()
+    {
+        return $this->hasMany(JobPosting::class, 'id_company');
+    }
 }
