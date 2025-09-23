@@ -24,10 +24,10 @@ class JobSeeker extends Model
         'password',
     ];
 
-    // public function applications()
-    // {
-    //     return $this->hasMany(JobApplication::class);
-    // }
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'id_job_seeker');
+    }
 
     public function resumes()
     {
