@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('job_seekers', function (Blueprint $table) {
             $table->id()->autoIncrement();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('password');
             $table->string('phone_number')->nullable();
             $table->text('address')->nullable();
             $table->text('profile_summary')->nullable();

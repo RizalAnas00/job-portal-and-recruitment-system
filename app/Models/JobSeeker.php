@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,16 +12,14 @@ class JobSeeker extends Model
     protected $fillable = [
         'first_name',
         'last_name',
-        'email',
-        'password',
         'phone_number',
         'address',
         'profile_summary',
     ];
 
-    protected $hidden = [
-        'password',
-    ];
+    // protected $hidden = [
+    //     'password',
+    // ];
 
     public function applications()
     {
@@ -32,6 +29,11 @@ class JobSeeker extends Model
     public function resumes()
     {
         return $this->hasMany(Resume::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // public function skills()

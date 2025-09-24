@@ -18,7 +18,6 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
     ];
@@ -44,5 +43,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+        
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function jobSeeker()
+    {
+        return $this->hasOne(JobSeeker::class, 'user_id');
+    }
+
+    public function company()
+    {
+        return $this->hasOne(Company::class, 'user_id');
     }
 }
