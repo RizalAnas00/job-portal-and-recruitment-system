@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             JobPostingSkillSeeder::class,
             SubscriptionPlanSeeder::class,
             NotificationSeeder::class,
+            InterviewAndSubscriptionSeeder::class,
         ]);
     }
 }
