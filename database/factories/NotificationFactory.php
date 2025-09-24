@@ -19,8 +19,8 @@ class NotificationFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_job_seeker' => JobSeeker::factory(),
-            'id_company'    => Company::factory(),
+            'id_job_seeker' => JobSeeker::inRandomOrder()->first()->id,
+            'id_company'    => Company::inRandomOrder()->first()->id,
             'message'       => $this->faker->sentence(8),
             'is_read'       => $this->faker->boolean(30),
             'link_url'      => $this->faker->url(),

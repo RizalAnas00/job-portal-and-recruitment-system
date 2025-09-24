@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CompanyFactory extends Factory
 {
+    protected static int $userIdCounter = 4;
+
     /**
      * Define the model's default state.
      *
@@ -17,12 +19,9 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         $companyName = $this->faker->company();
-        $emailName = strtolower(
-            preg_replace('/[^a-zA-Z0-9]/', '', $companyName)
-        );
 
         $industry = $this->faker->randomElement([
-            'Teknnologi',
+            'Teknologi',
             'Finansial',
             'Kesehatan',
             'Pendidikan',
@@ -42,10 +41,11 @@ class CompanyFactory extends Factory
             'Lainnya',
         ]);
 
+        $userId = self::$userIdCounter++;
+
         return [
+            'user_id' => $userId,
             'company_name' => $companyName,
-            'email' => $emailName . '@company.com',
-            'password' => bcrypt('password'),
             'company_description' => $this->faker->paragraph(),
             'website' => $this->faker->url(),
             'industry' => $industry,
@@ -53,5 +53,4 @@ class CompanyFactory extends Factory
             'is_verified' => $this->faker->boolean(20),
         ];
     }
-
 }

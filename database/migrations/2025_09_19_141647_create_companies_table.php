@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id()->autoIncrement();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('company_name', 100);
-            $table->string('email')->unique();
-            $table->string('password');
             $table->text('company_description');
             $table->string('website');
             $table->string('industry');
