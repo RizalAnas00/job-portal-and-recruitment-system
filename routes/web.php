@@ -17,4 +17,28 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Admin-only routes
+    Route::get('/admin/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
+    // Add more admin routes here
+});
+
+Route::middleware(['auth', 'role:user'])->group(function () {
+    // User-only routes
+    Route::get('/user/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+    // Add more user routes here
+});
+
+Route::middleware(['auth', 'role:company'])->group(function () {
+    // Company-only routes
+    Route::get('/company/dashboard', function () {
+        return view('company.dashboard');
+    })->name('company.dashboard');
+    // Add more company routes here
+});
+
 require __DIR__.'/auth.php';
