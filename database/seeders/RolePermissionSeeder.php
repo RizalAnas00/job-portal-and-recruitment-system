@@ -10,9 +10,18 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin     = Role::firstOrCreate(['name' => 'admin']);
-        $jobSeeker = Role::firstOrCreate(['name' => 'user']);
-        $company   = Role::firstOrCreate(['name' => 'company']);
+        $admin = Role::firstOrCreate(
+            ['name' => 'admin'],
+            ['display_name' => 'Administrator', 'description' => 'Full system access', 'is_active' => true]
+        );
+        $jobSeeker = Role::firstOrCreate(
+            ['name' => 'user'], 
+            ['display_name' => 'Job Seeker', 'description' => 'Job seeker with limited access', 'is_active' => true]
+        );
+        $company = Role::firstOrCreate(
+            ['name' => 'company'],
+            ['display_name' => 'Company', 'description' => 'Company with job posting access', 'is_active' => true]
+        );
 
         $adminPermissions = Permission::all();
         $admin->permissions()->sync($adminPermissions->pluck('id'));
