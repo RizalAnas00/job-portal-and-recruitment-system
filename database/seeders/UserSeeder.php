@@ -43,6 +43,54 @@ class UserSeeder extends Seeder
             );
         }
 
+        $companies = [
+            [
+                'email' => 'contact@techcorp.com',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+                'remember_token' => \Illuminate\Support\Str::random(10),
+                'role_id' => 2,
+            ],
+            [
+                'email' => 'hr@innovateinc.com',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+                'remember_token' => \Illuminate\Support\Str::random(10),
+                'role_id' => 2,
+            ],
+        ];
+
+        foreach ($companies as $company) {
+            User::firstOrCreate(
+                ['email' => $company['email']],
+                $company
+            );
+        }
+
+        $users = [
+            [
+                'email' => 'budi.santoso@example.com',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+                'remember_token' => \Illuminate\Support\Str::random(10),
+                'role_id' => 3,
+            ],
+            [
+                'email' => 'citra.lestari@example.com',
+                'password' => bcrypt('password'),
+                'email_verified_at' => now(),
+                'remember_token' => \Illuminate\Support\Str::random(10),
+                'role_id' => 3,
+            ],
+        ];
+
+        foreach ($users as $user) {
+            User::firstOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
+        }
+
         User::factory()->count(70)->create();
     }
 }
