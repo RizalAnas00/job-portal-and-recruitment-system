@@ -37,10 +37,10 @@ class JobSeeker extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // public function skills()
-    // {
-    //     return $this->belongsToMany(Skill::class, 'job_seeker_skills');
-    // }
+    public function skills()
+    {
+         return $this->belongsToMany(Skill::class, 'job_seeker_skills');
+    }
 
     // public function notifications()
     // {
