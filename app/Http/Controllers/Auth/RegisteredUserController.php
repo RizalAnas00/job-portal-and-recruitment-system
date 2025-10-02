@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['nullable', 'in:user,company'],
         ]);
 
         $user = User::create([
@@ -40,6 +42,22 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Assign default role 'user' unless 'company' explicitly selected
+        $selectedRoleName = $request->input('role', 'user');
+        if (!in_array($selectedRoleName, ['user', 'company'])) {
+            $selectedRoleName = 'user';
+        }
+
+        try {
+            $user->assignRole($selectedRoleName);
+        } catch (\Exception $e) {
+            // Fallback: ensure roles seeded; default to user role if exists
+            $role = Role::where('name', 'user')->first();
+            if ($role) {
+                $user->update(['role_id' => $role->id]);
+            }
+        }
 
         event(new Registered($user));
 
