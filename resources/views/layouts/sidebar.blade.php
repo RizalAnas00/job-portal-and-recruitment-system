@@ -21,8 +21,7 @@
         <button 
             @click="open = !open" 
             class="p-2 rounded hover:bg-[#0f14aa]/30 transition">
-            <x-heroicons-chevron-up class="h-6 w-6 transition-transform duration-300" 
-                 :class="open ? 'rotate-0' : 'rotate-180'" />
+            <x-heroicons-chevron-up class="h-6 w-6 transition-transform duration-300" />
         </button>
     </div>
 
