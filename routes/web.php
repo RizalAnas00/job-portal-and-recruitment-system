@@ -124,4 +124,6 @@ Route::resource('subscription-plans', SubscriptionPlanController::class);
 Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     // Rute untuk proses berlangganan
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+
+
 require __DIR__.'/auth.php';
