@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -12,51 +13,40 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admins = [
-            [
-                'email' => 'admin1@example.com',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-                'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 1,
-            ],
-            [
-                'email' => 'admin2@example.com',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-                'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 1,
-            ],
-            [
-                'email' => 'admin3@example.com',
-                'password' => bcrypt('password'),
-                'email_verified_at' => now(),
-                'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 1,
-            ],
-        ];
+        // Single Admin with optional env overrides
+        $adminEmail = env('ADMIN_EMAIL', 'admin@example.com');
+        $adminPassword = env('ADMIN_PASSWORD', 'password');
+        $adminName = env('ADMIN_NAME', 'Administrator');
 
-        foreach ($admins as $admin) {
-            User::firstOrCreate(
-                ['email' => $admin['email']],
-                $admin
-            );
-        }
+        $adminRoleId = optional(Role::where('name', 'admin')->first())->id ?? 1;
+
+        User::updateOrCreate(
+            ['email' => $adminEmail],
+            [
+                'name' => $adminName,
+                'password' => bcrypt($adminPassword),
+                'email_verified_at' => now(),
+                'remember_token' => \Illuminate\Support\Str::random(10),
+                'role_id' => $adminRoleId,
+            ]
+        );
 
         $companies = [
             [
+                'name' => 'Tech Corp',
                 'email' => 'contact@techcorp.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
                 'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 2,
+                'role_id' => optional(Role::where('name', 'company')->first())->id ?? 2,
             ],
             [
+                'name' => 'Innovate Inc',
                 'email' => 'hr@innovateinc.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
                 'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 2,
+                'role_id' => optional(Role::where('name', 'company')->first())->id ?? 2,
             ],
         ];
 
@@ -69,18 +59,20 @@ class UserSeeder extends Seeder
 
         $users = [
             [
+                'name' => 'Budi Santoso',
                 'email' => 'budi.santoso@example.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
                 'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 3,
+                'role_id' => optional(Role::where('name', 'user')->first())->id ?? 3,
             ],
             [
+                'name' => 'Citra Lestari',
                 'email' => 'citra.lestari@example.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
                 'remember_token' => \Illuminate\Support\Str::random(10),
-                'role_id' => 3,
+                'role_id' => optional(Role::where('name', 'user')->first())->id ?? 3,
             ],
         ];
 
