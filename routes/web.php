@@ -25,6 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route for Role Management
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/', function () {
+        return view('role.index');
+    })->name('role.index');
+});
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin-only routes
     Route::get('/admin/dashboard', function () {
