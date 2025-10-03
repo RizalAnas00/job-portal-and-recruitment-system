@@ -17,6 +17,10 @@
                     <span class="ml-1 font-extrabold text-primary-600 dark:text-primary-300">
                         {{ strtoupper(Auth::user()->getRoleName()) }}
                     </span>
+                    dengan email
+                    <span class="ml-1 font-extrabold text-primary-600 dark:text-primary-300">
+                        {{ Auth::user()->email }}
+                    </span>
                 </div>
             </div>
         </div>

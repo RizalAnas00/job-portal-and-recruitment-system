@@ -21,9 +21,11 @@ class RoleMiddleware
         }
 
         $user = Auth::user();
-        if (!in_array($user->role, $roles)) {
+        // pastikan user punya relasi role
+        if (!$user->role || !in_array($user->role->name, $roles)) {
             abort(403, 'You do not have permission to access this resource.');
         }
+        
         return $next($request);
     }
 }

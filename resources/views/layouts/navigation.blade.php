@@ -1,5 +1,5 @@
 <nav x-data="{ open: false }" 
-     class="bg-black dark:bg-gray-800/90 backdrop-blur-md shadow-md sticky top-0 z-20">
+     class="bg-white dark:bg-gray-800/90 backdrop-blur-md shadow-md sticky z-20 m-3 rounded-lg">
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
