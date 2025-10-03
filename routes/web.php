@@ -25,6 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route for Role Management
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/role', function () {
+        return view('role.index');
+    })->name('role.index');
+});
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Admin-only routes
     Route::get('/admin/dashboard', function () {
@@ -124,4 +131,6 @@ Route::resource('subscription-plans', SubscriptionPlanController::class);
 Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     // Rute untuk proses berlangganan
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+
+
 require __DIR__.'/auth.php';
