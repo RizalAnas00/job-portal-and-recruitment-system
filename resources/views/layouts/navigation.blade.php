@@ -19,7 +19,7 @@
                                        text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600
                                        transition shadow-sm">
                             <img src="https://i.pravatar.cc/40" class="h-8 w-8 rounded-full border border-gray-300" />
-                            <span>{{ Auth::user()->name }}</span>
+                            <span class="hidden sm:block ml-2">{{ Auth::user()->email }}</span>
                             <svg class="h-4 w-4 opacity-70" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
                                 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0-1.414z" clip-rule="evenodd"/>

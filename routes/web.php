@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
 
 // Route for Role Management
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/', function () {
+    Route::get('/role', function () {
         return view('role.index');
     })->name('role.index');
 });
