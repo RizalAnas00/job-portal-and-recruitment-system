@@ -21,7 +21,7 @@
         <button 
             @click="open = !open" 
             class="p-2 rounded hover:bg-[#0f14aa]/30 transition">
-            <x-heroicon-c-bars-3 class="h-6 w-6 transition-transform duration-300" />
+            {{-- <x-heroicon-c-bars-3 class="h-6 w-6 transition-transform duration-300" /> --}}
         </button>
     </div>
 
@@ -29,7 +29,7 @@
     <nav class="flex-1 px-2 py-4 space-y-2">
         <a href="{{ route('dashboard') }}" 
            class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('dashboard') ? 'bg-[#0f14aa]/30' : '' }}">
-            <x-gmdi-space-dashboard class="h-6 w-6 flex-shrink-0"/>
+            {{-- <x-gmdi-space-dashboard class="h-6 w-6 flex-shrink-0"/> --}}
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Dashboard
             </span>
@@ -37,7 +37,7 @@
 
         @if (Auth::user()->hasRole('admin'))
         <a href=" {{ route('role.index') }} " class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
-            <x-eos-role-binding class="h-6 w-6 flex-shrink-0"/>
+            {{-- <x-eos-role-binding class="h-6 w-6 flex-shrink-0"/> --}}
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Role
             </span>
@@ -45,7 +45,7 @@
         @endif
 
         <a href="#" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
-            <x-iconsax-bol-setting-2 class="h-6 w-6 flex-shrink-0"/>
+            {{-- <x-iconsax-bol-setting-2 class="h-6 w-6 flex-shrink-0"/> --}}
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Settings
             </span>
