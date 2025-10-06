@@ -64,3 +64,15 @@
         @endforeach
     </x-table>
 @endsection
+
+@section('scripts')
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault();
+
+            if (confirm('Are you sure you want to delete this role?')) {
+                event.target.submit();
+            }
+        }
+    </script>
+@endsection
