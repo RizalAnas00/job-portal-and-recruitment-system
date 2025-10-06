@@ -9,6 +9,7 @@ use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\JobSeekerSkillController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,16 +34,30 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     
     // Add more admin routes here
     // Route for Role Management
+     // Route for Role Management (Versi Lengkap & Terhubung ke Controller)
     Route::prefix('role')->name('role.')->group(function () {
         
-        Route::get('/', function () {
-            return view('role.index');
-        })->name('index');
+        // Menampilkan semua role (Read)
+        Route::get('/', [RoleController::class, 'index'])->name('index');
         
-        Route::get('/{role}', function ($role) {
-            return view('role.show', ['role' => $role]);
-        })->name('show');
-    
+        // Menampilkan form tambah role (Create)
+        Route::get('/create', [RoleController::class, 'create'])->name('create');
+        
+        // Menyimpan data role baru (Create)
+        Route::post('/', [RoleController::class, 'store'])->name('store');
+        
+        // Menampilkan detail satu role (Read)
+        Route::get('/{role}', [RoleController::class, 'show'])->name('show');
+        
+        // Menampilkan form edit role (Update)
+        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+        
+        // Mengupdate data role (Update)
+        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+        
+        // Menghapus data role (Delete)
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+        
     });
 });
 
