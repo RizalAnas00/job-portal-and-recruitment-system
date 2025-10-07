@@ -18,6 +18,11 @@ class RoleService implements RoleServiceInterface
         if (!array_key_exists('is_active', $data)) {
             $data['is_active'] = true;
         }
+
+        if (!array_key_exists('permissions', $data)) {
+            $data['permissions'] = [];
+        }
+
         return $this->roles->createRole($data);
     }
 

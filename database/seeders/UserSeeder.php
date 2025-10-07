@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
         User::updateOrCreate(
             ['email' => $adminEmail],
             [
-                'name' => $adminName,
                 'password' => bcrypt($adminPassword),
                 'email_verified_at' => now(),
                 'remember_token' => \Illuminate\Support\Str::random(10),
@@ -33,7 +32,6 @@ class UserSeeder extends Seeder
 
         $companies = [
             [
-                'name' => 'Tech Corp',
                 'email' => 'contact@techcorp.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
@@ -41,7 +39,6 @@ class UserSeeder extends Seeder
                 'role_id' => optional(Role::where('name', 'company')->first())->id ?? 2,
             ],
             [
-                'name' => 'Innovate Inc',
                 'email' => 'hr@innovateinc.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
@@ -59,7 +56,6 @@ class UserSeeder extends Seeder
 
         $users = [
             [
-                'name' => 'Budi Santoso',
                 'email' => 'budi.santoso@example.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
@@ -67,7 +63,6 @@ class UserSeeder extends Seeder
                 'role_id' => optional(Role::where('name', 'user')->first())->id ?? 3,
             ],
             [
-                'name' => 'Citra Lestari',
                 'email' => 'citra.lestari@example.com',
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
