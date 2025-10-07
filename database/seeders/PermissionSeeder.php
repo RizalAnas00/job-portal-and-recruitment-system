@@ -14,6 +14,12 @@ class PermissionSeeder extends Seeder
             // Admin Permissions
             // ===============================
 
+            // Role Management
+            ['name' => 'role.create', 'display_name' => 'Create Role', 'group' => 'Role Management'],
+            ['name' => 'role.read', 'display_name' => 'View Roles', 'group' => 'Role Management'],
+            ['name' => 'role.update', 'display_name' => 'Update Roles', 'group' => 'Role Management'],
+            ['name' => 'role.delete', 'display_name' => 'Delete Roles', 'group' => 'Role Management'],
+
             // User Management
             ['name' => 'user.read', 'display_name' => 'View Users', 'group' => 'User Management'],
             ['name' => 'user.update', 'display_name' => 'Update Users', 'group' => 'User Management'],
