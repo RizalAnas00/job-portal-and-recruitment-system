@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\Role\Contracts\RoleServiceInterface;
@@ -29,7 +30,8 @@ class RoleController extends Controller
 
     public function create()
     {
-        return view('role.create');
+        $permissions = Permission::getAllPermissions();
+        return view('role.create' , compact('permissions'));
     }
 
     public function store(Request $request)
@@ -37,8 +39,14 @@ class RoleController extends Controller
         $validatedData = $request->validate([
             'name'         => 'required|string|max:255|unique:roles,name',
             'display_name' => 'required|string|max:255',
-            'description'  => 'nullable|string',
+            'description'  => 'nullable|string|max:255',
+            'is_active'    => 'sometimes|boolean',
+            'permissions'  => 'sometimes|array',
+            'permissions.*' => 'integer|exists:permissions,id',
         ]);
+        
+        $postDisplayName = formatRoleName($validatedData['name']);
+        $validatedData['name'] = $postDisplayName;
 
         // Menggabungkan data ke dalam satu array
         $dataToCreate = $validatedData;
@@ -53,26 +61,34 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        return view('role.edit', compact('role'));
+        $permissions = Permission::getAllPermissions();
+        return view('role.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, Role $role)
     {
         $validatedData = $request->validate([
-            'name'         => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'display_name' => 'required|string|max:255',
-            'description'  => 'nullable|string',
+            'name'          => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'display_name'  => 'required|string|max:255',
+            'description'   => 'nullable|string|max:255',
+            'is_active'     => 'sometimes|boolean',
+            'permissions'   => 'sometimes|array',
+            'permissions.*' => 'integer|exists:permissions,id',
         ]);
 
-        // Menggabungkan data ke dalam satu array
+        // Format nama agar konsisten dengan helper
+        $postDisplayName = formatRoleName($validatedData['name']);
+        $validatedData['name'] = $postDisplayName;
+
+        // Gabungkan semua data ke satu array
         $dataToUpdate = $validatedData;
         $dataToUpdate['is_active'] = $request->has('is_active');
 
-        // Memanggil fungsi update() dengan ID dan satu array
+        // Panggil service untuk update role
         $this->roleService->update($role->id, $dataToUpdate);
 
         return redirect()->route('role.index')
-                         ->with('success', 'Role berhasil diperbarui.');
+                        ->with('success', 'Role berhasil diperbarui.');
     }
 
     public function destroy(Role $role)
@@ -86,6 +102,8 @@ class RoleController extends Controller
 
     public function show(Role $role)
     {
+        $role = $this->roleService->find($role->id);
+
         return view('role.show', compact('role'));
     }
 }

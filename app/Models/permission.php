@@ -25,6 +25,11 @@ class Permission extends Model
         return $this->belongsToMany(Role::class, 'role_permissions')->withTimestamps();
     }
 
+    public static function getAllPermissions()
+    {
+        return Permission::all();
+    }
+
     /**
      * Check if permission is assigned to a specific role
      */
