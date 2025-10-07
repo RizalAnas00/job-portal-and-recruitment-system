@@ -38,25 +38,25 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('role')->name('role.')->group(function () {
         
         // Menampilkan semua role (Read)
-        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::get('/', [RoleController::class, 'index'])->name('index')->middleware('permission:role.read');
         
         // Menampilkan form tambah role (Create)
-        Route::get('/create', [RoleController::class, 'create'])->name('create');
+        Route::get('/create', [RoleController::class, 'create'])->name('create')->middleware('permission:role.create');
         
         // Menyimpan data role baru (Create)
-        Route::post('/', [RoleController::class, 'store'])->name('store');
+        Route::post('/', [RoleController::class, 'store'])->name('store')->middleware('permission:role.create');
         
         // Menampilkan detail satu role (Read)
-        Route::get('/{role}', [RoleController::class, 'show'])->name('show');
+        Route::get('/{role}', [RoleController::class, 'show'])->name('show')->middleware('permission:role.read');
         
         // Menampilkan form edit role (Update)
-        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit')->middleware('permission:role.update');
         
         // Mengupdate data role (Update)
-        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('update')->middleware('permission:role.update');
         
         // Menghapus data role (Delete)
-        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:role.delete');
         
     });
 });
