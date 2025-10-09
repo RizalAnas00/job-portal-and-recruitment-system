@@ -17,7 +17,7 @@ class InterviewAndSubscriptionSeeder extends Seeder
 
         // Create 10 company subscriptions
         CompanySubscription::factory()
-            ->count(10)
+            ->count(23)
             ->create();
     }
 }

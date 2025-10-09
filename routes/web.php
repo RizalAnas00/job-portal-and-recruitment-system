@@ -10,6 +10,7 @@ use App\Http\Controllers\JobSeekerSkillController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -153,5 +154,8 @@ Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('su
     // Rute untuk proses berlangganan
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 
+
+// Webhook Route for Payment Gateway , No need authentication
+Route::post('/webhook/payment', [WebhookController::class, 'handlePayment'])->name('webhook.payment');
 
 require __DIR__.'/auth.php';
