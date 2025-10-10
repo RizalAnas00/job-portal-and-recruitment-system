@@ -21,6 +21,7 @@ class PaymentTransaction extends Model
         'va_number',
         'payment_url',
         'status',
+        'expires_at',
     ];
 
     protected $casts = [

@@ -7,6 +7,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\JobSeekerSkillController;
+use App\Http\Controllers\PaymentTransactionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
@@ -144,6 +145,17 @@ Route::middleware(['auth', 'role:user'])->name('job-seeker-')->group(function ()
     Route::get('/my-skills', [JobSeekerSkillController::class, 'index'])->name('skills.index');
     Route::post('/my-skills', [JobSeekerSkillController::class, 'store'])->name('skills.store');
     Route::delete('/my-skills/{skill}', [JobSeekerSkillController::class, 'destroy'])->name('skills.destroy');
+});
+
+// Route for Payment Transactions
+Route::middleware(['auth', 'role:company'])->group(function () {
+    Route::post('/payment/process/{subscription}', [PaymentTransactionController::class, 'processPayment'])->name('payment.process');
+    Route::get('/payment/waiting/{paymentTransaction}', function ($paymentTransaction) {
+        return "Waiting for payment " . $paymentTransaction;
+    })->name('payment.waiting');
+    Route::get('/payment/success', function () {
+        return "Payment Successful!";
+    })->name('payment.success');
 });
 
 

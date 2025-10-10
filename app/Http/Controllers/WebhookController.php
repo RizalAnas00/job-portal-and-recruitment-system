@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\PaymentTransaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,7 @@ class WebhookController extends Controller
 {
     public function handlePayment(Request $request)
     {
+        // TODO: THIS ONE
         // Log webhook received
         Log::info('Webhook received', $request->all());
 
@@ -37,33 +39,23 @@ class WebhookController extends Controller
         if ($event === 'payment.success') {
             $externalId = $data['external_id'];
 
-            $order = Order::where('order_number', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
 
-            if (!$order) {
+            if (!$paymentTransaction) {
                 Log::warning('Order not found', ['external_id' => $externalId]);
                 return response()->json(['error' => 'Order not found'], 404);
             }
 
             // Check if already processed (idempotency)
-            if ($order->isPaid()) {
-                Log::info('Payment already processed', ['order_id' => $order->id]);
+            if ($paymentTransaction->isSuccessful()) {
+                Log::info('Payment already processed', ['id' => $paymentTransaction->id]);
                 return response()->json(['message' => 'Already processed'], 200);
             }
 
             // Update order status
-            $order->update([
-                'payment_status' => 'paid',
-                'paid_at' => now(),
-            ]);
-
-            // Reduce product stock
-            $product = $order->product;
-            $product->decrement('stock', $order->quantity);
-
-            Log::info('Payment success processed', [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'amount' => $order->total_amount,
+            $paymentTransaction->update([
+                'status' => 'success',
+                'payment_date' => now(),
             ]);
 
             return response()->json(['message' => 'Webhook processed successfully'], 200);
@@ -72,11 +64,11 @@ class WebhookController extends Controller
         if ($event === 'payment.failed') {
             $externalId = $data['external_id'];
 
-            $order = Order::where('order_number', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
 
-            if ($order) {
-                $order->update(['payment_status' => 'failed']);
-                Log::info('Payment failed processed', ['order_id' => $order->id]);
+            if ($paymentTransaction) {
+                $paymentTransaction->update(['payment_status' => 'failed']);
+                Log::info('Payment failed processed', ['id' => $paymentTransaction->id]);
             }
 
             return response()->json(['message' => 'Webhook processed'], 200);
@@ -85,11 +77,11 @@ class WebhookController extends Controller
         if ($event === 'payment.expired') {
             $externalId = $data['external_id'];
 
-            $order = Order::where('order_number', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
 
-            if ($order) {
-                $order->update(['payment_status' => 'expired']);
-                Log::info('Payment expired processed', ['order_id' => $order->id]);
+            if ($paymentTransaction) {
+                $paymentTransaction->update(['status' => 'failed']);
+                Log::info('Payment expired processed', ['id' => $paymentTransaction->id]);
             }
 
             return response()->json(['message' => 'Webhook processed'], 200);
