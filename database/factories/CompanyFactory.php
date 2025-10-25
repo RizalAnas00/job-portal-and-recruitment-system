@@ -46,6 +46,7 @@ class CompanyFactory extends Factory
         return [
             'user_id' => $userId,
             'company_name' => $companyName,
+            'phone_number' => $this->faker->unique()->numerify('+62##########'),
             'company_description' => $this->faker->paragraph(),
             'website' => $this->faker->url(),
             'industry' => $industry,

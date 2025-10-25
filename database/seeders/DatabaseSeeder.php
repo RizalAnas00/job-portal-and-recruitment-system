@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             SubscriptionPlanSeeder::class,
             NotificationSeeder::class,
             InterviewAndSubscriptionSeeder::class,
+            PaymentTransactionSeeder::class,
         ]);
     }
 }

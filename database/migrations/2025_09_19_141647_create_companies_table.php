@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('phone_number', 15)->unique();
             $table->string('company_name', 100);
             $table->text('company_description');
             $table->string('website');

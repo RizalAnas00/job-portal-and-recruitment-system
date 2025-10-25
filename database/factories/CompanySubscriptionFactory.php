@@ -13,12 +13,15 @@ class CompanySubscriptionFactory extends Factory
 
     public function definition(): array
     {
+        $plans = SubscriptionPlan::all();
+        $companies = Company::all();
+
         $startDate = $this->faker->dateTimeBetween('-1 month', 'now');
         $endDate = $this->faker->dateTimeBetween($startDate, '+1 year');
 
         return [
-            'id_company' => Company::factory(),
-            'id_plan' => SubscriptionPlan::factory(),
+            'id_company' => $companies->random()->id,
+            'id_plan' => $this->faker->randomElement($plans)->id,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'status' => $this->faker->randomElement(['active', 'expired', 'canceled']),

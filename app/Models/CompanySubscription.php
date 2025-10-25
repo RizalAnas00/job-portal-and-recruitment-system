@@ -32,4 +32,14 @@ class CompanySubscription extends Model
     {
         return $this->belongsTo(SubscriptionPlan::class, 'id_plan');
     }
+
+    public function paymentTransactions()
+    {
+        return $this->hasMany(PaymentTransaction::class, 'id_company_subscription');
+    }
+
+    public function isActive()
+    {
+        return $this->status === 'active' && $this->end_date->isFuture();
+    }
 }

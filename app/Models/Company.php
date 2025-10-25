@@ -26,6 +26,13 @@ class Company extends Model
         'password',
     ];
 
+    public function activeSubscription()
+    {
+        return $this->hasOne(CompanySubscription::class, 'id_company')
+                    ->where('status', '=' ,'active')
+                    ->where('end_date', '>', now());
+    }
+    
     public function jobPostings()
     {
         return $this->hasMany(JobPosting::class, 'id_company');

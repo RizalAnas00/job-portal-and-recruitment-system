@@ -7,9 +7,11 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\JobSeekerSkillController;
+use App\Http\Controllers\PaymentTransactionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -145,13 +147,27 @@ Route::middleware(['auth', 'role:user'])->name('job-seeker-')->group(function ()
     Route::delete('/my-skills/{skill}', [JobSeekerSkillController::class, 'destroy'])->name('skills.destroy');
 });
 
+// Route for Payment Transactions
+Route::middleware(['auth', 'role:company'])->group(function () {
+    Route::post('/payment/process/{subscription}', [PaymentTransactionController::class, 'processPayment'])->name('payment.process');
+    Route::get('/payment/waiting/{paymentTransaction}', function ($paymentTransaction) {
+        return "Waiting for payment " . $paymentTransaction;
+    })->name('payment.waiting');
+    Route::get('/payment/success', function () {
+        return "Payment Successful!";
+    })->name('payment.success');
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+});
+
 
 // Route Subscription Plans (Admin Only)
 Route::resource('subscription-plans', SubscriptionPlanController::class);
 
-Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     // Rute untuk proses berlangganan
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 
+
+// Webhook Route for Payment Gateway , No need authentication
+Route::post('/webhook/payment', [WebhookController::class, 'handlePayment'])->name('webhook.payment');
 
 require __DIR__.'/auth.php';

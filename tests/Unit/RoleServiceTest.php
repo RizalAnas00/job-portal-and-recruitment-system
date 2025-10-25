@@ -19,7 +19,7 @@ it('creates a role via service', function () {
 
     expect($role)->toBeInstanceOf(Role::class)
         ->and($role->name)->toBe('qa')
-        ->and($role->is_active)->toBeTrue();
+        ->and($role->is_active)->toBeTruthy();
 });
 
 it('lists roles with pagination and filters', function () {
