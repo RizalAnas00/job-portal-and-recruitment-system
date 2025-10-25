@@ -156,13 +156,13 @@ Route::middleware(['auth', 'role:company'])->group(function () {
     Route::get('/payment/success', function () {
         return "Payment Successful!";
     })->name('payment.success');
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
 });
 
 
 // Route Subscription Plans (Admin Only)
 Route::resource('subscription-plans', SubscriptionPlanController::class);
 
-Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     // Rute untuk proses berlangganan
 Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
 

@@ -7,6 +7,43 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## 🧩 Artisan Command — app:icons-cache
+Deskripsi
+
+`app:icons-cache` adalah command Artisan untuk membersihkan cache view, menghapus cache ikon lama, dan membangun ulang cache Blade Icons dalam satu langkah.
+
+Command ini membantu menjaga performa aplikasi tetap optimal, terutama saat bekerja dengan set ikon besar dari Blade Icons.
+
+Penggunaan Dasar
+``php artisan app:icons-cache``
+
+
+Secara berurutan, command ini menjalankan:
+
+`php artisan view:clear` \
+`php artisan icons:clear` \
+`php artisan icons:cache`
+
+### Opsi Tambahan
+
+`--skip-view`	    Melewati proses pembersihan cache view \
+`--skip-clear`	Melewati penghapusan cache ikon lama \
+`--skip-cache`	Melewati proses pembuatan ulang cache ikon
+
+Contoh penggunaan:
+
+`php artisan app:icons-cache`
+
+atau misal pakai opsi 
+
+`php artisan app:icons-cache --skip-view`
+
+### Kapan Digunakan
+
+1. Saat deploy ke production agar cache ikon selalu up-to-date.
+2. Setelah menambah, menghapus, atau mengganti ikon di Blade Icons.
+3. Saat ingin membersihkan cache view dan ikon secara bersamaan.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

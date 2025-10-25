@@ -29,23 +29,33 @@
     <nav class="flex-1 px-2 py-4 space-y-2">
         <a href="{{ route('dashboard') }}" 
            class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('dashboard') ? 'bg-[#0f14aa]/30' : '' }}">
-            <span class="h-6 w-6 flex-shrink-0 text-xl">📊</span>
-            <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+            @svg('carbon-dashboard-reference', 'h-6 w-6 flex-shrink-0 text-xl')
+           <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Dashboard
             </span>
         </a>
 
         @if (Auth::user()->hasRole('admin'))
         <a href=" {{ route('role.index') }} " class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
-            <span class="h-6 w-6 flex-shrink-0 text-xl">👥</span>
+            @svg('carbon-user-role', 'h-6 w-6 flex-shrink-0 text-xl')
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Role
             </span>
         </a>
         @endif
 
+        @can('subscription_plan.read')
+            <a href="{{ Auth::user()->hasRole('admin') ? route('subscription-plans') : route('subscriptions.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('ionicon-book', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Subscription Plans
+                </span>
+            </a>
+        @endcan
+
         <a href="#" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
-            <span class="h-6 w-6 flex-shrink-0 text-xl">⚙️</span>
+            @svg('ionicon-settings-sharp', 'h-6 w-6 flex-shrink-0 text-xl')
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Settings
             </span>

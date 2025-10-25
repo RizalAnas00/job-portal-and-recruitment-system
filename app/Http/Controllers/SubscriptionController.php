@@ -15,17 +15,18 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        $plans = SubscriptionPlan::whereNull('deleted_at')->get();
+        $plans = SubscriptionPlan::all();
         
+        /** @var \App\Models\User */
         $company = Auth::user()->company;
         $activeSubscription = null;
 
         // Cek apakah perusahaan memiliki profil dan cari langganan aktif
         if ($company) {
-            $activeSubscription = $company->activeSubscription();
+            $activeSubscription = $company->activeSubscription;
         }
 
-        return view('subscriptions.index', compact('plans', 'activeSubscription'));
+        return view('company-subscriptions.index', compact('plans', 'activeSubscription'));
     }
 
     /**
@@ -45,7 +46,9 @@ class SubscriptionController extends Controller
             'plan_id' => 'required|exists:subscription_plans,id',
         ]);
 
+        /** @var \App\Models\User */
         $user = Auth::user();
+
         $company = $user->company;
         $plan = SubscriptionPlan::find($request->plan_id);
 
