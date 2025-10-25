@@ -44,15 +44,15 @@
         </a>
         @endif
 
-        @can('subscription_plan.read')
-            <a href="{{ Auth::user()->hasRole('admin') ? route('subscription-plans') : route('subscriptions.index') }}"
+        @if (Auth::user()->hasRole('company'))
+            <a href="{{ route('subscriptions.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
                 @svg('ionicon-book', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                     Subscription Plans
                 </span>
             </a>
-        @endcan
+        @endif
 
         <a href="#" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
             @svg('ionicon-settings-sharp', 'h-6 w-6 flex-shrink-0 text-xl')
