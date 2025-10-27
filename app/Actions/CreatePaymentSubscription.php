@@ -15,8 +15,8 @@ class CreatePaymentSubscription {
         return PaymentTransaction::create([
             'id_company_subscription' => $companySubscription->id,
             'amount' => $paymentData['amount'] ?? 0,
-            'payment_date' => now(),
-            'payment_method' => $paymentData['payment_method'] ?? 'bank_transfer',
+            'payment_date' => null,
+            'payment_method' => $paymentData['payment_method'] ?? null,
             'va_number' => $paymentData['va_number'] ?? null,
             'payment_url' => $paymentData['payment_url'] ?? null,
             'status' => $paymentData['status'] ?? 'pending',

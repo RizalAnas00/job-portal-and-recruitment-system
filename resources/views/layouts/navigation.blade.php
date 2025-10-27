@@ -20,6 +20,9 @@
                                        transition shadow-sm">
                             <img src="https://i.pravatar.cc/40" class="h-8 w-8 rounded-full border border-gray-300" />
                             <span class="hidden sm:block ml-2">{{ Auth::user()->email }}</span>
+                            @if (Auth::user()->company && Auth::user()->company->is_verified)
+                                @svg('gmdi-verified-s', 'h-5 w-5 text-blue-500 ml-1')
+                            @endif
                             <svg class="h-4 w-4 opacity-70" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
                                 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0-1.414z" clip-rule="evenodd"/>

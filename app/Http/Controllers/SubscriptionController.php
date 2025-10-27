@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\checkPendingPayment;
 use App\Models\CompanySubscription;
+use App\Models\PaymentTransaction;
 use App\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
+    private $checkPending;
+
+    public function __construct(checkPendingPayment $checkPending) {
+        $this->checkPending = $checkPending;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -73,6 +81,21 @@ class SubscriptionController extends Controller
                          ->with('success', "Anda berhasil berlangganan paket {$plan->plan_name}!");
     }
 
+    public function confirmationOrder(SubscriptionPlan $plan)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        $checkPending = $this->checkPending->__invoke($user->company);
+        Log::info('Pending Payments: ' . $checkPending);
+
+        if ($checkPending) {
+            $err = "You have pending payment transactions. Please complete them before creating a new subscription.";
+            return view('company-subscriptions.confirm', compact('plan', 'err'));
+        }
+
+        return view('company-subscriptions.confirm', compact('plan'));
+    }
     /**
      * Display the specified resource.
      */

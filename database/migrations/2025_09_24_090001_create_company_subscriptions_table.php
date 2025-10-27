@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('id_plan')->constrained('subscription_plans')->onDelete('cascade');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->enum('status', ['active', 'expired', 'canceled'])->default('active');
+            $table->enum('status', ['active', 'expired', 'canceled', 'inactive'])->default('inactive');
             $table->timestamps();
             $table->softDeletes();
         });

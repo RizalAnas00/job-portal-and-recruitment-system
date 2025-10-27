@@ -29,7 +29,7 @@
 
                 <!-- Breadcrumb -->
                 @if (isset($breadcrumb))
-                    <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300">
+                    <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mt-4 text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300">
                         <span class="text-gray-500 dark:text-gray-400 font-light">Pages /</span>
                         <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $breadcrumb }}</span>
                     </div>

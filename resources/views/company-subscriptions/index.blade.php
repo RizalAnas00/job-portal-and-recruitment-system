@@ -49,7 +49,7 @@
                         ? 'border-teal-400 bg-gradient-to-b from-teal-50 to-white dark:from-teal-900/20 dark:to-gray-900' 
                         : ($isActive 
                             ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20' 
-                            : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900') }}">
+                            : 'border-gray-200 dark:border-gray-700 bg-transparent dark:bg-transparent') }}">
 
                     @if ($isEnterprise)
                         <span class="absolute top-3 right-3 bg-teal-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
@@ -123,13 +123,16 @@
                         </div>
 
                         @if (!$isActive)
-                            <button
-                                class="w-full py-2 rounded-lg font-semibold text-white transition
-                                    {{ $isEnterprise
-                                        ? 'bg-teal-500 hover:bg-teal-600'
-                                        : 'bg-primary-500 hover:bg-primary-600' }}">
-                                Choose Plan
-                            </button>
+                            <form action="{{ route('company.subscriptions.confirm', $plan) }}" method="GET">
+                                @csrf
+                                <button
+                                    class="w-full py-2 rounded-lg font-semibold text-white transition
+                                        {{ $isEnterprise
+                                            ? 'bg-teal-500 hover:bg-teal-600'
+                                            : 'bg-primary-500 hover:bg-primary-600' }}">
+                                    Choose Plan
+                                </button>
+                            </form>
                         @else
                             <button disabled
                                 class="w-full py-2 bg-primary-300 text-white rounded-lg opacity-70 cursor-not-allowed font-semibold">

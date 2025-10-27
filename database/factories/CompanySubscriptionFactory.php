@@ -24,7 +24,7 @@ class CompanySubscriptionFactory extends Factory
             'id_plan' => $this->faker->randomElement($plans)->id,
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'status' => $this->faker->randomElement(['active', 'expired', 'canceled']),
+            'status' => $this->faker->randomElement(['active', 'expired', 'canceled', 'inactive']),
         ];
     }
 }

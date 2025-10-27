@@ -1,5 +1,5 @@
-<table class="w-full text-sm text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden shadow">
-    <thead class="text-xs text-gray-700 uppercase bg-primary-600 dark:bg-primary-500 dark:text-gray-900">
+<table class="w-full text-sm text-gray-500 dark:text-gray-300 rounded-lg overflow-hidden shadow">
+    <thead class="text-xs text-gray-100 uppercase bg-primary-600 dark:bg-primary-500 dark:text-gray-900">
         <tr>
             @foreach ($headers as $header)
                 <th scope="col" class="px-6 py-3 

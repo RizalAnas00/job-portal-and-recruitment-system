@@ -45,7 +45,7 @@
         @endif
 
         @if (Auth::user()->hasRole('company'))
-            <a href="{{ route('subscriptions.index') }}"
+            <a href="{{ route('company.subscriptions.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
                 @svg('ionicon-book', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
@@ -53,6 +53,14 @@
                 </span>
             </a>
         @endif
+
+        <a href="{{ Auth::user()->hasRole('company') ? route('company.payment.index') : '#' }}"
+            class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
+            @svg('fluentui-payment-28', 'h-6 w-6 flex-shrink-0 text-xl')
+            <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                Payment History
+            </span>
+        </a>
 
         <a href="#" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
             @svg('ionicon-settings-sharp', 'h-6 w-6 flex-shrink-0 text-xl')
