@@ -15,7 +15,7 @@ class JobPostingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
 
         $user = Auth::user();
@@ -23,7 +23,9 @@ class JobPostingController extends Controller
 
         // Jika yang login adalah 'company', tampilkan hanya lowongan milik mereka.
         if ($user->hasRole('company') && $user->company) {
-            $query->where('company_id', $user->company->id);
+            if (!$request->boolean('all')) {
+                $query->where('id_company', $user->company->id);
+            }
         }
 
         $jobPostings = $query->paginate(10);
@@ -42,6 +44,11 @@ class JobPostingController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
+        if (!$user->hasRole('company') || !$user->company) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
         $skills = Skill::orderBy('skill_name')->get();
         return view('job_postings.create', compact('skills'));
     }
@@ -60,9 +67,9 @@ class JobPostingController extends Controller
             'job_title' => 'required|string|max:255',
             'job_description' => 'required|string',
             'location' => 'required|string|max:255',
-            'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship'])],
+            'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote' ])],
             'salary_range' => 'nullable|string|max:100',
-            'posted_date' => 'required|date',
+            'posted_date' => 'nullable|date',
             'closing_date' => 'nullable|date|after_or_equal:posted_date',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id' // Validasi setiap ID skill
@@ -83,9 +90,13 @@ class JobPostingController extends Controller
      */
     public function edit(JobPosting $jobPosting)
     {
+        $user = Auth::user();
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
         $skills = Skill::orderBy('skill_name')->get();
         return view('job_postings.edit', compact('jobPosting', 'skills'));
-
     }
 
     /**
@@ -96,7 +107,7 @@ class JobPostingController extends Controller
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa mengupdate
-        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->company_id)) {
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
             abort(403, 'AKSES DITOLAK');
         }
 
@@ -104,9 +115,9 @@ class JobPostingController extends Controller
             'job_title' => 'required|string|max:255',
             'job_description' => 'required|string',
             'location' => 'required|string|max:255',
-            'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship'])],
+            'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote'])],
             'salary_range' => 'nullable|string|max:100',
-            'posted_date' => 'required|date',
+            'posted_date' => 'nullable|date',
             'closing_date' => 'nullable|date|after_or_equal:posted_date',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id'
@@ -115,10 +126,9 @@ class JobPostingController extends Controller
         $jobPosting->update($validated);
 
         // 'sync' akan memperbarui relasi: menghapus yang tidak dipilih dan menambah yang baru.
-        if ($request->has('skills')) {
-            $jobPosting->skills()->sync($request->skills);
+        if (!empty($validated['skills'])) {
+            $jobPosting->skills()->sync($validated['skills']);
         } else {
-            // Jika tidak ada skill yang dikirim, hapus semua relasi skill
             $jobPosting->skills()->detach();
         }
 
@@ -133,7 +143,7 @@ class JobPostingController extends Controller
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa menghapus
-        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->company_id)) {
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
             abort(403, 'AKSES DITOLAK');
         }
 

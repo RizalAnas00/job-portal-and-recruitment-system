@@ -24,6 +24,11 @@ class JobPosting extends Model
 		'status',
 	];
 
+	protected $casts = [
+		'posted_date' => 'date',
+		'closing_date' => 'date',
+	];
+
 	public function company()
 	{
 		return $this->belongsTo(Company::class, 'id_company');
@@ -33,7 +38,8 @@ class JobPosting extends Model
 	{
 		return $this->belongsToMany(Skill::class, 'job_posting_skill', 'id_job_posting', 'id_skill')
 			->using(JobPostingSkill::class)
-			->withTimestamps();
+			->withTimestamps()
+			->withPivot('deleted_at');
 	}
 
 	public function applications()

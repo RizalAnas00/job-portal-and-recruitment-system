@@ -12,9 +12,14 @@ class JobPostingSkill extends Pivot
 	protected $table = 'job_posting_skill';
 
 	public $timestamps = true;
+	public $incrementing = false;
 
 	protected $fillable = [
 		'id_job_posting',
 		'id_skill',
+	];
+
+	protected $dates = [
+		'deleted_at',
 	];
 }

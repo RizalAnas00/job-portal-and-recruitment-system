@@ -34,10 +34,14 @@
                         <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $breadcrumb }}</span>
                     </div>
                 @endif
- 
+
                 <!-- Page Content -->
                 <main class="p-6">
-                    {{ $slot }}
+                    @isset($slot)
+                        {{ $slot }}
+                    @else
+                        @yield('content')
+                    @endisset
                 </main>
  
             </div>

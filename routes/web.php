@@ -117,6 +117,22 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
 // Route Companies
 Route::resource('companies', CompanyController::class);
 
+// Public view untuk daftar & detail (autentikasi sudah ada jika perlu)
+Route::middleware('auth')->group(function () {
+    Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
+    Route::get('/job-postings/{job_posting}', [JobPostingController::class, 'show'])->name('job-postings.show');
+    Route::get('/job-postings/create', [JobPostingController::class, 'create'])->name('job-postings.create');
+});
+
+// Company management (create/store/edit/update/destroy) - requires company role
+Route::middleware(['auth', 'role:company'])->group(function () {
+    Route::get('/job-postings/create', [JobPostingController::class, 'create'])->name('job-postings.create');
+    Route::post('/job-postings', [JobPostingController::class, 'store'])->name('job-postings.store');
+    Route::get('/job-postings/{job_posting}/edit', [JobPostingController::class, 'edit'])->name('job-postings.edit');
+    Route::put('/job-postings/{job_posting}', [JobPostingController::class, 'update'])->name('job-postings.update');
+    Route::delete('/job-postings/{job_posting}', [JobPostingController::class, 'destroy'])->name('job-postings.destroy');
+});
+
 // Route Resumes
 Route::resource('resumes', ResumeController::class)->except([
     'show'

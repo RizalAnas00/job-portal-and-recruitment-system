@@ -71,6 +71,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
+        $user = Auth::user();
         if ($user->hasRole('admin') || $user->id === $company->user_id) {
             return view('companies.edit', compact('company'));
         }
@@ -83,6 +84,7 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
+        $user = Auth::user();
         if (!$user->hasRole('admin') && $user->id !== $company->user_id) {
             abort(403, 'AKSES DITOLAK');
         }
@@ -106,13 +108,12 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
+        $user = Auth::user();
         if ($user->hasRole('admin') || $user->id === $company->user_id) {
             $company->delete();
             return redirect()->route('companies.index')->with('success', 'Profil perusahaan berhasil dihapus.');
         }
 
-        $company->delete();
-
-        return redirect()->route('companies.index')->with('success', 'Profil perusahaan berhasil dihapus.');
+        abort(403, 'AKSES DITOLAK');
     }
 }
