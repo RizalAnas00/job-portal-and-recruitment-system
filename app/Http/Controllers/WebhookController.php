@@ -61,7 +61,7 @@ class WebhookController extends Controller
 
             if ($companySubscription) {
                 $company = $companySubscription->company;
-
+                
                 $activeSubscription = $this->checkActiveSubscription->__invoke($company);
 
                 if ($activeSubscription && $activeSubscription->id !== $companySubscription->id) {
@@ -70,6 +70,12 @@ class WebhookController extends Controller
                 }
 
                 $companySubscription->update(['status' => 'active']);
+
+                if ($companySubscription->plan->allow_verified_badge == true) {
+                    $company->update(['is_verified' => true]);
+                }
+                
+                $company->update(['is_verified' => true]);
                 Log::info('New subscription activated', ['id' => $companySubscription->id]);
             }
 
