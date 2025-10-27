@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="breadcrumb">
-        Subscriptions List
+        Payment History
     </x-slot>
 
     <div class="py-6">

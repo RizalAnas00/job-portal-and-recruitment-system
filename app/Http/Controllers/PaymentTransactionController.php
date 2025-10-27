@@ -32,7 +32,17 @@ class PaymentTransactionController extends Controller
      */
     public function index()
     {
-        //
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        $payments = PaymentTransaction::whereHas('companySubscription', function ($query) use ($user) {
+                $query->where('id_company', $user->company->id);
+            })
+            ->with('companySubscription.plan')
+            ->latest()
+            ->get();
+
+        return view('payment-history.index', compact('payments'));
     }
 
     /**
@@ -53,6 +63,9 @@ class PaymentTransactionController extends Controller
 
     public function processPayment(Request $request, SubscriptionPlan $subscription)
     {
+        // Log::info('Processing payment for subscription: ' . $subscription);
+        // Log::info('Request data: ' . json_encode($request->all()));
+
         $expiredHours = (int) config('services.payment.expired_hours', 24);
 
         // Create Company Subscription
@@ -78,6 +91,8 @@ class PaymentTransactionController extends Controller
             'expires_at' => $expiredHours,
         ]);
 
+        // Log::info('Created Payment Transaction: ' . $paymentTransaction);
+
         // Create Virtual Account via Payment Gateway API
         try {
             $response = Http::withHeaders([
@@ -91,9 +106,10 @@ class PaymentTransactionController extends Controller
                 'customer_phone' => $role === 'company' ? $user->company->phone_number : '081234567890',
                 'description' => 'Pembayaran ' . $subscription->name,
                 'expired_duration' => $expiredHours,
-                'callback_url' => route('payment.success'),
+                // This doesnt do shit tbh, since we manually handle the redirect response
+                'callback_url' => route('company.payment.waiting', $paymentTransaction), 
                 'metadata' => [
-                    'subscription_id' => $subscription->id,
+                    'subscription_id' => $companySubscription->id,
                     'user_id' => $user->id,
                 ],
             ]);
@@ -108,7 +124,7 @@ class PaymentTransactionController extends Controller
                     'payment_url' => $data['data']['payment_url'],
                 ]);
 
-                return redirect()->route('payment.waiting', $paymentTransaction);
+                return redirect()->route('company.payment.waiting', $paymentTransaction);
             } else {
                 $paymentTransaction->update(['payment_status' => 'failed']);
                 return redirect()->route('customer.products.index')
@@ -117,10 +133,55 @@ class PaymentTransactionController extends Controller
         } catch (\Exception $e) {
             $paymentTransaction->update(['payment_status' => 'failed']);
             // dd($e);
-            return redirect()->route('customer.products.error')
+            // Log::error('Error creating virtual account: ' . $e->getMessage());
+            return redirect()->route('company.payment.failure')
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    public function waitingPayment(PaymentTransaction $payment)
+    {
+        return view('payment-history.show', compact('payment'));
+    }
+
+    // TODO : Implement cancel payment for db and payment gateway
+    public function cancelPayment(PaymentTransaction $payment)
+    {
+        try {
+            $url = config('services.payment.base_url') . "/virtual-account/{$payment->va_number}/cancel";
+
+            $response = Http::withHeaders([
+                'X-API-Key' => config('services.payment.api_key'),
+                'Accept' => 'application/json',
+            ])->post($url, [
+                'callback_url' => route('company.payment.index'),
+            ]);
+
+            if($response->failed()) {
+                return redirect()->route('company.payment.waiting', $payment)
+                    ->with('error', 'Gagal membatalkan pembayaran di gateway. Silakan coba lagi.');
+            }
+
+            $vaNumber = $payment->va_number;
+
+            $payment->delete();
+
+            return redirect()->route('company.payment.index')
+                ->with('success-cancel', 'Pembayaran dengan VA Number ' . $vaNumber . ' berhasil dibatalkan.');
+
+        } catch (\Exception $e) {
+            return redirect()->route('company.payment.waiting', $payment)
+                ->with('error', 'Gagal membatalkan pembayaran. Silakan coba lagi.');
+        }
+    }
+
+    public function checkPaymentStatus(PaymentTransaction $payment)
+    {
+        return response()->json([
+            'status' => $payment->status,
+            'payment_date' => $payment->payment_date,
+        ]);
+    }   
 
     /**
      * Display the specified resource.

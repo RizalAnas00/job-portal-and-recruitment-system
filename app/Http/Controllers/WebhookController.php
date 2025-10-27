@@ -2,25 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use App\Models\PaymentTransaction;
-use App\Models\Product;
+use App\Models\CompanySubscription;
+use App\Actions\CheckActiveSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
+    private $checkActiveSubscription;
+
+    public function __construct(CheckActiveSubscription $checkActiveSubscription)
+    {
+        $this->checkActiveSubscription = $checkActiveSubscription;
+    }
+
     public function handlePayment(Request $request)
     {
-        // TODO: THIS ONE
-        // Log webhook received
         Log::info('Webhook received', $request->all());
 
         // Verify webhook signature
         $signature = $request->header('X-Webhook-Signature');
         $webhookSecret = config('services.payment.webhook_secret');
-
-        // Get payload and calculate expected signature
         $payload = $request->all();
         $expectedSignature = hash_hmac('sha256', json_encode($payload), $webhookSecret);
 
@@ -32,42 +35,53 @@ class WebhookController extends Controller
             return response()->json(['error' => 'Invalid signature'], 401);
         }
 
-        // Process webhook
         $event = $request->input('event');
         $data = $request->input('data');
 
         if ($event === 'payment.success') {
             $externalId = $data['external_id'];
-
-            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::find($externalId);
 
             if (!$paymentTransaction) {
-                Log::warning('Order not found', ['external_id' => $externalId]);
-                return response()->json(['error' => 'Order not found'], 404);
+                Log::warning('Payment transaction not found', ['external_id' => $externalId]);
+                return response()->json(['error' => 'Transaction not found'], 404);
             }
 
-            // Check if already processed (idempotency)
             if ($paymentTransaction->isSuccessful()) {
                 Log::info('Payment already processed', ['id' => $paymentTransaction->id]);
                 return response()->json(['message' => 'Already processed'], 200);
             }
 
-            // Update order status
             $paymentTransaction->update([
                 'status' => 'success',
                 'payment_date' => now(),
             ]);
+
+            $companySubscription = $paymentTransaction->companySubscription ?? null;
+
+            if ($companySubscription) {
+                $company = $companySubscription->company;
+
+                $activeSubscription = $this->checkActiveSubscription->__invoke($company);
+
+                if ($activeSubscription && $activeSubscription->id !== $companySubscription->id) {
+                    $activeSubscription->update(['status' => 'canceled']);
+                    Log::info('Previous subscription canceled', ['id' => $activeSubscription->id]);
+                }
+
+                $companySubscription->update(['status' => 'active']);
+                Log::info('New subscription activated', ['id' => $companySubscription->id]);
+            }
 
             return response()->json(['message' => 'Webhook processed successfully'], 200);
         }
 
         if ($event === 'payment.failed') {
             $externalId = $data['external_id'];
-
-            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::find($externalId);
 
             if ($paymentTransaction) {
-                $paymentTransaction->update(['payment_status' => 'failed']);
+                $paymentTransaction->update(['status' => 'failed']);
                 Log::info('Payment failed processed', ['id' => $paymentTransaction->id]);
             }
 
@@ -76,8 +90,7 @@ class WebhookController extends Controller
 
         if ($event === 'payment.expired') {
             $externalId = $data['external_id'];
-
-            $paymentTransaction = PaymentTransaction::where('id', $externalId)->first();
+            $paymentTransaction = PaymentTransaction::find($externalId);
 
             if ($paymentTransaction) {
                 $paymentTransaction->update(['status' => 'failed']);
