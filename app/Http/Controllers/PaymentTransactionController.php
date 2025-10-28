@@ -40,7 +40,7 @@ class PaymentTransactionController extends Controller
             })
             ->with('companySubscription.plan')
             ->latest()
-            ->get();
+            ->paginate(5);
 
         return view('payment-history.index', compact('payments'));
     }

@@ -27,7 +27,7 @@ class RoleRepository implements RoleRepositoryInterface
         return $newRole->refresh();
     }
 
-    public function getAllRoles(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function getAllRoles(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         $query = RoleModel::query();
         

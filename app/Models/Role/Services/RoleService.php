@@ -26,7 +26,7 @@ class RoleService implements RoleServiceInterface
         return $this->roles->createRole($data);
     }
 
-    public function list(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function list(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         return $this->roles->getAllRoles($filters, $perPage);
     }

@@ -129,4 +129,8 @@
             @endforeach
         @endif
     </x-table>
+    
+    <div class="mt-6">
+        {{ $payments->onEachSide(5)->links() }}
+    </div>
 @endsection

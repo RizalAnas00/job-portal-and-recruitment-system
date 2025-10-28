@@ -50,6 +50,10 @@
         @endforeach
     </x-table>
 
+    <div class="mt-6">
+        {{ $roles->onEachSide(5)->links() }}
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-sm">
