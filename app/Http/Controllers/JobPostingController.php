@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class JobPostingController extends Controller
@@ -17,9 +18,9 @@ class JobPostingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(\Illuminate\Http\Request $request)
+    public function index(Request $request)
     {
-
+        /** @var \App\Models\User */
         $user = Auth::user();
         $query = JobPosting::with('company', 'skills')->latest();
 
@@ -125,7 +126,7 @@ class JobPostingController extends Controller
         } catch (\Exception $e) {
             // Jika terjadi error di dalam transaksi, kembalikan dengan pesan error.
             // Tidak ada data yang akan tersimpan di database.
-            \Log::error('Job posting creation failed: ' . $e->getMessage());
+            Log::error('Job posting creation failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan lowongan. Tidak ada data yang disimpan.');
         }
     }
@@ -135,7 +136,9 @@ class JobPostingController extends Controller
      */
     public function edit(JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
+        
         if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
             abort(403, 'AKSES DITOLAK');
         }
@@ -149,6 +152,7 @@ class JobPostingController extends Controller
      */
     public function update(Request $request, JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa mengupdate
@@ -185,6 +189,7 @@ class JobPostingController extends Controller
      */
     public function destroy(JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa menghapus
