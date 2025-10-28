@@ -265,7 +265,15 @@
                             </div>
                         </div>
 
-                        @if (!$isActive)
+                        @if (!Auth::user()->company)
+                            <div class="w-full py-2 px-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 text-sm rounded-lg font-normal text-center text-gray-800 dark:text-gray-300">
+                                You need to create a company profile first.  
+                                <a href="{{ route('companies.create') }}" class="text-yellow-800 font-medium dark:text-yellow-300 underline hover:text-yellow-800 dark:hover:text-yellow-300">
+                                    Click here
+                                </a>
+                                to create one.
+                            </div>
+                        @elseif (!$isActive)
                             <form action="{{ route('company.subscriptions.confirm', $plan) }}" method="GET">
                                 @csrf
                                 <button
@@ -281,16 +289,6 @@
                                 class="w-full py-2 bg-primary-300 text-white rounded-lg opacity-70 cursor-not-allowed font-semibold">
                                 Current Plan
                             </button>
-                            {{-- <form action="#" method="GET">
-                                @csrf
-                                <button
-                                    class="w-full py-2 rounded-lg font-semibold text-white transition
-                                        {{ $isEnterprise
-                                            ? 'bg-teal-500 hover:bg-teal-600'
-                                            : 'bg-primary-500 hover:bg-primary-600' }}">
-                                    Cancel Subscription
-                                </button>
-                            </form> --}}
                         @endif
                     </div>
                 </div>

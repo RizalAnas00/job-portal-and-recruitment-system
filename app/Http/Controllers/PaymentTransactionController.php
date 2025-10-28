@@ -35,12 +35,16 @@ class PaymentTransactionController extends Controller
         /** @var \App\Models\User */
         $user = Auth::user();
 
-        $payments = PaymentTransaction::whereHas('companySubscription', function ($query) use ($user) {
-                $query->where('id_company', $user->company->id);
-            })
-            ->with('companySubscription.plan')
-            ->latest()
-            ->paginate(5);
+        $payments = null;
+
+        if($user->company) {
+            $payments = PaymentTransaction::whereHas('companySubscription', function ($query) use ($user) {
+                    $query->where('id_company', $user->company->id);
+                })
+                ->with('companySubscription.plan')
+                ->latest()
+                ->paginate(5);
+        }
 
         return view('payment-history.index', compact('payments'));
     }

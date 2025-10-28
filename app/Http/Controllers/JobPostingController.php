@@ -55,7 +55,7 @@ class JobPostingController extends Controller
         }
 
         // Hitung jumlah lowongan yang sedang 'open'
-        $currentPostCount = $company->jobPostings()->where('status', 'open')->count();
+        $currentPostCount = $company->jobPostings()->where('status', '!=','closed')->count();
         // Ambil batas dari paket langganan
         $postLimit = $company->activeSubscription->plan->job_post_limit;
 
