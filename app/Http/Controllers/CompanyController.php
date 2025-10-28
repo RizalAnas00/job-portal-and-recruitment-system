@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Company;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CompanySubscription;
+use App\Models\SubscriptionPlan; // Import model SubscriptionPlan
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CompanyController extends Controller
 {
@@ -34,27 +37,52 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'phone_number' => 'required|string|max:20',
-            'website' => 'nullable|url|max:255',
-            'company_description' => 'nullable|string',
-            'industry' => 'nullable|string|max:100',
+        // Validasi disesuaikan dengan skema tabel companies
+        $request->validate([
+            'company_name' => 'required|string|max:100',
+            'company_description' => 'required|string',
+            'address' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15|unique:companies,phone_number',
+            'website' => 'required|url|max:255',
+            'industry' => 'required|string|max:255',
         ]);
 
-        // Tambahkan user_id dari user yang sedang login
-        $validatedData['user_id'] = Auth::id();
+        try {
+            DB::transaction(function () use ($request) {
+                // 1. Buat profil perusahaan
+                $company = Auth::user()->company()->create([
+                    'company_name' => $request->company_name,
+                    'company_description' => $request->company_description,
+                    'address' => $request->address,
+                    'phone_number' => $request->phone_number,
+                    'website' => $request->website,
+                    'industry' => $request->industry,
+                ]);
 
-        // Gunakan updateOrCreate untuk mencegah duplikat profil oleh user yang sama
-        $company = Company::updateOrCreate(
-            ['user_id' => $user->id],
-            $validatedData
-        );
+                // 2. Cari paket langganan default (id=1)
+                $defaultPlan = SubscriptionPlan::find(1);
+                if (!$defaultPlan) {
+                    // Jika plan tidak ditemukan, batalkan transaksi
+                    throw new \Exception("Default subscription plan (ID: 1) not found.");
+                }
 
-        return redirect()->route('companies.show', $company)->with('success', 'Profil perusahaan berhasil dibuat.');
+                // 3. Buat langganan default berdasarkan durasi dari plan
+                CompanySubscription::create([
+                    'id_company' => $company->id,
+                    'id_plan' => $defaultPlan->id,
+                    'start_date' => Carbon::now(),
+                    'end_date' => Carbon::now()->addDays($defaultPlan->duration_days), // Gunakan durasi dari plan
+                    'status' => 'active',
+                ]);
+            });
+
+            return redirect()->route('dashboard')->with('success', 'Profil perusahaan dan langganan awal berhasil dibuat.');
+
+        } catch (\Exception $e) {
+            // Jika terjadi error, catat log dan kembalikan pesan error
+            \Log::error('Company creation failed: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal membuat profil perusahaan. Silakan coba lagi atau hubungi administrator.');
+        }
     }
 
     /**
@@ -89,13 +117,14 @@ class CompanyController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
+        // --- PERBAIKAN VALIDASI DI SINI ---
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string',
-            'phone_number' => 'required|string|max:20',
-            'website' => 'nullable|url|max:255',
-            'company_description' => 'nullable|string',
-            'industry' => 'nullable|string|max:100',
+            'company_name' => 'required|string|max:100',
+            'company_description' => 'required|string',
+            'address' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:15|unique:companies,phone_number,' . $company->id,
+            'website' => 'required|url|max:255',
+            'industry' => 'required|string|max:255',
         ]);
 
         $company->update($validatedData);
@@ -108,12 +137,7 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        $user = Auth::user();
-        if ($user->hasRole('admin') || $user->id === $company->user_id) {
-            $company->delete();
-            return redirect()->route('companies.index')->with('success', 'Profil perusahaan berhasil dihapus.');
-        }
-
-        abort(403, 'AKSES DITOLAK');
+        $company->delete();
+        return redirect()->route('companies.index')->with('success', 'Perusahaan berhasil dihapus.');
     }
 }

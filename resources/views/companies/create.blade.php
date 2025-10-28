@@ -1,69 +1,67 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Lengkapi Profil Perusahaan Anda') }}
-        </h2>
+    <x-slot name="breadcrumb">
+        Buat Profil Perusahaan
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 sm:p-8 text-gray-900 dark:text-gray-100">
-                    
-                    <header>
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            {{ __('Selamat Datang!') }}
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            {{ __("Akun Anda telah dibuat. Harap lengkapi detail perusahaan Anda untuk melanjutkan.") }}
-                        </p>
-                    </header>
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+                        Lengkapi Profil Perusahaan Anda
+                    </h2>
 
-                    <form method="POST" action="{{ route('company.profile.store') }}" class="mt-6 space-y-6">
+                    {{-- Tampilkan error validasi --}}
+                    <x-auth-session-status class="mb-4" :status="session('error')" />
+                    <x-input-error :messages="$errors->all()" class="mb-4" />
+
+                    <form method="POST" action="{{ route('companies.store') }}">
                         @csrf
 
+                        <!-- Company Name -->
                         <div>
-                            <x-input-label for="name" :value="__('Nama Perusahaan')" />
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name')" required autofocus />
-                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                            <x-input-label for="company_name" :value="__('Nama Perusahaan')" />
+                            <x-text-input id="company_name" class="block mt-1 w-full" type="text" name="company_name" :value="old('company_name')" required autofocus />
                         </div>
 
-                        <div>
-                            <x-input-label for="company_description" :value="__('Deskripsi Singkat Perusahaan')" />
-                            <textarea id="company_description" name="company_description" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full h-32">{{ old('company_description') }}</textarea>
-                            <x-input-error class="mt-2" :messages="$errors->get('company_description')" />
+                        <!-- Industry -->
+                        <div class="mt-4">
+                            <x-input-label for="industry" :value="__('Industri')" />
+                            <x-text-input id="industry" class="block mt-1 w-full" type="text" name="industry" :value="old('industry')" required />
+                            <p class="text-sm text-gray-500 mt-1">Contoh: Teknologi, Keuangan, Manufaktur, dll.</p>
                         </div>
 
-                        <div>
-                            <x-input-label for="industry" :value="__('Industri (cth: Teknologi, Keuangan, F&B)')" />
-                            <x-text-input id="industry" name="industry" type="text" class="mt-1 block w-full" :value="old('industry')" />
-                            <x-input-error class="mt-2" :messages="$errors->get('industry')" />
+                        <!-- Website -->
+                        <div class="mt-4">
+                            <x-input-label for="website" :value="__('Website')" />
+                            <x-text-input id="website" class="block mt-1 w-full" type="url" name="website" :value="old('website')" required placeholder="https://www.contoh.com" />
                         </div>
 
-                        <div>
-                            <x-input-label for="website" :value="__('Website Perusahaan')" />
-                            <x-text-input id="website" name="website" type="url" class="mt-1 block w-full" :value="old('website')" placeholder="https://contoh.com" />
-                            <x-input-error class="mt-2" :messages="$errors->get('website')" />
+                        <!-- Phone Number -->
+                        <div class="mt-4">
+                            <x-input-label for="phone_number" :value="__('Nomor Telepon')" />
+                            <x-text-input id="phone_number" class="block mt-1 w-full" type="text" name="phone_number" :value="old('phone_number')" required />
                         </div>
 
-                        <div>
-                            <x-input-label for="phone_number" :value="__('Nomor Telepon (Kantor/HRD)')" />
-                            <x-text-input id="phone_number" name="phone_number" type="tel" class="mt-1 block w-full" :value="old('phone_number')" required />
-                            <x-input-error class="mt-2" :messages="$errors->get('phone_number')" />
-                        </div>
-
-                        <div>
+                        <!-- Address -->
+                        <div class="mt-4">
                             <x-input-label for="address" :value="__('Alamat Lengkap Perusahaan')" />
-                            <textarea id="address" name="address" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 block w-full h-24">{{ old('address') }}</textarea>
-                            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+                            <textarea id="address" name="address" rows="4" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>{{ old('address') }}</textarea>
                         </div>
 
+                        <!-- Company Description -->
+                        <div class="mt-4">
+                            <x-input-label for="company_description" :value="__('Deskripsi Perusahaan')" />
+                            <textarea id="company_description" name="company_description" rows="6" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>{{ old('company_description') }}</textarea>
+                            <p class="text-sm text-gray-500 mt-1">Jelaskan tentang perusahaan Anda, visi, misi, dan budaya kerja.</p>
+                        </div>
 
-                        <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Simpan Profil') }}</x-primary-button>
+                        <div class="flex items-center justify-end mt-6">
+                            <x-primary-button>
+                                {{ __('Simpan Profil Perusahaan') }}
+                            </x-primary-button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
