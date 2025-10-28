@@ -101,7 +101,7 @@
                     </div>
                 </summary>
 
-                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mt-6">
+                <div class="bg-white dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mt-4">
                     
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Subscription Details</h3>
 
@@ -118,11 +118,11 @@
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Payment Method</dt>
-                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->payment_method ?? 'N/A' }}</dd>
+                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->latestPaymentTransaction->payment_method ?? 'N/A' }}</dd>
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Payment Date</dt>
-                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->start_date->format('d F Y H:i:s') }}</dd>
+                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->latestPaymentTransaction->payment_date->format('d F Y H:i:s') ?? 'N/A'}}</dd>
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Next Billing Date</dt>
@@ -130,7 +130,11 @@
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Job Post Limit</dt>
-                            <dd class="font-semibold text-primary-700 dark:text-primary-200">{{ $activeSubscription->plan->job_post_limit }}</dd>
+                            @if ($activeSubscription->plan->job_post_limit == 999)
+                                <dd class="font-semibold text-teal-600 dark:text-teal-400">Unlimited</dd>
+                            @else
+                                <dd class="font-semibold text-primary-700 dark:text-primary-200">{{ $activeSubscription->plan->job_post_limit }}</dd>
+                            @endif
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Verified Badge</dt>
@@ -206,7 +210,7 @@
 
                     <div class="p-6 md:p-7 flex flex-col justify-between h-full">
                         {{-- Plan name --}}
-                        <h3 class="text-2xl font-bold mb-3 
+                        <h3 class="text-3xl font-bold mb-3 
                             {{ $isEnterprise ? 'text-teal-700 dark:text-teal-300' : ($isActive ? 'text-primary-700 dark:text-primary-300' : 'text-gray-800 dark:text-gray-100') }}">
                             {{ $plan->plan_name }}
                         </h3>
@@ -286,7 +290,7 @@
                             </form>
                         @else
                             <button disabled
-                                class="w-full py-2 bg-primary-300 text-white rounded-lg opacity-70 cursor-not-allowed font-semibold">
+                                class="w-full py-2 rounded-lg opacity-70 cursor-not-allowed font-bold {{ $isEnterprise ? 'bg-teal-200 text-gray-700' : 'bg-primary-300 text-gray-100' }}">
                                 Current Plan
                             </button>
                         @endif

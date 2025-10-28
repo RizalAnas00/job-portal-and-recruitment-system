@@ -18,6 +18,7 @@ class CheckActiveSubscription {
                           ->whereNotNull('payment_date');
                 })
                 ->latest()
+                ->with('latestPaymentTransaction')
                 ->first();
     }
 }
