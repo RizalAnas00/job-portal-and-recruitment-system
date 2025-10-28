@@ -17,7 +17,7 @@
                             {{ $activeSubscription->start_date->format('d M Y') }} – {{ $activeSubscription->end_date->format('d M Y') }}
                         </p>
                     </div>
-                    <span class="mt-3 md:mt-0 px-4 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
+                    <span class="mt-3 md:mt-0 px-4 py-1 text-sm font-medium dark:bg-green-600/25 bg-green-300/50 text-green-700 dark:text-green-300 border-green-600 dark:border-green-400 border rounded-full">
                         Active
                     </span>
                 </div>
