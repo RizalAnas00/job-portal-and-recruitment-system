@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SendJobSeekerNotification;
 use App\Models\Application;
 use App\Models\JobPosting;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Queue\Job;
 use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
 {
+    public function __construct(
+        private readonly SendJobSeekerNotification $sendJobSeekerNotification
+    ) {
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -97,13 +101,51 @@ class ApplicationController extends Controller
             $application->update($data);
         } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->company_id) {
             // Company hanya boleh mengupdate status
-            $data = $request->validate(['status' => 'required|in:applied,under_review,interview_scheduled,offered,rejected']);
+            $data = $request->validate([
+                'status' => 'required|in:applied,under_review,interview_scheduled,interviewing,offered,hired,rejected',
+            ]);
+
             $application->update($data);
+
+            $application->loadMissing('jobSeeker', 'jobPosting.company');
+
+            $this->maybeSendStatusNotification($application);
         } else {
             abort(403);
         }
 
-        return redirect()->route('applications.index')->with('success', 'Lamaran berhasil diperbarui.');
+        return back()->with('success', 'Lamaran berhasil diperbarui.');
+    }
+
+    private function maybeSendStatusNotification(Application $application): void
+    {
+        $jobSeeker = $application->jobSeeker;
+        $company = $application->jobPosting?->company;
+
+        if (!$jobSeeker) {
+            return;
+        }
+
+        $messages = [
+            'interviewing' => fn() => "Status lamaran Anda untuk posisi {$application->jobPosting?->job_title} di {$company?->company_name} kini berlanjut ke tahap interview.",
+            'hired' => fn() => "Selamat! Anda diterima di {$company?->company_name} untuk posisi {$application->jobPosting?->job_title}.",
+            'rejected' => fn() => "Maaf, lamaran Anda untuk posisi {$application->jobPosting?->job_title} di {$company?->company_name} belum dapat dilanjutkan.",
+        ];
+
+        $status = $application->status;
+
+        if (!array_key_exists($status, $messages)) {
+            return;
+        }
+
+        $message = $messages[$status]();
+
+        ($this->sendJobSeekerNotification)(
+            $jobSeeker,
+            $company,
+            $message,
+            route('user.applications.index')
+        );
     }
 
     /**
