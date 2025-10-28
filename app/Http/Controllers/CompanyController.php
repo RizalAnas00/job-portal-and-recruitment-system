@@ -91,7 +91,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $company->load('jobPostings');
-        return view('companies.show', compact('company'));
+        return view('dashboard', compact('company'));
     }
 
     /**
