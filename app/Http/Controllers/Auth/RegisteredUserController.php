@@ -32,33 +32,19 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['nullable', 'in:user,company'],
+            'role' => ['nullable', 'string', 'in:user,company'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Assign default role 'user' unless 'company' explicitly selected
-        $selectedRoleName = $request->input('role', 'user');
-        if (!in_array($selectedRoleName, ['user', 'company'])) {
-            $selectedRoleName = 'user';
-        }
-
-        try {
-            $user->assignRole($selectedRoleName);
-        } catch (\Exception $e) {
-            // Fallback: ensure roles seeded; default to user role if exists
-            $role = Role::where('name', 'user')->first();
-            if ($role) {
-                $user->update(['role_id' => $role->id]);
-            }
-        }
+        // Assign the selected role, or 'user' if none is provided.
+        $role = $request->input('role', 'user');
+        $user->assignRole($role);
 
         event(new Registered($user));
 
