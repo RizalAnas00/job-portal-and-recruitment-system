@@ -8,6 +8,7 @@ use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class JobPostingController extends Controller
@@ -49,7 +50,10 @@ class JobPostingController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
-        $skills = Skill::orderBy('skill_name')->get();
+        $skills = Cache::remember('skills_list',600 ,function () {
+            return Skill::orderBy('skill_name')->get();
+        });
+        
         return view('job_postings.create', compact('skills'));
     }
 
