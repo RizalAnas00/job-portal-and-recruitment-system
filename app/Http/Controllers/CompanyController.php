@@ -46,7 +46,7 @@ class CompanyController extends Controller
         ]);
 
         // Tambahkan user_id dari user yang sedang login
-        $validatedData['user_id'] = $user->id;
+        $validatedData['user_id'] = Auth::id();
 
         // Gunakan updateOrCreate untuk mencegah duplikat profil oleh user yang sama
         $company = Company::updateOrCreate(

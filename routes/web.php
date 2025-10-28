@@ -87,8 +87,16 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware('role:company')->prefix('company')->name('company.')->group(function () {
 
+        // Company Profile create
+        Route::get('/create-profile', [CompanyController::class, 'create'])->name('profile.create');
+        Route::post('/create-profile', [CompanyController::class, 'store'])->name('profile.store');
+
         // Company Dashboard
         Route::get('/dashboard', fn() => view('company.dashboard'))->name('dashboard');
+
+        // Company Profile edit
+        Route::get('/profile/{company}/edit', [CompanyController::class, 'edit'])->name('profile.edit');
+        Route::match(['put', 'patch'], '/profile/{company}', [CompanyController::class, 'update'])->name('profile.update');
 
         // Job Postings (Company Only)
         Route::resource('job-postings', JobPostingController::class)->except(['show']);
