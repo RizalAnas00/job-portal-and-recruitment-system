@@ -90,7 +90,7 @@
     @endif
 
     <x-table :headers="['VA Number', 'Plan Name', 'Amount', 'Status', 'Payment Date', 'Actions']">
-        @if (isset($payments) && $payments->isEmpty())
+        @if (isset($payments) && $payments->isEmpty() || $payments === null)
             <tr>
                 <td colspan="6" class="italic px-6 py-4 text-center text-gray-600 dark:text-gray-400">
                     No payment history yet.
@@ -128,9 +128,11 @@
                 </tr>
             @endforeach
         @endif
-    </x-table>
-    
-    <div class="mt-6">
-        {{ $payments->onEachSide(5)->links() }}
-    </div>
+        </x-table>
+        
+        @if (isset($payments) && !$payments->isEmpty() && $payments !== null)
+            <div class="mt-6">
+                {{ $payments->onEachSide(5)->links() }}
+            </div>
+        @endif
 @endsection

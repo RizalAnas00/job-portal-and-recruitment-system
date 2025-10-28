@@ -55,6 +55,7 @@ class WebhookController extends Controller
             $paymentTransaction->update([
                 'status' => 'success',
                 'payment_date' => now(),
+                'payment_method' => $data['payment_method'] ?? null,
             ]);
 
             $companySubscription = $paymentTransaction->companySubscription ?? null;
@@ -73,9 +74,10 @@ class WebhookController extends Controller
 
                 if ($companySubscription->plan->allow_verified_badge == true) {
                     $company->update(['is_verified' => true]);
+                } elseif ($companySubscription->plan->allow_verified_badge == false) {
+                    $company->update(['is_verified' => false]);
                 }
-                
-                $company->update(['is_verified' => true]);
+
                 Log::info('New subscription activated', ['id' => $companySubscription->id]);
             }
 

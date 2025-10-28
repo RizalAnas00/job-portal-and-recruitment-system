@@ -8,7 +8,9 @@ use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class JobPostingController extends Controller
@@ -16,9 +18,9 @@ class JobPostingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(\Illuminate\Http\Request $request)
+    public function index(Request $request)
     {
-
+        /** @var \App\Models\User */
         $user = Auth::user();
         $query = JobPosting::with('company', 'skills')->latest();
 
@@ -53,7 +55,7 @@ class JobPostingController extends Controller
         }
 
         // Hitung jumlah lowongan yang sedang 'open'
-        $currentPostCount = $company->jobPostings()->where('status', 'open')->count();
+        $currentPostCount = $company->jobPostings()->where('status', '!=','closed')->count();
         // Ambil batas dari paket langganan
         $postLimit = $company->activeSubscription->plan->job_post_limit;
 
@@ -63,7 +65,10 @@ class JobPostingController extends Controller
                 ->with('error', "Anda telah mencapai batas maksimal ({$postLimit}) lowongan pekerjaan untuk paket Anda.");
         }
 
-        $skills = Skill::orderBy('skill_name')->get();
+        $skills = Cache::remember('skills_list',600 ,function () {
+            return Skill::orderBy('skill_name')->get();
+        });
+        
         return view('job_postings.create', compact('skills'));
     }
 
@@ -121,7 +126,7 @@ class JobPostingController extends Controller
         } catch (\Exception $e) {
             // Jika terjadi error di dalam transaksi, kembalikan dengan pesan error.
             // Tidak ada data yang akan tersimpan di database.
-            \Log::error('Job posting creation failed: ' . $e->getMessage());
+            Log::error('Job posting creation failed: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan lowongan. Tidak ada data yang disimpan.');
         }
     }
@@ -131,7 +136,9 @@ class JobPostingController extends Controller
      */
     public function edit(JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
+        
         if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
             abort(403, 'AKSES DITOLAK');
         }
@@ -145,6 +152,7 @@ class JobPostingController extends Controller
      */
     public function update(Request $request, JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa mengupdate
@@ -181,6 +189,7 @@ class JobPostingController extends Controller
      */
     public function destroy(JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa menghapus
