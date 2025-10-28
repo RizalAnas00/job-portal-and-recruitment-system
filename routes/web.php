@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
         Route::get('/subscriptions/{plan}', [SubscriptionController::class, 'confirmationOrder'])->name('subscriptions.confirm');
         Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+        Route::post('/subscriptions/cancel/{subscription}', [SubscriptionController::class, 'cancelSubscription'])->name('subscriptions.cancel')->withTrashed();
     });
 
 

@@ -163,8 +163,7 @@ class PaymentTransactionController extends Controller
             }
 
             $vaNumber = $payment->va_number;
-
-            $payment->delete();
+            $payment->companySubscription->forceDelete();
 
             return redirect()->route('company.payment.index')
                 ->with('success-cancel', 'Pembayaran dengan VA Number ' . $vaNumber . ' berhasil dibatalkan.');

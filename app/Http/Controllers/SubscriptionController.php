@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CheckActiveSubscription;
 use App\Actions\checkPendingPayment;
+use App\Models\Company;
 use App\Models\CompanySubscription;
 use App\Models\PaymentTransaction;
 use App\Models\SubscriptionPlan;
@@ -13,10 +15,12 @@ use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
+    private $checkActiveSubscription;
     private $checkPending;
 
-    public function __construct(checkPendingPayment $checkPending) {
+    public function __construct(checkPendingPayment $checkPending, CheckActiveSubscription $checkActiveSubscription) {
         $this->checkPending = $checkPending;
+        $this->checkActiveSubscription = $checkActiveSubscription;
     }
     /**
      * Display a listing of the resource.
@@ -26,12 +30,12 @@ class SubscriptionController extends Controller
         $plans = SubscriptionPlan::all();
         
         /** @var \App\Models\User */
-        $company = Auth::user()->company;
+        $user = Auth::user();
         $activeSubscription = null;
 
         // Cek apakah perusahaan memiliki profil dan cari langganan aktif
-        if ($company) {
-            $activeSubscription = $company->activeSubscription;
+        if ($user->company) {
+            $activeSubscription = $this->checkActiveSubscription->__invoke($user->company);
         }
 
         return view('company-subscriptions.index', compact('plans', 'activeSubscription'));
@@ -96,6 +100,22 @@ class SubscriptionController extends Controller
 
         return view('company-subscriptions.confirm', compact('plan'));
     }
+
+    public function cancelSubscription(CompanySubscription $subscription)
+    {
+        if (!$subscription->trashed()) {
+            
+            $subscription->update([
+                'status' => 'canceled',
+            ]);
+
+            $subscription->delete();
+            return redirect()->route('company.subscriptions.index')->with('success', 'Langganan berhasil dibatalkan.');
+        }
+
+        return redirect()->route('company.subscriptions.index')->with('info', 'Langganan ini sudah dibatalkan sebelumnya.');
+    }   
+    
     /**
      * Display the specified resource.
      */
@@ -123,8 +143,8 @@ class SubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    //public function destroy(string $id)
-    //{
-        //
-    //}
+    // public function destroy(string $id)
+    // {
+        
+    // }
 }

@@ -23,6 +23,15 @@ class CompanySubscription extends Model
         'end_date' => 'datetime',
     ];
 
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::deleted(function ($subscription) {
+    //         $subscription->company->update(['is_verified' => false]);
+    //     });
+    // }
+
     public function company()
     {
         return $this->belongsTo(Company::class, 'id_company');
