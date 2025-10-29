@@ -68,7 +68,7 @@
         @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user'))
             <a href="{{ route('interviews.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('interviews.*') ? 'bg-[#0f14aa]/30' : '' }}">
-                @svg('heroicon-o-calendar', 'h-6 w-6 flex-shrink-0 text-xl')
+                @svg('carbon-calendar', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                     Interviews
                 </span>
@@ -79,7 +79,7 @@
         @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user'))
             <a href="{{ route('notifications.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('notifications.*') ? 'bg-[#0f14aa]/30' : '' }}">
-                @svg('heroicon-o-bell', 'h-6 w-6 flex-shrink-0 text-xl')
+                @svg('carbon-notification', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                     Notifications
                 </span>
