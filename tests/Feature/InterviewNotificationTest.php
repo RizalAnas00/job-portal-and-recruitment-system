@@ -47,6 +47,9 @@ function createCompanyUser(Role $role): array
         'address' => 'Test Address',
     ]);
 
+    // Reload user to ensure company relationship is loaded
+    $user->load('company');
+
     return [$user, $company];
 }
 
@@ -85,6 +88,11 @@ it('sends notification when company marks application as hired', function () {
         'id_job_posting' => $jobPosting->id,
         'status' => 'under_review',
     ]);
+
+    // Debug: ensure company relationship is loaded
+    expect($companyUser->company)->not()->toBeNull();
+    expect($companyUser->company->id)->toBe($company->id);
+    expect($jobPosting->id_company)->toBe($company->id);
 
     $response = $this->actingAs($companyUser)
         ->patch(route('company.applications.update', $application), [

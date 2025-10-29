@@ -4,12 +4,12 @@
     <div class="flex items-center justify-between mb-5">
         <!-- Tombol Back -->
         <div class="flex items-center justify-between mb-5">
-            <a href="{{ route('role.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 dark:text-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300">
+            <a href="{{ route('admin.role.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 dark:text-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300">
                 ← Back
             </a>
         </div>
 
-        <a href="{{ route('role.edit', $role) }}"
+        <a href="{{ route('admin.role.edit', $role) }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
             Edit
         </a>

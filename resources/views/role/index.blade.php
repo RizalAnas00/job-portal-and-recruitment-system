@@ -4,7 +4,7 @@
 
     <div class="flex items-center justify-between mb-5">
         <!-- Add New Role Button -->
-        <a href="{{ route('role.create') }}"
+        <a href="{{ route('admin.role.create') }}"
         class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg shadow hover:bg-green-700 transition">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -13,7 +13,7 @@
         </a>
 
         <!-- Search -->
-        <form method="GET" action="{{ route('role.index') }}" class="relative w-72">
+        <form method="GET" action="{{ route('admin.role.index') }}" class="relative w-72">
             <input type="text" name="search" placeholder="Search roles..." disabled
                 class="w-full pl-4 pr-10 py-2 text-sm rounded-full border border-gray-200 bg-gray-100 text-gray-400 shadow-inner cursor-not-allowed
                        dark:bg-gray-800 dark:border-gray-700 dark:text-gray-500 transition" 
@@ -36,12 +36,12 @@
                 <td class="px-6 py-4 font-bold">{{ $role->display_name }}</td>
                 <td class="px-6 py-4">{{ $role->users_count ?? '—' }}</td>
                 <td class="px-6 py-4">
-                    <a href="{{ route('role.show', $role) }}" class="font-semibold text-green-600 dark:text-green-500 hover:underline">Detail</a> |
-                    <a href="{{ route('role.edit', $role) }}" class="text-blue-600 dark:text-blue-500 hover:underline">Edit</a> |
+                    <a href="{{ route('admin.role.show', $role) }}" class="font-semibold text-green-600 dark:text-green-500 hover:underline">Detail</a> |
+                    <a href="{{ route('admin.role.edit', $role) }}" class="text-blue-600 dark:text-blue-500 hover:underline">Edit</a> |
                     
                     <!-- Delete Button -->
                     <button type="button" 
-                        onclick="openDeleteModal('{{ route('role.destroy', $role) }}')"
+                        onclick="openDeleteModal('{{ route('admin.role.destroy', $role) }}')"
                         class="font-semibold text-red-600 dark:text-red-500 hover:underline">
                         Delete
                     </button>

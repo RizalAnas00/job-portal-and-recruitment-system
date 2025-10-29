@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="flex items-center justify-between mb-5">
-        <a href="{{ route('role.index') }}"
+        <a href="{{ route('admin.role.index') }}"
            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300
                   dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:border dark:border-gray-700 transition">
             ← Back
@@ -11,7 +11,7 @@
 
     <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Add New Role</h2>
 
-    <form action="{{ route('role.store') }}" method="POST"
+    <form action="{{ route('admin.role.store') }}" method="POST"
           class="bg-white dark:bg-gray-900 shadow-inner dark:shadow-md dark:shadow-gray-800 rounded-lg p-6 transition">
         @csrf
 

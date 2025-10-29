@@ -28,16 +28,26 @@ class InterviewController extends Controller
 
         if ($user->hasRole('company')) {
             // Company hanya bisa melihat interview untuk lowongan mereka
-            $companyId = $user->company->id;
-            $query->whereHas('application.jobPosting', function ($q) use ($companyId) {
-                $q->where('company_id', $companyId);
-            });
+            $companyId = $user->company?->id;
+            if ($companyId) {
+                $query->whereHas('application.jobPosting', function ($q) use ($companyId) {
+                    $q->where('id_company', $companyId);
+                });
+            } else {
+                // Jika company belum punya profil, tidak ada interview
+                $query->whereRaw('1 = 0');
+            }
         } elseif ($user->hasRole('user')) {
             // User (job seeker) hanya bisa melihat interview miliknya
-            $jobSeekerId = $user->jobSeeker->id;
-            $query->whereHas('application', function ($q) use ($jobSeekerId) {
-                $q->where('job_seeker_id', $jobSeekerId);
-            });
+            $jobSeekerId = $user->jobSeeker?->id;
+            if ($jobSeekerId) {
+                $query->whereHas('application', function ($q) use ($jobSeekerId) {
+                    $q->where('job_seeker_id', $jobSeekerId);
+                });
+            } else {
+                // Jika job seeker belum punya profil, tidak ada interview
+                $query->whereRaw('1 = 0');
+            }
         }
         // Admin bisa melihat semua, jadi tidak perlu filter tambahan.
 
@@ -51,7 +61,7 @@ class InterviewController extends Controller
      */
     public function create(Application $application)
     {
-        if (Auth::user()->company?->id !== $application->jobPosting->company_id) {
+        if (Auth::user()->company?->id !== $application->jobPosting->id_company) {
             abort(403, 'AKSES DITOLAK');
         }
         return view('interviews.create', compact('application'));
@@ -73,7 +83,7 @@ class InterviewController extends Controller
 
         $application = Application::findOrFail($validated['id_application']);
         // Otorisasi: Pastikan company adalah pemilik lamaran ini
-        if (Auth::user()->company?->id !== $application->jobPosting->company_id) {
+        if (Auth::user()->company?->id !== $application->jobPosting->id_company) {
             abort(403, 'AKSES DITOLAK');
         }
 
@@ -106,7 +116,7 @@ class InterviewController extends Controller
         $canView = false;
         if ($user->hasRole('admin')) {
             $canView = true;
-        } elseif ($user->hasRole('company') && $user->company?->id === $interview->application->jobPosting->company_id) {
+        } elseif ($user->hasRole('company') && $user->company?->id === $interview->application->jobPosting->id_company) {
             $canView = true;
         } elseif ($user->hasRole('user') && $user->jobSeeker?->id === $interview->application->job_seeker_id) {
             $canView = true;
@@ -126,7 +136,7 @@ class InterviewController extends Controller
     {
         $user = Auth::user();
         // Otorisasi: Hanya admin atau company pemilik yang bisa mengedit
-        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->company_id) {
+        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->id_company) {
             abort(403, 'AKSES DITOLAK');
         }
 
@@ -140,7 +150,7 @@ class InterviewController extends Controller
     {
         $user = Auth::user();
         // Otorisasi: Hanya admin atau company pemilik yang bisa memperbarui
-        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->company_id) {
+        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->id_company) {
             abort(403, 'AKSES DITOLAK');
         }
 
@@ -176,7 +186,7 @@ class InterviewController extends Controller
     {
         $user = Auth::user();
         // Otorisasi: Hanya admin atau company pemilik yang bisa menghapus
-        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->company_id) {
+        if (!$user->hasRole('admin') && $user->company?->id !== $interview->application->jobPosting->id_company) {
             abort(403, 'AKSES DITOLAK');
         }
 

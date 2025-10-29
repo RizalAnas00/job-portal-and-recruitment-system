@@ -102,9 +102,8 @@
                     </button>
                 </form>
             @else
-                <form action="{{ route('company.payment.process') }}" method="POST">
+                <form action="{{ route('company.payment.process', $plan) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="plan_id" value="{{ $plan }}">
                     <button type="submit"
                         class="bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg focus:ring-2 focus:ring-green-300">
                         Activate Free Plan
