@@ -30,7 +30,7 @@ class ApplicationController extends Controller
             // Company melihat lamaran untuk semua lowongan miliknya
             $companyId = $user->company->id;
             $query->whereHas('jobPosting', function ($q) use ($companyId) {
-                $q->where('company_id', $companyId);
+                $q->where('id_company', $companyId);
             });
         }
 
@@ -99,7 +99,7 @@ class ApplicationController extends Controller
             // User hanya boleh mengupdate cover letter
             $data = $request->validate(['cover_letter' => 'nullable|string']);
             $application->update($data);
-        } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->company_id) {
+        } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->id_company) {
             // Company hanya boleh mengupdate status
             $data = $request->validate([
                 'status' => 'required|in:applied,under_review,interview_scheduled,interviewing,offered,hired,rejected',

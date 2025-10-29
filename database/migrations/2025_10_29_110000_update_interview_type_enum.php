@@ -13,18 +13,18 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'mysql') {
-            DB::statement("ALTER TABLE applications MODIFY status ENUM('pending','reviewed','accepted','rejected','applied','under_review','interview_scheduled','interviewing','offered','hired') DEFAULT 'pending'");
+            DB::statement("ALTER TABLE interviews MODIFY interview_type ENUM('online','offline','phone_screen','phone','video','in_person') NOT NULL");
             return;
         }
 
         if ($driver === 'pgsql') {
-            $values = ['applied', 'under_review', 'interview_scheduled', 'interviewing', 'offered', 'hired'];
+            $values = ['online', 'offline', 'phone_screen'];
 
             foreach ($values as $value) {
                 DB::statement(<<<SQL
 DO $$
 BEGIN
-    ALTER TYPE applications_status_enum ADD VALUE IF NOT EXISTS '{$value}';
+    ALTER TYPE interviews_interview_type_enum ADD VALUE IF NOT EXISTS '{$value}';
 EXCEPTION WHEN duplicate_object THEN
     NULL;
 END
@@ -42,29 +42,29 @@ SQL);
             
             // Create temporary table with new schema
             DB::statement("
-                CREATE TABLE applications_new (
+                CREATE TABLE interviews_new (
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                    id_job_seeker INTEGER NOT NULL,
-                    id_job_posting INTEGER NOT NULL,
-                    application_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                    status TEXT DEFAULT 'pending' NOT NULL CHECK(status IN ('pending','reviewed','accepted','rejected','applied','under_review','interview_scheduled','interviewing','offered','hired')),
-                    cover_letter TEXT,
+                    id_application INTEGER NOT NULL,
+                    interviewer_name TEXT,
+                    interview_date DATETIME NOT NULL,
+                    interview_type TEXT NOT NULL CHECK(interview_type IN ('online','offline','phone_screen','phone','video','in_person')),
+                    location TEXT,
+                    notes TEXT,
                     created_at DATETIME,
                     updated_at DATETIME,
                     deleted_at DATETIME,
-                    FOREIGN KEY (id_job_seeker) REFERENCES job_seekers(id),
-                    FOREIGN KEY (id_job_posting) REFERENCES job_postings(id)
+                    FOREIGN KEY (id_application) REFERENCES applications(id) ON DELETE CASCADE
                 )
             ");
             
             // Copy data from old table
-            DB::statement("INSERT INTO applications_new SELECT * FROM applications");
+            DB::statement("INSERT INTO interviews_new SELECT * FROM interviews");
             
             // Drop old table
-            DB::statement("DROP TABLE applications");
+            DB::statement("DROP TABLE interviews");
             
             // Rename new table
-            DB::statement("ALTER TABLE applications_new RENAME TO applications");
+            DB::statement("ALTER TABLE interviews_new RENAME TO interviews");
             
             DB::statement('PRAGMA foreign_keys=on');
             
@@ -80,11 +80,10 @@ SQL);
         $driver = DB::getDriverName();
 
         if ($driver === 'mysql') {
-            DB::statement("ALTER TABLE applications MODIFY status ENUM('pending','reviewed','accepted','rejected') DEFAULT 'pending'");
+            DB::statement("ALTER TABLE interviews MODIFY interview_type ENUM('phone','video','in_person') NOT NULL");
         }
 
         // PostgreSQL enumerations cannot remove values easily; no-op for other drivers.
     }
 };
-
 

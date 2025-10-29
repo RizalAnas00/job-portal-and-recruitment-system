@@ -86,7 +86,31 @@ class PaymentTransactionController extends Controller
         
         $company = $user->company;
 
+        // Check if company already has an active subscription
+        $activeSubscription = CompanySubscription::where('id_company', $company->id)
+            ->where('status', 'active')
+            ->where('end_date', '>', now())
+            ->first();
+
+        if ($activeSubscription) {
+            return redirect()->route('company.subscriptions.index')
+                ->with('error', 'You already have an active subscription. Please wait until it expires or cancel it first.');
+        }
+
         $companySubscription = $this->createCompanySubscription->__invoke($company, $subscription);
+
+        // Check if this is a free plan
+        if ($subscription->price == 0) {
+            // Free plan - activate immediately without payment
+            $companySubscription->update([
+                'status' => 'active',
+                'start_date' => now(),
+                'end_date' => now()->addDays($subscription->duration_days),
+            ]);
+
+            return redirect()->route('company.subscriptions.index')
+                ->with('success', 'Free plan activated successfully!');
+        }
 
         $paymentTransaction = $this->createPaymentSubscription->__invoke($companySubscription, [
             'amount' => $subscription->price,

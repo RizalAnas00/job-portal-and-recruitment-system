@@ -36,7 +36,7 @@
         </a>
 
         @if (Auth::user()->hasRole('admin'))
-        <a href=" {{ route('role.index') }} " class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
+        <a href=" {{ route('admin.role.index') }} " class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
             @svg('carbon-user-role', 'h-6 w-6 flex-shrink-0 text-xl')
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                 Role
