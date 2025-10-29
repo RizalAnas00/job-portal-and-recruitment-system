@@ -50,6 +50,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if ($user->hasRole('company')) {
+            return redirect()->route('companies.create');
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

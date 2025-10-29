@@ -30,6 +30,13 @@
                         </button>
                     </x-slot>
                     <x-slot name="content">
+                        @if (Auth::user()->hasRole('company') && Auth::user()->company)
+                            <x-dropdown-link :href="route('companies.edit', Auth::user()->company->id)">
+                                {{ __('Edit Profil Perusahaan') }}
+                            </x-dropdown-link>
+                            {{-- Tambahkan pemisah jika mau --}}
+                            {{-- <div class="border-t border-gray-200 dark:border-gray-600"></div> --}}
+                        @endif
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>

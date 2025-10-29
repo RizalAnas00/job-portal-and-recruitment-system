@@ -35,7 +35,6 @@
                     {{-- ===== Tombol Aksi Berdasarkan Role Pengguna ===== --}}
                     <div class="mt-6 border-t dark:border-gray-700 pt-6">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Langkah Selanjutnya</h3>
-                        
                         @if (Auth::user()->hasRole('company'))
                             @if (Auth::user()->company)
                                 <a href="{{ route('company.job-postings.index') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
