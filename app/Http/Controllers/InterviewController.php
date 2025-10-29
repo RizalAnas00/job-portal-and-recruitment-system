@@ -28,16 +28,26 @@ class InterviewController extends Controller
 
         if ($user->hasRole('company')) {
             // Company hanya bisa melihat interview untuk lowongan mereka
-            $companyId = $user->company->id;
-            $query->whereHas('application.jobPosting', function ($q) use ($companyId) {
-                $q->where('id_company', $companyId);
-            });
+            $companyId = $user->company?->id;
+            if ($companyId) {
+                $query->whereHas('application.jobPosting', function ($q) use ($companyId) {
+                    $q->where('id_company', $companyId);
+                });
+            } else {
+                // Jika company belum punya profil, tidak ada interview
+                $query->whereRaw('1 = 0');
+            }
         } elseif ($user->hasRole('user')) {
             // User (job seeker) hanya bisa melihat interview miliknya
-            $jobSeekerId = $user->jobSeeker->id;
-            $query->whereHas('application', function ($q) use ($jobSeekerId) {
-                $q->where('job_seeker_id', $jobSeekerId);
-            });
+            $jobSeekerId = $user->jobSeeker?->id;
+            if ($jobSeekerId) {
+                $query->whereHas('application', function ($q) use ($jobSeekerId) {
+                    $q->where('job_seeker_id', $jobSeekerId);
+                });
+            } else {
+                // Jika job seeker belum punya profil, tidak ada interview
+                $query->whereRaw('1 = 0');
+            }
         }
         // Admin bisa melihat semua, jadi tidak perlu filter tambahan.
 

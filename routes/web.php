@@ -12,6 +12,7 @@ use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
@@ -181,6 +182,14 @@ Route::middleware('auth')->group(function () {
             Route::put('/{interview}', [InterviewController::class, 'update'])->name('update');
             Route::delete('/{interview}', [InterviewController::class, 'destroy'])->name('destroy');
         });
+    });
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::put('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
+        Route::put('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unread-count');
     });
 });
 

@@ -54,13 +54,37 @@
             </a>
         @endif
 
-        <a href="{{ Auth::user()->hasRole('company') ? route('company.payment.index') : '#' }}"
-            class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
-            @svg('fluentui-payment-28', 'h-6 w-6 flex-shrink-0 text-xl')
-            <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
-                Payment History
-            </span>
-        </a>
+        @if (Auth::user()->hasRole('company'))
+            <a href="{{ route('company.payment.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('company.payment.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('fluentui-payment-28', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Payment History
+                </span>
+            </a>
+        @endif
+
+        {{-- Menu Interviews untuk Company dan Job Seeker --}}
+        @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user'))
+            <a href="{{ route('interviews.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('interviews.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('heroicon-o-calendar', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Interviews
+                </span>
+            </a>
+        @endif
+
+        {{-- Menu Notifikasi untuk Company dan Job Seeker --}}
+        @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user'))
+            <a href="{{ route('notifications.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('notifications.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('heroicon-o-bell', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Notifications
+                </span>
+            </a>
+        @endif
 
         <a href="#" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
             @svg('ionicon-settings-sharp', 'h-6 w-6 flex-shrink-0 text-xl')
