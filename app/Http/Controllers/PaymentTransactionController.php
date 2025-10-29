@@ -87,15 +87,15 @@ class PaymentTransactionController extends Controller
         $company = $user->company;
 
         // Check if company already has an active subscription
-        $activeSubscription = CompanySubscription::where('id_company', $company->id)
-            ->where('status', 'active')
-            ->where('end_date', '>', now())
-            ->first();
+        // $activeSubscription = CompanySubscription::where('id_company', $company->id)
+        //     ->where('status', 'active')
+        //     ->where('end_date', '>', now())
+        //     ->first();
 
-        if ($activeSubscription) {
-            return redirect()->route('company.subscriptions.index')
-                ->with('error', 'You already have an active subscription. Please wait until it expires or cancel it first.');
-        }
+        // if ($activeSubscription) {
+        //     return redirect()->route('company.subscriptions.index')
+        //         ->with('error', 'You already have an active subscription. Please wait until it expires or cancel it first.');
+        // }
 
         $companySubscription = $this->createCompanySubscription->__invoke($company, $subscription);
 

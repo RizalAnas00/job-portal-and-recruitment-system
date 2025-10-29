@@ -46,6 +46,10 @@ class CompanySubscription extends Model
     {
         return $this->hasMany(PaymentTransaction::class, 'id_company_subscription');
     }
+    public function latestPaymentTransaction()
+    {
+        return $this->hasOne(PaymentTransaction::class, 'id_company_subscription')->latestOfMany('payment_date');
+    }
 
     public function isActive()
     {

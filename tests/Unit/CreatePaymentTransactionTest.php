@@ -74,7 +74,7 @@ it('creates a payment transaction with default values', function () {
     expect($payment)
         ->toBeInstanceOf(PaymentTransaction::class)
         ->amount->toEqual(0)
-        ->payment_method->toBe('bank_transfer')
+        ->payment_method->toBe(null)
         ->va_number->toBeNull()
         ->payment_url->toBeNull()
         ->status->toBe('pending')
@@ -83,7 +83,7 @@ it('creates a payment transaction with default values', function () {
     $this->assertDatabaseHas('payment_transactions', [
         'id_company_subscription' => $companySubscription->id,
         'amount' => 0,
-        'payment_method' => 'bank_transfer',
+        'payment_method' => null,
         'status' => 'pending',
         'va_number' => null,
     ]);

@@ -27,6 +27,7 @@ class CheckActiveSubscription {
                     });
                 })
                 ->latest()
+                ->with('latestPaymentTransaction')
                 ->first();
     }
 }

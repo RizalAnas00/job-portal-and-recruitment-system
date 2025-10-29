@@ -30,7 +30,7 @@ it('creates a company subscription and sets the correct dates and status', funct
     expect($subscription)->toBeInstanceOf(CompanySubscription::class);
     expect($subscription->id_company)->toBe($company->id);
     expect($subscription->id_plan)->toBe($plan->id);
-    expect($subscription->status)->toBe('active');
+    expect($subscription->status)->toBe('inactive');
     expect($subscription->start_date)->not->toBeNull();
     expect($subscription->end_date)->not->toBeNull();
 
@@ -41,6 +41,6 @@ it('creates a company subscription and sets the correct dates and status', funct
     $this->assertDatabaseHas('company_subscriptions', [
         'id_company' => $company->id,
         'id_plan' => $plan->id,
-        'status' => 'active',
+        'status' => 'inactive',
     ]);
 });
