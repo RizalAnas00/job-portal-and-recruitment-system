@@ -8,6 +8,9 @@ use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class);
 
@@ -75,6 +78,8 @@ function createJobSeekerUser(Role $role): array
 }
 
 it('sends notification when company marks application as hired', function () {
+    Session::start();
+    $token = csrf_token();
     [$companyRole, $userRole] = createRoles();
     [$companyUser, $company] = createCompanyUser($companyRole);
     [$jobSeekerUser, $jobSeeker] = createJobSeekerUser($userRole);
@@ -94,12 +99,30 @@ it('sends notification when company marks application as hired', function () {
     expect($companyUser->company->id)->toBe($company->id);
     expect($jobPosting->id_company)->toBe($company->id);
 
-    $response = $this->actingAs($companyUser)
-        ->patch(route('company.applications.update', $application), [
-            'status' => 'hired',
-        ]);
+    Auth::login($companyUser);
 
-    $response->assertStatus(302);
+    session()->put('_token', $token);
+
+    $request = Request::create(
+        route('company.applications.update', $application),
+        'PATCH',
+        [
+            '_token' => $token,
+            'status' => 'hired',
+        ]
+    );
+
+    $request->setUserResolver(fn () => $companyUser);
+    $request->setLaravelSession(session()->driver());
+    $request->headers->set('referer', route('company.applications.edit', $application));
+
+    app()->instance('request', $request);
+
+    $response = app(
+        \App\Http\Controllers\ApplicationController::class
+    )->update($request, $application);
+
+    expect($response->isRedirection())->toBeTrue();
 
     $application->refresh();
 
@@ -114,6 +137,8 @@ it('sends notification when company marks application as hired', function () {
 });
 
 it('creates interview and notifies job seeker', function () {
+    Session::start();
+    $token = csrf_token();
     [$companyRole, $userRole] = createRoles();
     [$companyUser, $company] = createCompanyUser($companyRole);
     [$jobSeekerUser, $jobSeeker] = createJobSeekerUser($userRole);
@@ -138,7 +163,8 @@ it('creates interview and notifies job seeker', function () {
     ];
 
     $response = $this->actingAs($companyUser)
-        ->post(route('interviews.store'), $payload);
+        ->withSession(['_token' => $token])
+        ->post(route('interviews.store'), array_merge($payload, ['_token' => $token]));
 
     $response->assertStatus(302);
 

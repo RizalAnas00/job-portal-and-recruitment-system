@@ -118,11 +118,17 @@
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Payment Method</dt>
-                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->payment_method ?? 'N/A' }}</dd>
+                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->latestPaymentTransaction->payment_method ?? 'N/A' }}</dd>
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Payment Date</dt>
-                            <dd class="font-semibold text-gray-900 dark:text-gray-100">{{ $activeSubscription->start_date->format('d F Y H:i:s') }}</dd>
+                            <dd class="font-semibold text-gray-900 dark:text-gray-100">
+                                @if($activeSubscription->latestPaymentTransaction && $activeSubscription->latestPaymentTransaction->payment_date)
+                                    {{ $activeSubscription->latestPaymentTransaction->payment_date->format('d F Y H:i:s') }}
+                                @else
+                                    N/A
+                                @endif
+                            </dd>
                         </div>
                         <div class="md:col-span-1">
                             <dt class="font-medium text-gray-600 dark:text-gray-400">Next Billing Date</dt>

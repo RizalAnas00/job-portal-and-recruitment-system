@@ -61,8 +61,8 @@ class ApplicationController extends Controller
         ]);
 
         // Mencegah duplikat lamaran
-        $existingApplication = Application::where('job_seeker_id', $user->jobSeeker->id)
-            ->where('job_posting_id', $jobPosting->id)
+        $existingApplication = Application::where('id_job_seeker', $user->jobSeeker->id)
+            ->where('id_job_posting', $jobPosting->id)
             ->exists();
 
         if ($existingApplication) {
@@ -70,8 +70,8 @@ class ApplicationController extends Controller
         }
 
         Application::create([
-            'job_seeker_id' => $user->jobSeeker->id,
-            'job_posting_id' => $jobPosting->id, 
+            'id_job_seeker' => $user->jobSeeker->id,
+            'id_job_posting' => $jobPosting->id, 
             'cover_letter' => $request->cover_letter,
             'status' => 'applied'
         ]);
@@ -95,7 +95,7 @@ class ApplicationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasRole('user') && $user->jobSeeker?->id === $application->job_seeker_id) {
+        if ($user->hasRole('user') && $user->jobSeeker?->id === $application->id_job_seeker) {
             // User hanya boleh mengupdate cover letter
             $data = $request->validate(['cover_letter' => 'nullable|string']);
             $application->update($data);
@@ -157,7 +157,7 @@ class ApplicationController extends Controller
 
         // Otorisasi: Hanya user pemilik atau admin yang bisa menghapus
         if (
-            ($user->hasRole('user') && $user->jobSeeker?->id !== $application->job_seeker_id) &&
+            ($user->hasRole('user') && $user->jobSeeker?->id !== $application->id_job_seeker) &&
             !$user->hasRole('admin')
         ) {
             abort(403);

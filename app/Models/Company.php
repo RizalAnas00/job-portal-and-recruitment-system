@@ -63,4 +63,32 @@ class Company extends Model
                     ->where('status', 'active')
                     ->where('end_date', '>', now());
     }
+
+    /**
+     * Get the notifications for the company.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'id_company');
+    }
+
+    /**
+    * Calculate the total number of applicants across all job postings of the company.
+    */
+    public function totalApplicants(): int
+    {
+        return Application::whereHas('jobPosting', function ($query) {
+            $query->where('id_company', $this->id);
+        })->count();
+    }
+
+    /**
+     * Calculate the number of hired candidates for the company.
+     */
+    public function hiredCandidates(): int
+    {
+        return Application::whereHas('jobPosting', function ($query) {
+            $query->where('id_company', $this->id);
+        })->where('status', 'hired')->count();
+    }
 }

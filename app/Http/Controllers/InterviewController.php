@@ -42,7 +42,7 @@ class InterviewController extends Controller
             $jobSeekerId = $user->jobSeeker?->id;
             if ($jobSeekerId) {
                 $query->whereHas('application', function ($q) use ($jobSeekerId) {
-                    $q->where('job_seeker_id', $jobSeekerId);
+                    $q->where('id_job_seeker', $jobSeekerId);
                 });
             } else {
                 // Jika job seeker belum punya profil, tidak ada interview
@@ -118,7 +118,7 @@ class InterviewController extends Controller
             $canView = true;
         } elseif ($user->hasRole('company') && $user->company?->id === $interview->application->jobPosting->id_company) {
             $canView = true;
-        } elseif ($user->hasRole('user') && $user->jobSeeker?->id === $interview->application->job_seeker_id) {
+        } elseif ($user->hasRole('user') && $user->jobSeeker?->id === $interview->application->id_job_seeker) {
             $canView = true;
         }
 

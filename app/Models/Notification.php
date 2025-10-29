@@ -18,6 +18,12 @@ class Notification extends Model
         'link_url',
     ];
 
+    protected $casts = [
+        'is_read' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function jobSeeker()
     {
         return $this->belongsTo(JobSeeker::class, 'id_job_seeker');
