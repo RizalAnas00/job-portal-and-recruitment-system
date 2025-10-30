@@ -60,4 +60,12 @@ class JobPosting extends Model
     {
         return $this->belongsToMany(Skill::class, 'job_posting_skill', 'id_job_posting', 'id_skill');
     }
+
+    /**
+     * Get the applications for the job posting.
+     */
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'id_job_posting');
+    }
 }

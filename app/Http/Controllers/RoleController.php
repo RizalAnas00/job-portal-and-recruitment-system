@@ -55,7 +55,7 @@ class RoleController extends Controller
         // Memanggil fungsi create() dengan satu array
         $this->roleService->create($dataToCreate);
         
-        return redirect()->route('role.index')
+        return redirect()->route('admin.role.index')
                          ->with('success', 'Role berhasil ditambahkan.');
     }
 
@@ -87,7 +87,7 @@ class RoleController extends Controller
         // Panggil service untuk update role
         $this->roleService->update($role->id, $dataToUpdate);
 
-        return redirect()->route('role.index')
+        return redirect()->route('admin.role.index')
                         ->with('success', 'Role berhasil diperbarui.');
     }
 
@@ -96,7 +96,7 @@ class RoleController extends Controller
         // Memanggil fungsi delete() dengan ID
         $this->roleService->delete($role->id);
 
-        return redirect()->route('role.index')
+        return redirect()->route('admin.role.index')
                          ->with('success', 'Role berhasil dihapus.');
     }
 
