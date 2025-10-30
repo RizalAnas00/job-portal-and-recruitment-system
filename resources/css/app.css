@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Explicitly set a solid background color and remove any background images */
+html, body {
+    background-color: #121418 !important; /* Matches dark:bg-gray-950 from tailwind.config.js */
+    background-image: none !important;
+}

@@ -65,6 +65,8 @@ class RolePermissionSeeder extends Seeder
             'notification.read.own',
             'notification.update.own',
             'notification.delete.own',
+            'job_posting.update_status',
+            'application.filter',
         ])->get();
         
         $company->permissions()->sync($companyPermissions->pluck('id'));
