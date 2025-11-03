@@ -17,9 +17,11 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
+// ------------------------- LANDING PAGE ------------------------- //
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('landing');
+// ------------------------- LANDING PAGE ------------------------- //
 
 Route::get('/test-cache', function () {
     $name = ['first' => 'aa', 'last' => 'bb'];

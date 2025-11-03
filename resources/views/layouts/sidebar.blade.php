@@ -1,6 +1,6 @@
 <aside 
     x-data="{ open: true }" 
-    :class="open ? 'w-64 rounded-r-xl' : 'w-20'" 
+    :class="open ? 'w-64 rounded-r-xl' : 'w-16'" 
     class="bg-gradient-to-b from-[#3f36f7] to-[#171ee0] text-white h-screen transition-all duration-300 ease-in-out shadow-lg flex flex-col sticky top-0">
 
     <!-- Logo & Toggle -->
