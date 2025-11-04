@@ -109,7 +109,7 @@ Route::middleware('auth')->group(function () {
 
         // Job Postings (Company Only)
         Route::resource('job-postings', JobPostingController::class)->except(['show']);
-        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status')->middleware('permission:job_posting.update_status');
+        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status');
 
         // Applications (Company Only)
         Route::resource('applications', ApplicationController::class)->only(['index', 'edit', 'update']);
