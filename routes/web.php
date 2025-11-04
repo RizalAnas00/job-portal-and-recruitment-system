@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\ApplicationController;
@@ -18,9 +19,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 // ------------------------- LANDING PAGE ------------------------- //
-Route::get('/', function () {
-    return view('welcome');
-})->name('landing');
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 // ------------------------- LANDING PAGE ------------------------- //
 
 Route::get('/test-cache', function () {

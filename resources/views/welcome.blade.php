@@ -4,10 +4,10 @@
 @section('content')
 <div class="bg-white dark:bg-gray-900">
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white pt-40 pb-20">
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 text-white pt-52 pb-28">
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-6">Temukan Pekerjaan Impianmu</h1>
-            <p class="text-lg md:text-xl text-blue-100 mb-8">Jelajahi ribuan lowongan pekerjaan dari perusahaan terpercaya di seluruh Indonesia.</p>
+            <p class="text-lg md:text-xl text-primary-100 mb-8">Jelajahi <span class="font-extrabold text-white">{{ config('app.name') }}</span> dan temukan lowongan pekerjaan dari perusahaan terpercaya di seluruh Indonesia.</p>
 
             <!-- Search Bar -->
             <form action="#" method="GET" class="max-w-2xl mx-auto flex bg-white rounded-full overflow-hidden shadow-lg">
@@ -26,38 +26,121 @@
     </section>
 
     <!-- Category Section -->
-    <section class="py-20 bg-gray-50 dark:bg-gray-800">
-        <div class="container mx-auto px-6">
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">Jelajahi Berdasarkan Kategori</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                @foreach (['Teknologi', 'Desain', 'Marketing', 'Keuangan', 'Pendidikan', 'Kesehatan', 'Manufaktur', 'Lainnya'] as $category)
-                    <a href="#"
-                        class="p-6 bg-white dark:bg-gray-700 rounded-2xl shadow hover:shadow-lg hover:-translate-y-1 transition text-center">
-                        <span class="block text-lg font-semibold text-gray-800 dark:text-gray-100">{{ $category }}</span>
-                    </a>
+            @foreach (['Full Time', 'Part Time', 'Contract', 'Internship', 'Temporary', 'Freelance', 'Remote'] as $category)
+                <form action="#" method="GET">
+                    @php
+                        $categorySearch = str_replace(' ', '_', strtolower($category));
+                    @endphp
+                    <input type="hidden" name="category" value="{{ $categorySearch }}">
+                    <button type="submit"
+                        class="w-full bg-white/30 dark:bg-gray-600/20 text-gray-800 dark:text-gray-200 
+                               border border-gray-200 dark:border-gray-700 rounded-lg shadow 
+                               hover:bg-white/90 dark:hover:bg-gray-700/70 hover:-translate-y-1 text-center backdrop-blur-sm
+                               px-4 py-4 font-semibold transition">
+                        {{ $category }}
+                    </button>
+                </form>
+            @endforeach
+            </div>
+            {{-- <a href="#" class="mt-8 inline-block text-primary-600 dark:text-primary-400 font-semibold hover:underline">
+                Lihat Semua Kategori →
+            </a> --}}
+        </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section class="relative py-20 bg-white dark:bg-gray-800 overflow-hidden">
+        <div class="absolute inset-0">
+            <!-- desktop -->
+            <img src="{{ asset('images/cbl.webp') }}" 
+                alt="Company Building Background" 
+                class="hidden md:block w-full h-auto object-cover absolute top-0 left-0 opacity-20 dark:opacity-25">
+
+            <!-- mobile -->
+            <img src="{{ asset('images/cbp.webp') }}" 
+                alt="Company Building Background Mobile" 
+                class="block md:hidden w-full h-64 object-cover absolute top-0 left-0 opacity-20 dark:opacity-25">
+        </div>
+
+        <!-- Content -->
+        <div class="relative container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-12">
+                Dipercaya Lebih Dari 
+                <strong class="text-primary-300">
+                    {{ isset($companyCount) ? floor($companyCount / 10) * 10 : 1000 }}+
+                </strong> 
+                Perusahaan
+            </h2>
+
+            <div class="space-y-10">
+                @php
+                    $chunks = [];
+                    $companies = $companies->values();
+                    $rowIndex = 0;
+
+                    while ($companies->isNotEmpty()) {
+                        $count = ($rowIndex % 2 == 1) ? 4 : 3;
+                        $chunks[] = $companies->splice(0, $count);
+                        $rowIndex++;
+                    }
+                @endphp
+
+                @foreach ($chunks as $index => $row)
+                    <div class="grid gap-6 justify-items-center
+                        {{ $index % 2 == 1 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' }}">
+                        
+                        @foreach ($row as $company)
+                            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 w-full max-w-xs shadow-sm hover:shadow-md transition">
+                                @if ($company->logo_url)
+                                    <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" class="h-12 w-12 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700">
+                                @else
+                                    @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-400')
+                                @endif
+                                <div class="text-left">
+                                    <p class="font-semibold text-gray-900 dark:text-gray-100">{{ $company->company_name }}</p>
+                                    @if ($company->created_at)
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            Bergabung sejak {{ $company->created_at->format('Y') }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 @endforeach
+                <!-- Footer text -->
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                    dan masih banyak lagi perusahaan lainnya yang telah mempercayai kami...
+                </p>
             </div>
         </div>
     </section>
 
     <!-- Featured Jobs Section -->
-    <section class="py-20 bg-white dark:bg-gray-900">
+    <section class="py-20 bg-gray-50 dark:bg-gray-900">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">Lowongan Terbaru</h2>
             <div class="grid md:grid-cols-3 gap-8">
-                @for ($i = 1; $i <= 3; $i++)
-                    <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 shadow hover:shadow-lg transition">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Frontend Developer</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">PT Digital Inovasi Nusantara · Jakarta</p>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Bergabung dengan tim kreatif kami dan bantu kembangkan aplikasi inovatif.</p>
+                @forelse ($latestJobs as $job)
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow hover:shadow-lg transition">
+                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ $job->job_title }}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ $job->company?->company_name }} || <strong>{{ $job->job_type }}</strong> || {{ $job->location }}</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 max-h-16 overflow-hidden">{{ $job->job_description ?? '-' }}</p>
                         <a href="#" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">Lihat Detail →</a>
                     </div>
-                @endfor
+                @empty
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-600 dark:text-gray-400">Belum ada lowongan terbaru.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
 
-    <!-- Call to Action -->
     <section class="py-16 bg-gradient-to-br from-indigo-600 to-blue-600 text-white text-center">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold mb-4">Perusahaan Anda Sedang Mencari Talenta?</h2>
@@ -68,13 +151,12 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 text-center py-6 text-sm">
         © {{ date('Y') }} JobFinder. All rights reserved.
     </footer>
 </div>
 
-<!-- Tailwind blob animation -->
+<!-- blob animation -->
 <style>
 @keyframes blob {
     0%, 100% { transform: translate(0, 0) scale(1); }
