@@ -65,6 +65,14 @@ class Company extends Model
     }
 
     /**
+     * Get the notifications for the company.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'id_company');
+    }
+
+    /**
     * Calculate the total number of applicants across all job postings of the company.
     */
     public function totalApplicants(): int

@@ -18,13 +18,16 @@ class NotificationFactory extends Factory
      */
     public function definition(): array
     {
+        $jobSeeker = JobSeeker::inRandomOrder()->first();
+        $company = Company::inRandomOrder()->first();
+        
         return [
-            'id_job_seeker' => JobSeeker::inRandomOrder()->first()->id,
-            'id_company'    => Company::inRandomOrder()->first()->id,
+            'id_job_seeker' => $jobSeeker?->id,
+            'id_company'    => $company?->id,
             'message'       => $this->faker->sentence(8),
             'is_read'       => $this->faker->boolean(30),
-            'link_url'      => $this->faker->url(),
-            'created_at'    => now(),
+            'link_url'      => $this->faker->boolean(70) ? '/notifications' : null,
+            'created_at'    => $this->faker->dateTimeBetween('-30 days', 'now'),
         ];
     }
 }

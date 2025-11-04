@@ -31,6 +31,11 @@ class JobPostingController extends Controller
             }
         }
 
+        // Apply status filter if present
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
         $jobPostings = $query->paginate(10);
         return view('job_postings.index', compact('jobPostings'));
     }
@@ -182,6 +187,28 @@ class JobPostingController extends Controller
         }
 
         return redirect()->route('job-postings.index')->with('success', 'Lowongan berhasil diperbarui.');
+    }
+
+    /**
+     * Update the status of the specified job posting.
+     */
+    public function updateStatus(Request $request, JobPosting $jobPosting)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa mengupdate status
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['draft', 'open', 'paused', 'closed', 'archived'])],
+        ]);
+
+        $jobPosting->update(['status' => $validated['status']]);
+
+        return back()->with('success', 'Status lowongan berhasil diperbarui.');
     }
 
     /**

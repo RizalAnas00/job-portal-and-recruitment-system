@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-gray-900 dark:text-gray-100 text-2xl font-bold">Notifikasi</h1>
         
-        @if($notifications->where('is_read', false)->count() > 0)
+        @if($unreadCount > 0)
             <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="inline-block">
                 @csrf
                 @method('PUT')
@@ -19,6 +19,12 @@
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('error') }}</span>
         </div>
     @endif
 

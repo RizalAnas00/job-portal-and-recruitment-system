@@ -14,7 +14,7 @@ class NotificationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = Notification::latest();
+        $query = Notification::with(['jobSeeker.user', 'company'])->latest();
 
         // Filter notifikasi berdasarkan role
         if ($user->hasRole('user')) {
@@ -39,8 +39,11 @@ class NotificationController extends Controller
         }
 
         $notifications = $query->paginate(15);
+        
+        // Get unread count for the current page efficiently
+        $unreadCount = $notifications->where('is_read', false)->count();
 
-        return view('notifications.index', compact('notifications'));
+        return view('notifications.index', compact('notifications', 'unreadCount'));
     }
 
     /**
@@ -79,17 +82,30 @@ class NotificationController extends Controller
     public function markAllAsRead()
     {
         $user = Auth::user();
+        
+        // Admin tidak memiliki notifikasi personal
+        if ($user->hasRole('admin')) {
+            return redirect()->route('notifications.index')
+                ->with('error', 'Admin tidak dapat menandai semua notifikasi.');
+        }
+        
         $query = Notification::where('is_read', false);
 
         if ($user->hasRole('user')) {
             $jobSeekerId = $user->jobSeeker?->id;
             if ($jobSeekerId) {
                 $query->where('id_job_seeker', $jobSeekerId);
+            } else {
+                return redirect()->route('notifications.index')
+                    ->with('error', 'Tidak ada notifikasi untuk ditandai.');
             }
         } elseif ($user->hasRole('company')) {
             $companyId = $user->company?->id;
             if ($companyId) {
                 $query->where('id_company', $companyId);
+            } else {
+                return redirect()->route('notifications.index')
+                    ->with('error', 'Tidak ada notifikasi untuk ditandai.');
             }
         }
 
@@ -104,6 +120,12 @@ class NotificationController extends Controller
     public function getUnreadCount()
     {
         $user = Auth::user();
+        
+        // Admin tidak memiliki notifikasi personal
+        if ($user->hasRole('admin')) {
+            return response()->json(['count' => 0]);
+        }
+        
         $query = Notification::where('is_read', false);
 
         if ($user->hasRole('user')) {

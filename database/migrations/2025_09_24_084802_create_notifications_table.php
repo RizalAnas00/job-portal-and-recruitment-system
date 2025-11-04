@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('id_job_seeker')->nullable();
             $table->unsignedBigInteger('id_company')->nullable();
             $table->text('message');
@@ -29,6 +30,13 @@ return new class extends Migration
                   ->onDelete('cascade');
                   
             $table->timestamps();
+            
+            // Indexes untuk performance
+            $table->index('id_job_seeker');
+            $table->index('id_company');
+            $table->index('is_read');
+            $table->index(['id_job_seeker', 'is_read']);
+            $table->index(['id_company', 'is_read']);
         });
     }
 

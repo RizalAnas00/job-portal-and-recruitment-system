@@ -43,8 +43,8 @@ class JobSeeker extends Model
          return $this->belongsToMany(Skill::class, 'job_seeker_skills');
     }
 
-    // public function notifications()
-    // {
-    //     return $this->hasMany(Notification::class);
-    // }
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'id_job_seeker');
+    }
 }
