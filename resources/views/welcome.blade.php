@@ -26,10 +26,10 @@
     </section>
 
     <!-- Category Section -->
-    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <section class="pt-16 pb-32 bg-gray-50 dark:bg-gray-900">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">Jelajahi Berdasarkan Kategori</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-6">
             @foreach (['Full Time', 'Part Time', 'Contract', 'Internship', 'Temporary', 'Freelance', 'Remote'] as $category)
                 <form action="#" method="GET">
                     @php
@@ -37,9 +37,9 @@
                     @endphp
                     <input type="hidden" name="category" value="{{ $categorySearch }}">
                     <button type="submit"
-                        class="w-full bg-white/30 dark:bg-gray-600/20 text-gray-800 dark:text-gray-200 
+                        class="w-full bg-gray-200/40 dark:bg-gray-600/20 text-gray-800 dark:text-gray-200 
                                border border-gray-200 dark:border-gray-700 rounded-lg shadow 
-                               hover:bg-white/90 dark:hover:bg-gray-700/70 hover:-translate-y-1 text-center backdrop-blur-sm
+                               hover:bg-gray-200 dark:hover:bg-gray-700/70 hover:-translate-y-1 text-center backdrop-blur-sm
                                px-4 py-4 font-semibold transition">
                         {{ $category }}
                     </button>
@@ -53,12 +53,12 @@
     </section>
 
     <!-- Companies Section -->
-    <section class="relative py-20 bg-white dark:bg-gray-800 overflow-hidden">
+    <section class="relative pt-24 pb-16 bg-gray-200 dark:bg-gray-800 overflow-hidden">
         <div class="absolute inset-0">
             <!-- desktop -->
             <img src="{{ asset('images/cbl.webp') }}" 
                 alt="Company Building Background" 
-                class="hidden md:block w-full h-auto object-cover absolute top-0 left-0 opacity-20 dark:opacity-25">
+                class="hidden md:block w-full h-full object-cover absolute top-0 left-0 opacity-80 dark:opacity-35">
 
             <!-- mobile -->
             <img src="{{ asset('images/cbp.webp') }}" 
@@ -113,7 +113,7 @@
                     </div>
                 @endforeach
                 <!-- Footer text -->
-                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                <p class="text-gray-600 dark:text-gray-300 text-sm pt-12">
                     dan masih banyak lagi perusahaan lainnya yang telah mempercayai kami...
                 </p>
             </div>
@@ -121,7 +121,7 @@
     </section>
 
     <!-- Featured Jobs Section -->
-    <section class="py-20 bg-gray-50 dark:bg-gray-900">
+    <section class="pt-16 pb-32 bg-gray-100 dark:bg-gray-900">
         <div class="container mx-auto px-6">
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">Lowongan Terbaru</h2>
             <div class="grid md:grid-cols-3 gap-8">
@@ -141,18 +141,32 @@
         </div>
     </section>
 
-    <section class="py-16 bg-gradient-to-br from-indigo-600 to-blue-600 text-white text-center">
-        <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold mb-4">Perusahaan Anda Sedang Mencari Talenta?</h2>
-            <p class="text-lg text-blue-100 mb-8">Pasang lowongan dan temukan kandidat terbaik dalam hitungan menit.</p>
-            <a href="#" class="bg-white text-indigo-700 font-semibold px-6 py-3 rounded-full shadow hover:bg-gray-100 transition">
-                Pasang Lowongan Sekarang
-            </a>
+    <section class="relative bg-gradient-to-br from-indigo-600 to-blue-600 text-white overflow-hidden">
+        <div class="container mx-auto pt-20 pb-28 flex flex-col-reverse md:flex-row items-center justify-between relative z-10">
+            <div class="w-full md:w-1/2 text-center md:text-left">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    Perusahaan Anda Sedang Mencari Talenta?
+                </h2>
+                <p class="text-lg text-blue-100 mb-8">
+                    Pasang lowongan dan temukan kandidat terbaik untuk perusahaan Anda.
+                </p>
+                <a href="@auth {{ route('job-postings.create') }} @else {{ route('login') }} @endauth"
+                class="inline-block bg-white text-indigo-700 font-semibold px-6 py-3 rounded-full shadow 
+                        hover:bg-gray-100 transition duration-300">
+                    Pasang Lowongan Sekarang
+                </a>
+            </div>
+        </div>
+
+        <div class="hidden md:block absolute ml-6 top-0 right-0 w-1/2 h-full">
+            <img src="{{ asset('images/irl.webp') }}"
+                alt="Interview"
+                class="w-full h-full object-cover rounded-l-full" />
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 text-center py-6 text-sm">
-        © {{ date('Y') }} JobFinder. All rights reserved.
+    <footer class="bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-center py-6 text-sm">
+        © {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
     </footer>
 </div>
 

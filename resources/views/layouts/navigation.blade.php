@@ -2,7 +2,7 @@
     x-data="{ open: false }"
     @class([
         // Guest
-        'fixed top-3 left-3 right-3 z-50 bg-gray-900/30 dark:bg-gray-600/20 backdrop-blur-lg shadow-md rounded-lg transition-all duration-300' => !Auth::check(),
+        'fixed top-3 left-3 right-3 z-50 bg-gray-900/30 dark:bg-gray-600/20 backdrop-blur-md shadow-md rounded-lg transition-all duration-300' => !Auth::check(),
 
         // Auth
         'bg-white dark:bg-gray-800/90 backdrop-blur-md shadow-md sticky top-2 z-20 m-3 rounded-lg' => Auth::check(),
