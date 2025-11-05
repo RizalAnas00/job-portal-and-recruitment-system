@@ -22,7 +22,7 @@
                     Selamat Datang, {{ $displayName }} 👋
                 </h1>
                 <p class="mt-2 text-blue-100">
-                    @if (Auth::user()->hasRole('company'))
+                    @if (Auth::user()->hasRole('company') && Auth::user()->company)
                         Kelola lowongan, pantau pelamar, dan lihat performa rekrutmen perusahaan Anda di satu tempat.
                     @elseif (Auth::user()->hasRole('admin'))
                         Anda login sebagai <span class="font-semibold">{{ strtoupper(Auth::user()->getRoleName()) }}</span>
@@ -33,6 +33,43 @@
                     @endif
                 </p>
             </div>
+
+                        {{-- Aksi Perusahaan --}}
+            @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user') )
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-md rounded-xl mt-6">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        @if (($jobPostingsCount ?? 0) < 1)
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                                Langkah Selanjutnya
+                            </h3>
+                        @endif
+
+                        @if (Auth::user()->hasRole('company') && Auth::user()->company)
+                            <div class="flex flex-wrap gap-4">
+                                <a href="{{ route('company.job-postings.index') }}"
+                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                                    Kelola Lowongan
+                                </a>
+                                <a href="{{ route('company.job-postings.create') }}"
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                                    Tambah Lowongan Baru
+                                </a>
+                            </div>
+                            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
+                                Lihat, buat, atau edit lowongan pekerjaan yang diposting oleh perusahaan Anda.
+                            </p>
+                        @else
+                            <a href="{{ route('companies.create') }}"
+                                class="inline-block bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
+                                Buat Profil Perusahaan
+                            </a>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                Lengkapi profil perusahaan Anda untuk mulai memposting lowongan pekerjaan.
+                            </p>
+                        @endif
+                    </div>
+                </div>
+            @endif
 
             {{-- ============ COMPANY DASHBOARD ONLY ============ --}}
             @if (Auth::user()->hasRole('company'))
@@ -93,40 +130,6 @@
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Statistik Pelamar Bulanan</h3>
                     <div id="chart"></div>
                 </div>
-
-                {{-- Aksi Perusahaan --}}
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-md rounded-xl mt-6">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
-                            Langkah Selanjutnya
-                        </h3>
-
-                        @if (Auth::user()->company)
-                            <div class="flex flex-wrap gap-4">
-                                <a href="{{ route('company.job-postings.index') }}"
-                                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
-                                    Kelola Lowongan
-                                </a>
-                                <a href="{{ route('company.job-postings.create') }}"
-                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
-                                    Tambah Lowongan Baru
-                                </a>
-                            </div>
-                            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                                Lihat, buat, atau edit lowongan pekerjaan yang diposting oleh perusahaan Anda.
-                            </p>
-                        @else
-                            <a href="{{ route('companies.create') }}"
-                                class="inline-block bg-orange-500 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg text-center transition duration-300">
-                                Buat Profil Perusahaan
-                            </a>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                Lengkapi profil perusahaan Anda untuk mulai memposting lowongan pekerjaan.
-                            </p>
-                        @endif
-                    </div>
-                </div>
-
             @endif
             {{-- ============ END COMPANY DASHBOARD ============ --}}
 

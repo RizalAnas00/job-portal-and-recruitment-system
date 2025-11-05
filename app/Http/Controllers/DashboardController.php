@@ -17,6 +17,10 @@ class DashboardController extends Controller
 
         if ($user->role->name === 'company') {
             return $this->companyDashboard($user);
+        } elseif ($user->role->name === 'admin') {
+            //
+        } elseif ($user->role->name === 'user') {
+            //
         }
 
         // Add other role-based dashboards here as needed
@@ -25,22 +29,34 @@ class DashboardController extends Controller
         return view('dashboard');
     }
 
-    // Private function to redirect according to user role
-    private function companyDashboard(User $user) {
+    private function companyDashboard(User $user)
+    {
         if ($user->hasRole('company')) {
             $company = $user->company;
+
+            if (!$company) {
+                return view('dashboard', [
+                    'company' => null,
+                    'jobPostingsCount' => 0,
+                    'totalApplicantsCount' => 0,
+                    'activeJobPostingsCount' => 0,
+                    'hiredCandidatesCount' => 0,
+                ]);
+            }
+
             $jobPostingsCount = $company->jobPostings()->count();
-            $totalApplicantsCount = $company->totalApplicants();
+            $totalApplicantsCount = $company->totalApplicants() ?? 0;
             $activeJobPostingsCount = $company->jobPostings()->where('status', 'active')->count();
-            $hiredCandidatesCount = $company->hiredCandidates();
+            $hiredCandidatesCount = $company->hiredCandidates() ?? 0;
 
             return view('dashboard', compact(
-                'company', 
-                'jobPostingsCount', 
+                'company',
+                'jobPostingsCount',
                 'totalApplicantsCount',
-                'activeJobPostingsCount', 
+                'activeJobPostingsCount',
                 'hiredCandidatesCount'
             ));
         }
     }
+
 }

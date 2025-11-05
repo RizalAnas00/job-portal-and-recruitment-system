@@ -11,10 +11,10 @@
                 <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open</option>
                 <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Closed</option>
             </select>
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">Filter</button>
+            <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md">Filter</button>
         </form>
         @if(Auth::user()->hasRole('company'))
-            <a href="{{ route('company.job-postings.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+            <a href="{{ route('company.job-postings.create') }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md">
                 Buat Lowongan Baru
             </a>
         @endif
