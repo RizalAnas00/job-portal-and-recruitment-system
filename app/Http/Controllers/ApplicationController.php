@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\JobPosting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ApplicationController extends Controller
 {
@@ -22,6 +23,7 @@ class ApplicationController extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         $query = Application::with('jobSeeker.user', 'jobPosting.company');
 
@@ -53,6 +55,7 @@ class ApplicationController extends Controller
      */
     public function store(Request $request, JobPosting $jobPosting)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         if (!$user->hasRole('user') || !$user->jobSeeker) {
             abort(403, 'Hanya pencari kerja yang bisa melamar.');
@@ -107,6 +110,7 @@ class ApplicationController extends Controller
      */
     public function update(Request $request, Application $application)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         if ($user->hasRole('user') && $user->jobSeeker?->id === $application->id_job_seeker) {
@@ -167,6 +171,7 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
 
         // Otorisasi: Hanya user pemilik atau admin yang bisa menghapus
@@ -179,5 +184,60 @@ class ApplicationController extends Controller
 
         $application->delete();
         return redirect()->route('applications.index')->with('success', 'Lamaran berhasil dihapus.');
+    }
+
+    /**
+     * Display a listing of applications for a specific job posting.
+     */
+    public function indexByJobPosting(JobPosting $jobPosting, Request $request)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        // Otorisasi: Hanya admin atau pemilik perusahaan dari job posting yang bisa melihat
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        $query = $jobPosting->applications()->with('jobSeeker.user');
+
+        // Filter by status if provided
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $applications = $query->latest()->paginate(10);
+        $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
+
+        return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));
+    }
+
+    /**
+     * Filter applications for a specific job posting by status.
+     */
+    public function filterByStatus(JobPosting $jobPosting, Request $request)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        // Otorisasi: Hanya admin atau pemilik perusahaan dari job posting yang bisa melihat
+        if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        $validated = $request->validate([
+            'status' => ['nullable', 'string', Rule::in(['all', 'pending', 'reviewed', 'accepted', 'rejected'])],
+        ]);
+
+        $query = $jobPosting->applications()->with('jobSeeker.user');
+
+        if (isset($validated['status']) && $validated['status'] !== 'all') {
+            $query->where('status', $validated['status']);
+        }
+
+        $applications = $query->latest()->paginate(10);
+        $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
+
+        return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));
     }
 }

@@ -1,6 +1,6 @@
 <aside 
     x-data="{ open: true }" 
-    :class="open ? 'w-64 rounded-r-xl' : 'w-20'" 
+    :class="open ? 'w-64 rounded-r-xl' : 'w-16'" 
     class="bg-gradient-to-b from-[#3f36f7] to-[#171ee0] text-white h-screen transition-all duration-300 ease-in-out shadow-lg flex flex-col sticky top-0">
 
     <!-- Logo & Toggle -->
@@ -42,6 +42,16 @@
                 Role
             </span>
         </a>
+        @endif
+
+        @if (Auth::user()->hasRole('company'))
+            <a href="{{ route('company.job-postings.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('company.job-postings.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('fluentui-briefcase-28', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Manage Job
+                </span>
+            </a>
         @endif
 
         @if (Auth::user()->hasRole('company'))

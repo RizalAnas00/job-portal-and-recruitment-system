@@ -39,9 +39,11 @@ class PermissionSeeder extends Seeder
             ['name' => 'job_posting.read', 'display_name' => 'View Job Postings', 'group' => 'Job Posting Management'],
             ['name' => 'job_posting.update', 'display_name' => 'Update Job Postings', 'group' => 'Job Posting Management'],
             ['name' => 'job_posting.delete', 'display_name' => 'Delete Job Postings', 'group' => 'Job Posting Management'],
+            ['name' => 'job_posting.update_status', 'display_name' => 'Update Job Posting Status', 'group' => 'Job Posting Management'],
 
             // Application & Interview
             ['name' => 'application.read', 'display_name' => 'View Applications', 'group' => 'Application Management'],
+            ['name' => 'application.filter', 'display_name' => 'Filter Applications', 'group' => 'Application Management'],
             ['name' => 'application.delete', 'display_name' => 'Delete Applications', 'group' => 'Application Management'],
             ['name' => 'interview.read', 'display_name' => 'View Interviews', 'group' => 'Interview Management'],
             ['name' => 'interview.delete', 'display_name' => 'Delete Interviews', 'group' => 'Interview Management'],

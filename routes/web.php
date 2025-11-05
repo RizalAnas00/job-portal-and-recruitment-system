@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\ApplicationController;
@@ -17,9 +18,9 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ------------------------- LANDING PAGE ------------------------- //
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
+// ------------------------- LANDING PAGE ------------------------- //
 
 Route::get('/test-cache', function () {
     $name = ['first' => 'aa', 'last' => 'bb'];
@@ -81,6 +82,7 @@ Route::middleware('auth')->group(function () {
 
         // Admin - Job Postings
         Route::match(['put', 'patch'], '/job-postings/{job_posting}', [JobPostingController::class, 'update'])->name('job-postings.update');
+        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status')->middleware('permission:job_posting.update_status');
         Route::delete('/job-postings/{job_posting}', [JobPostingController::class, 'destroy'])->name('job-postings.destroy');
 
         // Admin - Applications
@@ -108,9 +110,12 @@ Route::middleware('auth')->group(function () {
 
         // Job Postings (Company Only)
         Route::resource('job-postings', JobPostingController::class)->except(['show']);
+        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status');
 
         // Applications (Company Only)
         Route::resource('applications', ApplicationController::class)->only(['index', 'edit', 'update']);
+        Route::get('/job-postings/{job_posting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
+        Route::get('/job-postings/{job_posting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
 
         // Payment & Subscription (Company Only)
         Route::get('/payment/history', [PaymentTransactionController::class, 'index'])->name('payment.index');

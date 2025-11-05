@@ -42,7 +42,9 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
-            @include('layouts.sidebar') <!-- Sidebar di kiri -->
+            @auth
+                @include('layouts.sidebar') <!-- Sidebar di kiri -->
+            @endauth
 
             <div class="flex-1 flex flex-col">
                 @include('layouts.navigation') <!-- Top Navbar -->
@@ -65,7 +67,7 @@
                 @endif
 
                 <!-- Page Content -->
-                <main class="p-6">
+                <main class=" @auth p-6 @else pb-6 @endauth ">
                     @isset($slot)
                         {{ $slot }}
                     @else
