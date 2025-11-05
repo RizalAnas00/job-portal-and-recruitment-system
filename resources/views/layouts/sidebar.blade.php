@@ -78,10 +78,16 @@
         {{-- Menu Notifikasi untuk Company dan Job Seeker --}}
         @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user'))
             <a href="{{ route('notifications.index') }}"
-                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('notifications.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('notifications.*') ? 'bg-[#0f14aa]/30' : '' }} relative">
                 @svg('ionicon-notifications', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
                     Notifications
+                </span>
+                {{-- Unread notification badge --}}
+                <span id="unread-notification-badge" 
+                      class="absolute top-2 left-8 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
+                      style="display: none;">
+                    0
                 </span>
             </a>
         @endif

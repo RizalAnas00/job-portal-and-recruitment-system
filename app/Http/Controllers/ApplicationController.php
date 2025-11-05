@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SendCompanyNotification;
 use App\Actions\SendJobSeekerNotification;
 use App\Models\Application;
 use App\Models\JobPosting;
@@ -11,7 +12,8 @@ use Illuminate\Http\Request;
 class ApplicationController extends Controller
 {
     public function __construct(
-        private readonly SendJobSeekerNotification $sendJobSeekerNotification
+        private readonly SendJobSeekerNotification $sendJobSeekerNotification,
+        private readonly SendCompanyNotification $sendCompanyNotification
     ) {
     }
 
@@ -75,6 +77,18 @@ class ApplicationController extends Controller
             'cover_letter' => $request->cover_letter,
             'status' => 'applied'
         ]);
+
+        // Send notification to company about new application
+        $jobPosting->loadMissing('company');
+        if ($jobPosting->company) {
+            $applicantName = $user->name ?? 'Pelamar baru';
+            $message = "{$applicantName} telah melamar pada posisi {$jobPosting->job_title}.";
+            ($this->sendCompanyNotification)(
+                $jobPosting->company,
+                $message,
+                route('company.applications.index')
+            );
+        }
 
         return redirect()->route('applications.index')->with('success', 'Lamaran berhasil dikirim.');
     }

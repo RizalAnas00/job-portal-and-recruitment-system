@@ -14,22 +14,25 @@ class NotificationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $query = Notification::with(['jobSeeker.user', 'company'])->latest();
+        
+        $query = Notification::latest();
 
         // Filter notifikasi berdasarkan role
         if ($user->hasRole('user')) {
-            // Job seeker melihat notifikasi mereka
+            // Job seeker melihat notifikasi mereka (where id_job_seeker is set)
             $jobSeekerId = $user->jobSeeker?->id;
             if ($jobSeekerId) {
-                $query->where('id_job_seeker', $jobSeekerId);
+                $query->where('id_job_seeker', $jobSeekerId)
+                      ->whereNull('id_company'); // Notifications TO job seekers
             } else {
                 $query->whereRaw('1 = 0'); // Tidak ada notifikasi
             }
         } elseif ($user->hasRole('company')) {
-            // Company melihat notifikasi mereka
+            // Company melihat notifikasi mereka (where id_company is set and id_job_seeker is null)
             $companyId = $user->company?->id;
             if ($companyId) {
-                $query->where('id_company', $companyId);
+                $query->where('id_company', $companyId)
+                      ->whereNull('id_job_seeker'); // Notifications TO companies
             } else {
                 $query->whereRaw('1 = 0'); // Tidak ada notifikasi
             }
@@ -38,10 +41,10 @@ class NotificationController extends Controller
             // Tidak perlu filter
         }
 
+        // Get total unread count BEFORE pagination
+        $unreadCount = (clone $query)->where('is_read', false)->count();
+
         $notifications = $query->paginate(15);
-        
-        // Get unread count for the current page efficiently
-        $unreadCount = $notifications->where('is_read', false)->count();
 
         return view('notifications.index', compact('notifications', 'unreadCount'));
     }
@@ -55,9 +58,12 @@ class NotificationController extends Controller
 
         // Otorisasi: pastikan notifikasi milik user
         $canUpdate = false;
-        if ($user->hasRole('user') && $notification->id_job_seeker === $user->jobSeeker?->id) {
+        
+        if ($user->hasRole('user') && $notification->id_job_seeker === $user->jobSeeker?->id && is_null($notification->id_company)) {
+            // Job seeker owns this notification (id_job_seeker is set, id_company is null)
             $canUpdate = true;
-        } elseif ($user->hasRole('company') && $notification->id_company === $user->company?->id) {
+        } elseif ($user->hasRole('company') && $notification->id_company === $user->company?->id && is_null($notification->id_job_seeker)) {
+            // Company owns this notification (id_company is set, id_job_seeker is null)
             $canUpdate = true;
         } elseif ($user->hasRole('admin')) {
             $canUpdate = true;
@@ -83,18 +89,13 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         
-        // Admin tidak memiliki notifikasi personal
-        if ($user->hasRole('admin')) {
-            return redirect()->route('notifications.index')
-                ->with('error', 'Admin tidak dapat menandai semua notifikasi.');
-        }
-        
         $query = Notification::where('is_read', false);
 
         if ($user->hasRole('user')) {
             $jobSeekerId = $user->jobSeeker?->id;
             if ($jobSeekerId) {
-                $query->where('id_job_seeker', $jobSeekerId);
+                $query->where('id_job_seeker', $jobSeekerId)
+                      ->whereNull('id_company');
             } else {
                 return redirect()->route('notifications.index')
                     ->with('error', 'Tidak ada notifikasi untuk ditandai.');
@@ -102,11 +103,17 @@ class NotificationController extends Controller
         } elseif ($user->hasRole('company')) {
             $companyId = $user->company?->id;
             if ($companyId) {
-                $query->where('id_company', $companyId);
+                $query->where('id_company', $companyId)
+                      ->whereNull('id_job_seeker');
             } else {
                 return redirect()->route('notifications.index')
                     ->with('error', 'Tidak ada notifikasi untuk ditandai.');
             }
+        } elseif ($user->hasRole('admin')) {
+            // Admin marks all as read
+        } else {
+            return redirect()->route('dashboard')
+                ->with('error', 'Tidak dapat menandai notifikasi.');
         }
 
         $query->update(['is_read' => true]);
@@ -121,29 +128,30 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         
-        // Admin tidak memiliki notifikasi personal
-        if ($user->hasRole('admin')) {
-            return response()->json(['count' => 0]);
-        }
-        
         $query = Notification::where('is_read', false);
 
         if ($user->hasRole('user')) {
             $jobSeekerId = $user->jobSeeker?->id;
             if ($jobSeekerId) {
-                $query->where('id_job_seeker', $jobSeekerId);
+                $query->where('id_job_seeker', $jobSeekerId)
+                      ->whereNull('id_company');
             } else {
                 return response()->json(['count' => 0]);
             }
         } elseif ($user->hasRole('company')) {
             $companyId = $user->company?->id;
             if ($companyId) {
-                $query->where('id_company', $companyId);
+                $query->where('id_company', $companyId)
+                      ->whereNull('id_job_seeker');
             } else {
                 return response()->json(['count' => 0]);
             }
+        } elseif ($user->hasRole('admin')) {
+            // Admin sees all unread
+        } else {
+            return response()->json(['count' => 0]);
         }
-
+        
         $count = $query->count();
 
         return response()->json(['count' => $count]);
