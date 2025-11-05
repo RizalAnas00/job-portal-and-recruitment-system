@@ -25,9 +25,15 @@ class JobPostingController extends Controller
         $query = JobPosting::with('company', 'skills')->latest();
 
         // Jika yang login adalah 'company', tampilkan hanya lowongan milik mereka.
-        if ($user->hasRole('company') && $user->company) {
-            if (!$request->boolean('all')) {
-                $query->where('id_company', $user->company->id);
+        if ($user->hasRole('company')) {
+
+            if ($user->company) {
+                Log::info("company : ", $user->company);
+                if (!$request->boolean('all')) {
+                    $query->where('id_company', $user->company->id);
+                }
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 

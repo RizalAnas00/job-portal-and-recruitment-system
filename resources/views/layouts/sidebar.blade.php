@@ -86,11 +86,18 @@
                 x-collapse
                 class="mt-1 space-y-1 ml-8"
             >
+                @if (Auth::user()->hasRole('company'))
+                    <a href="{{ route('company.job-postings.create') }}"
+                        class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.index') ? 'bg-[#0f14aa]/20' : '' }}">
+                        {{ __('Create Job Offer') }}
+                    </a>
+                @else
+                    <a href="{{ route('company.job-postings.index') }}"
+                        class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.index') ? 'bg-[#0f14aa]/20' : '' }}">
+                        {{ __('Find Job Offer') }}
+                    </a>
+                @endif
                 <a href="{{ route('company.job-postings.index') }}"
-                    class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.index') ? 'bg-[#0f14aa]/20' : '' }}">
-                    {{ __('Find Job Offer') }}
-                </a>
-                <a href="{{ route('company.job-postings.create') }}"
                     class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.create') ? 'bg-[#0f14aa]/20' : '' }}">
                     @if (Auth::user()->hasRole('user'))
                         {{ __('My Applied Jobs') }}
