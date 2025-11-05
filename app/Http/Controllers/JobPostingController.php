@@ -42,7 +42,7 @@ class JobPostingController extends Controller
         if ($user->hasRole('company')) {
 
             if ($user->company) {
-                Log::info("company : ", $user->company);
+                // Log::info("company : ". $user->company);
                 if (!$request->boolean('all')) {
                     $query->where('id_company', $user->company->id);
                 }
