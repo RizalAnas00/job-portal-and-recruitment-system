@@ -29,6 +29,14 @@ class DashboardController extends Controller
     private function companyDashboard(User $user) {
         if ($user->hasRole('company')) {
             $company = $user->company;
+            
+            // Check if company profile exists
+            if (!$company) {
+                // Redirect to create company profile if not exists
+                return redirect()->route('company.profile.create')
+                    ->with('info', 'Silakan lengkapi profil perusahaan Anda terlebih dahulu.');
+            }
+            
             $jobPostingsCount = $company->jobPostings()->count();
             $totalApplicantsCount = $company->totalApplicants();
             $activeJobPostingsCount = $company->jobPostings()->where('status', 'active')->count();
