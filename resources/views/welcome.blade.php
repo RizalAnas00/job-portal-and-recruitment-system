@@ -126,11 +126,22 @@
             <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">Lowongan Terbaru</h2>
             <div class="grid md:grid-cols-3 gap-8">
                 @forelse ($latestJobs as $job)
-                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow hover:shadow-lg transition">
-                        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ $job->job_title }}</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">{{ $job->company?->company_name }} || <strong>{{ $job->job_type }}</strong> || {{ $job->location }}</p>
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 max-h-16 overflow-hidden">{{ $job->job_description ?? '-' }}</p>
-                        <a href="#" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline">Lihat Detail →</a>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow hover:shadow-lg transition flex flex-col justify-between h-full">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {{ $job->job_title }}
+                            </h3>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                                {{ $job->company?->company_name }} || <strong>{{ $job->job_type }}</strong> || {{ $job->location }}
+                            </p>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6 max-h-20">
+                                {{ $job->job_description ? \Illuminate\Support\Str::limit($job->job_description, 200) : '-' }}
+                            </p>
+                        </div>
+
+                        <a href="#" class="text-primary-600 dark:text-primary-400 font-semibold hover:underline mt-auto">
+                            Lihat Detail →
+                        </a>
                     </div>
                 @empty
                     <div class="col-span-full text-center py-12">
