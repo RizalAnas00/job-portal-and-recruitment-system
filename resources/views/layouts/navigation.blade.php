@@ -14,8 +14,12 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" class="flex items-center gap-2">
-                    <x-application-logo class="h-8 w-auto text-primary-600 dark:text-primary-400" />
-                    <span class="font-bold text-lg text-gray-100 dark:text-gray-200">{{ config('app.name') }}</span>
+                    <x-application-logo class="h-16 w-auto text-primary-600 dark:text-primary-400" />
+                    @auth
+                        <span class="font-bold text-lg text-gray-700 dark:text-gray-200">{{ config('app.name') }}</span>
+                    @else
+                        <span class="font-bold text-lg text-gray-100 dark:text-gray-200">{{ config('app.name') }}</span>
+                    @endauth
                 </a>
             </div>
 
@@ -85,11 +89,11 @@
                         </a>
                         <a href="{{ route('login') }}" 
                         class="px-4 py-2 text-white hover:text-gray-200 dark:hover:text-primary-200 font-medium transition">
-                            Masuk
+                            {{ __('Log In') }}
                         </a>
                         <a href="{{ route('register') }}" 
                         class="px-4 py-2 text-white hover:text-gray-200 dark:hover:text-primary-200 font-medium transition">
-                            Daftar
+                            {{ __( 'Register')  }}
                         </a>
                     </div>
                 @endauth

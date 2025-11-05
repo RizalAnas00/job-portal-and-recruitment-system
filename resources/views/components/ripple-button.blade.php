@@ -2,7 +2,7 @@
     <button
         {{ $attributes->merge([
             'type' => 'button',
-            'class' => 'bt relative overflow-hidden rounded-lg transition-all duration-300
+            'class' => 'bt relative overflow-hidden rounded-lg transition-all duration-1000
                         focus:outline-none active:scale-[0.98]'
         ]) }}
     >
@@ -15,15 +15,15 @@
         position: absolute;
         border-radius: 50%;
         transform: scale(0);
-        animation: ripple-animation 700ms ease-out;
+        animation: ripple-animation 1100ms ease-out;
         pointer-events: none;
         z-index: 0;
-        opacity: 0.5;
+        opacity: 0.8;
     }
 
     @keyframes ripple-animation {
         to {
-            transform: scale(8);
+            transform: scale(5);
             opacity: 0;
         }
     }
@@ -48,7 +48,7 @@
             // Tentukan ripple color berdasarkan kontras
             const isLightBg = bgColor.includes('255, 255, 255') || bgColor.includes('rgba(255');
             circle.style.backgroundColor = isLightBg
-                ? textColor.replace('rgb', 'rgba').replace(')', ', 0.3)')
+                ? textColor.replace('rgb', 'rgba').replace(')', ', 0.6)')
                 : 'rgba(255,255,255,0.35)';
 
             circle.classList.add('ripple');

@@ -17,9 +17,9 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
+            <x-ripple-button type="submit" class="ms-4 bg-gray-600 hover:bg-gray-800 text-white px-4 py-2 rounded-md">
+                <x-slot name="buttonText">{{ __('Email Password Reset Link') }}</x-slot>
+            </x-ripple-button>
         </div>
     </form>
 </x-guest-layout>

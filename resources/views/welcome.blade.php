@@ -94,16 +94,16 @@
                         {{ $index % 2 == 1 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' }}">
                         
                         @foreach ($row as $company)
-                            <div class="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 rounded-xl p-4 w-full max-w-xs shadow-sm hover:shadow-md transition">
+                            <div class="flex items-center gap-3 bg-gray-50/40 dark:bg-gray-800/70 rounded-xl p-4 w-full max-w-xs shadow-sm hover:shadow-md transition backdrop-blur-md">
                                 @if ($company->logo_url)
                                     <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" class="h-12 w-12 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700">
                                 @else
-                                    @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-400')
+                                    @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-800 dark:text-gray-200')
                                 @endif
                                 <div class="text-left">
                                     <p class="font-semibold text-gray-900 dark:text-gray-100">{{ $company->company_name }}</p>
                                     @if ($company->created_at)
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        <p class="text-xs text-gray-800 dark:text-gray-400">
                                             Bergabung sejak {{ $company->created_at->format('Y') }}
                                         </p>
                                     @endif
@@ -113,7 +113,7 @@
                     </div>
                 @endforeach
                 <!-- Footer text -->
-                <p class="text-gray-600 dark:text-gray-300 text-sm pt-12">
+                <p class="text-gray-900 font-bold text-base dark:text-gray-300 pt-10">
                     dan masih banyak lagi perusahaan lainnya yang telah mempercayai kami...
                 </p>
             </div>
