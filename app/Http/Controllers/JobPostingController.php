@@ -22,7 +22,21 @@ class JobPostingController extends Controller
     {
         /** @var \App\Models\User */
         $user = Auth::user();
-        $query = JobPosting::with('company', 'skills')->latest();
+        $query = JobPosting::with('company', 'skills');
+
+        if($user->hasRole('admin')) {
+            // Jika yang login adalah 'admin', tampilkan semua lowongan.
+            if ($request->boolean('all')) {
+                $query->whereRaw('1 = 1');
+            }
+        }
+
+        else if($user->hasRole('user')) {
+            $query->whereIn('status', ['open', 'closed']);
+                // ->whereDate('created_at', '>=', );
+        }
+
+        $query->latest();
 
         // Jika yang login adalah 'company', tampilkan hanya lowongan milik mereka.
         if ($user->hasRole('company')) {
@@ -42,7 +56,8 @@ class JobPostingController extends Controller
             $query->where('status', $request->status);
         }
 
-        $jobPostings = $query->paginate(10);
+        $jobPostings = $query->paginate(12);
+        // Log::info("query : ", $jobPostings->toArray());
         return view('job_postings.index', compact('jobPostings'));
     }
 

@@ -92,18 +92,23 @@
                         {{ __('Create Job Offer') }}
                     </a>
                 @else
-                    <a href="{{ route('company.job-postings.index') }}"
+                    <a href="{{ route('job-postings.index') }}"
                         class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.index') ? 'bg-[#0f14aa]/20' : '' }}">
                         {{ __('Find Job Offer') }}
                     </a>
                 @endif
-                <a href="{{ route('company.job-postings.index') }}"
-                    class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.create') ? 'bg-[#0f14aa]/20' : '' }}">
-                    @if (Auth::user()->hasRole('user'))
+                
+                @if (Auth::user()->hasRole('user'))
+                    <a href="{{ route('company.job-postings.index') }}"
+                        class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.create') ? 'bg-[#0f14aa]/20' : '' }}">
                         {{ __('My Applied Jobs') }}
-                    @else
+                    </a>
+                @else
+                    <a href="{{ route('company.job-postings.index') }}"
+                        class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.create') ? 'bg-[#0f14aa]/20' : '' }}">
                         {{ __('My Job Offers') }}
-                    @endif
+                    </a>
+                @endif
                 </a>
             </div>
         </div>

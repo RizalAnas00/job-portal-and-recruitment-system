@@ -35,7 +35,7 @@
             </div>
 
                         {{-- Aksi Perusahaan --}}
-            @if (Auth::user()->hasRole('company') || Auth::user()->hasRole('user') )
+            @if (Auth::user()->hasRole('company'))
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-md rounded-xl mt-6">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         @if (($jobPostingsCount ?? 0) < 1)

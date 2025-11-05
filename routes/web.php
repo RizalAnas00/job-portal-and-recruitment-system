@@ -15,8 +15,28 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\NotificationController;
+use App\Jobs\sendEmail;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+
+// ------ Test Job Send Email Dummy --- ///
+Route::get('/send-email', function () {
+    $start = now();
+
+    Log::info('email sending at : '. $start->toDateTimeString());
+
+    sendEmail::dispatch();
+
+    $end = now();
+    Log::info('email sent at : '. $end->toDateTimeString());
+
+    return response()->json([
+        'message' => 'success',
+        'duration' => $end->diffInSeconds($start) . ' detik',
+    ]);
+});
+// ------ Test Job Send Email Dummy --- ///
 
 // ------------------------- LANDING PAGE ------------------------- //
 Route::get('/', [LandingPageController::class, 'index'])->name('landing');
