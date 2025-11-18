@@ -68,6 +68,11 @@
                                     {{ __('Edit Profil Perusahaan') }}
                                 </x-dropdown-link>
                             @endif
+                            @if (Auth::user()->hasRole('user'))
+                                <x-dropdown-link :href="route('user.skills.index')">
+                                    {{ __('Skill & Rekomendasi') }}
+                                </x-dropdown-link>
+                            @endif
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Profil Saya') }}
                             </x-dropdown-link>
@@ -107,6 +112,9 @@
         <div class="flex flex-col items-start px-6 py-4 space-y-3">
             @auth
                 <a href="{{ route('profile.edit') }}" class="block text-gray-100 hover:text-primary-300">Profil Saya</a>
+                @if (Auth::user()->hasRole('user'))
+                    <a href="{{ route('user.skills.index') }}" class="block text-gray-100 hover:text-primary-300">Skill & Rekomendasi</a>
+                @endif
                 @if (Auth::user()->hasRole('company') && Auth::user()->company)
                     <a href="{{ route('companies.edit', Auth::user()->company->id) }}" class="block text-gray-100 hover:text-primary-300">Edit Profil Perusahaan</a>
                 @endif

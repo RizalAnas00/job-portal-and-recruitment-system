@@ -7,6 +7,7 @@ use App\Models\JobPosting;
 use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ class JobPostingController extends Controller
     {
         /** @var \App\Models\User */
         $user = Auth::user();
+        JobPosting::refreshScheduledStatuses();
         $query = JobPosting::with('company', 'skills')->latest();
 
         // Jika yang login adalah 'company', tampilkan hanya lowongan milik mereka.
@@ -43,6 +45,7 @@ class JobPostingController extends Controller
     public function show(JobPosting $jobPosting)
     {
         // Eager load relasi untuk ditampilkan di halaman detail
+        JobPosting::refreshScheduledStatuses();
         $jobPosting->load('company', 'skills');
         return view('job_postings.show', compact('jobPosting'));
     }
@@ -100,7 +103,8 @@ class JobPostingController extends Controller
             'job_type' => 'required|in:full_time,part_time,contract,internship,temporary,freelance,remote',
             'job_description' => 'required|string',
             'salary_range' => 'nullable|string|max:255',
-            'closing_date' => 'nullable|date',
+            'posted_date' => 'required|date',
+            'closing_date' => 'required|date|after:posted_date',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id',
         ]);
@@ -108,6 +112,10 @@ class JobPostingController extends Controller
         try {
             // --- MULAI TRANSAKSI DI SINI ---
             DB::transaction(function () use ($company, $validatedData, $request) {
+                $openAt = Carbon::parse($validatedData['posted_date']);
+                $closeAt = Carbon::parse($validatedData['closing_date']);
+                $status = JobPosting::statusForSchedule($openAt, $closeAt);
+
                 // 1. Buat lowongan
                 $jobPosting = $company->jobPostings()->create([
                     'job_title' => $validatedData['job_title'],
@@ -115,8 +123,9 @@ class JobPostingController extends Controller
                     'job_type' => $validatedData['job_type'],
                     'job_description' => $validatedData['job_description'],
                     'salary_range' => $validatedData['salary_range'],
-                    'closing_date' => $validatedData['closing_date'],
-                    'status' => 'open',
+                    'posted_date' => $openAt,
+                    'closing_date' => $closeAt,
+                    'status' => $status,
                 ]);
 
                 // 2. Lampirkan skills jika ada
@@ -171,11 +180,15 @@ class JobPostingController extends Controller
             'location' => 'required|string|max:255',
             'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote'])],
             'salary_range' => 'nullable|string|max:100',
-            'posted_date' => 'nullable|date',
-            'closing_date' => 'nullable|date|after_or_equal:posted_date',
+            'posted_date' => 'required|date',
+            'closing_date' => 'required|date|after:posted_date',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id'
         ]);
+
+        $openAt = Carbon::parse($validated['posted_date']);
+        $closeAt = Carbon::parse($validated['closing_date']);
+        $validated['status'] = JobPosting::statusForSchedule($openAt, $closeAt);
 
         $jobPosting->update($validated);
 

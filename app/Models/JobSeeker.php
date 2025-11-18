@@ -40,7 +40,9 @@ class JobSeeker extends Model
 
     public function skills()
     {
-         return $this->belongsToMany(Skill::class, 'job_seeker_skills');
+         return $this->belongsToMany(Skill::class, 'job_seeker_skill', 'job_seeker_id', 'skill_id')
+            ->using(JobSeekerSkill::class)
+            ->withTimestamps();
     }
 
     public function notifications()

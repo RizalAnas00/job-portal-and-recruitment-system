@@ -36,7 +36,7 @@
                         {{ $job->job_title }}
                     </a>
                     <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        {{ $job->company?->name ?? '-' }} — {{ $job->location }} — {{ $job->job_type }}
+                        {{ $job->company?->company_name ?? '-' }} — {{ $job->location }} — {{ str_replace('_', ' ', $job->job_type) }}
                     </div>
                 </div>
                 <div class="flex-shrink-0">
@@ -57,7 +57,8 @@
             <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 <span>Skills: {{ $job->skills->pluck('skill_name')->join(', ') ?: '-' }}</span> |
                 <span>Gaji: {{ $job->salary_range ?? '-' }}</span> |
-                <span>Tutup: {{ optional($job->closing_date)->format('Y-m-d') ?? '-' }}</span>
+                <span>Buka: {{ optional($job->posted_date)->format('d M Y H:i') ?? '-' }}</span> |
+                <span>Tutup: {{ optional($job->closing_date)->format('d M Y H:i') ?? '-' }}</span>
             </div>
 
             @if(Auth::user()->hasRole('company') && Auth::user()->company?->id === $job->id_company || Auth::user()->hasRole('admin'))

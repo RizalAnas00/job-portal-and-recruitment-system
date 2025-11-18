@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class JobPosting extends Model
 {
@@ -44,6 +45,48 @@ class JobPosting extends Model
         'posted_date' => 'datetime',
         'closing_date' => 'datetime',
     ];
+
+    /**
+     * Determine the appropriate status based on the schedule window.
+     */
+    public static function statusForSchedule(?Carbon $openAt, ?Carbon $closeAt): string
+    {
+        if (!$openAt || !$closeAt) {
+            return 'draft';
+        }
+
+        $now = now();
+        return $now->between($openAt, $closeAt) ? 'open' : 'closed';
+    }
+
+    /**
+     * Sync statuses with their scheduled window (open between, closed outside).
+     */
+    public static function refreshScheduledStatuses(): void
+    {
+        $now = now();
+
+        static::query()
+            ->whereNotNull('posted_date')
+            ->whereNotNull('closing_date')
+            ->whereIn('status', ['draft', 'open', 'closed'])
+            ->whereColumn('posted_date', '<=', 'closing_date')
+            ->where('posted_date', '<=', $now)
+            ->where('closing_date', '>=', $now)
+            ->where('status', '!=', 'open')
+            ->update(['status' => 'open']);
+
+        static::query()
+            ->whereNotNull('posted_date')
+            ->whereNotNull('closing_date')
+            ->whereIn('status', ['draft', 'open', 'closed'])
+            ->where(function ($query) use ($now) {
+                $query->where('closing_date', '<', $now)
+                    ->orWhere('posted_date', '>', $now);
+            })
+            ->where('status', '!=', 'closed')
+            ->update(['status' => 'closed']);
+    }
 
     /**
      * Get the company that posted the job.

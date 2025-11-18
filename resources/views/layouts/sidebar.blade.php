@@ -54,6 +54,23 @@
             </a>
         @endif
 
+        @if (Auth::user()->hasRole('user'))
+            <a href="{{ route('user.jobs.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('user.jobs.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('ionicon-briefcase-outline', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    Job Recommendations
+                </span>
+            </a>
+            <a href="{{ route('user.skills.index') }}"
+                class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('user.skills.*') ? 'bg-[#0f14aa]/30' : '' }}">
+                @svg('ionicon-ribbon-outline', 'h-6 w-6 flex-shrink-0 text-xl')
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                    My Skills
+                </span>
+            </a>
+        @endif
+
         @if (Auth::user()->hasRole('company'))
             <a href="{{ route('company.subscriptions.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('subscription_plan.*') ? 'bg-[#0f14aa]/30' : '' }}">
