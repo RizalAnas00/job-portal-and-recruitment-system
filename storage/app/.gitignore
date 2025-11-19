@@ -1,4 +1,6 @@
 *
 !private/
 !public/
+!/TestFiles/
+!/TestFiles/**
 !.gitignore

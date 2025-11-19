@@ -1,0 +1,10 @@
+<?php 
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(TestCase::class, RefreshDatabase::class);
+
+it('test', function () {
+    $this->assertTrue(true);
+});
