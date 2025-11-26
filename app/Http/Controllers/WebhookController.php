@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SendCompanyNotification;
 use App\Models\PaymentTransaction;
 use App\Models\CompanySubscription;
 use App\Actions\CheckActiveSubscription;
@@ -11,10 +12,15 @@ use Illuminate\Support\Facades\Log;
 class WebhookController extends Controller
 {
     private $checkActiveSubscription;
+    private $sendCompanyNotification;
 
-    public function __construct(CheckActiveSubscription $checkActiveSubscription)
+    public function __construct(
+        CheckActiveSubscription $checkActiveSubscription,
+        SendCompanyNotification $sendCompanyNotification
+    )
     {
         $this->checkActiveSubscription = $checkActiveSubscription;
+        $this->sendCompanyNotification = $sendCompanyNotification;
     }
 
     public function handlePayment(Request $request)
@@ -78,6 +84,14 @@ class WebhookController extends Controller
                     $company->update(['is_verified' => false]);
                 }
 
+                // Send notification to company about successful payment
+                $message = "Pembayaran berhasil! Paket {$companySubscription->plan->name} Anda telah aktif. Total pembayaran: Rp " . number_format($paymentTransaction->amount, 0, ',', '.');
+                ($this->sendCompanyNotification)(
+                    $company,
+                    $message,
+                    route('company.subscriptions.index')
+                );
+
                 Log::info('New subscription activated', ['id' => $companySubscription->id]);
             }
 
@@ -90,6 +104,18 @@ class WebhookController extends Controller
 
             if ($paymentTransaction) {
                 $paymentTransaction->update(['status' => 'failed']);
+                
+                // Send notification to company about failed payment
+                $companySubscription = $paymentTransaction->companySubscription ?? null;
+                if ($companySubscription && $companySubscription->company) {
+                    $message = "Pembayaran gagal untuk paket {$companySubscription->plan->name}. Silakan coba lagi atau hubungi customer service.";
+                    ($this->sendCompanyNotification)(
+                        $companySubscription->company,
+                        $message,
+                        route('company.payment.index')
+                    );
+                }
+                
                 Log::info('Payment failed processed', ['id' => $paymentTransaction->id]);
             }
 

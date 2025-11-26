@@ -54,6 +54,10 @@ class RegisteredUserController extends Controller
             return redirect()->route('companies.create');
         }
 
+        if ($user->hasRole('user')) {
+            return redirect()->route('user.job-seekers.create');
+        }
+
         return redirect(route('dashboard', absolute: false));
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Skill;
 use App\Models\JobSeeker;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,11 +14,18 @@ class JobSeekerSkillController extends Controller
      */
     public function index()
     {
-        $jobSeeker = Auth::user()->jobSeeker;
-        $mySkills = $jobSeeker ? $jobSeeker->skills()->get() : collect();
-        $allSkills = Skill::all(); // Untuk dropdown/pilihan
+        $user = Auth::user();
+        $jobSeeker = $user->jobSeeker;
 
-        return view('job_seeker.skills.index', compact('mySkills', 'allSkills'));
+        if (!$jobSeeker) {
+            $jobSeeker = JobSeeker::create(['user_id' => $user->id]);
+        }
+
+        $mySkills = $jobSeeker->skills()->orderBy('skill_name')->get();
+        $allSkills = Skill::orderBy('skill_name')->get();
+        $mySkillIds = $mySkills->pluck('id');
+
+        return view('job_seekers.skills.index', compact('jobSeeker', 'mySkills', 'mySkillIds', 'allSkills'));
     }
     /**
      * Store a newly created resource in storage.
@@ -38,7 +45,7 @@ class JobSeekerSkillController extends Controller
         // syncWithoutDetaching untuk menambah tanpa menghapus yang sudah ada
         $jobSeeker->skills()->syncWithoutDetaching($request->skill_id);
 
-        return redirect()->route('job-seeker-skills.index')->with('success', 'Skill berhasil ditambahkan.');
+        return redirect()->route('user.skills.index')->with('success', 'Skill berhasil ditambahkan.');
     }
     /**
      * Remove the specified resource from storage.
@@ -49,9 +56,27 @@ class JobSeekerSkillController extends Controller
 
         if ($jobSeeker) {
             $jobSeeker->skills()->detach($skill->id);
-            return redirect()->route('job-seeker-skills.index')->with('success', 'Skill berhasil dihapus.');
+            return redirect()->route('user.skills.index')->with('success', 'Skill berhasil dihapus.');
         }
 
-        return redirect()->route('job-seeker-skills.index')->with('error', 'Profil tidak ditemukan.');
+        return redirect()->route('user.skills.index')->with('error', 'Profil tidak ditemukan.');
+    }
+
+    /**
+     * Update job seeker skills in bulk.
+     */
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        $jobSeeker = $user->jobSeeker ?? JobSeeker::create(['user_id' => $user->id]);
+
+        $validated = $request->validate([
+            'skills' => 'nullable|array',
+            'skills.*' => 'exists:skills,id',
+        ]);
+
+        $jobSeeker->skills()->sync($validated['skills'] ?? []);
+
+        return redirect()->route('user.skills.index')->with('success', 'Daftar skill berhasil diperbarui.');
     }
 }

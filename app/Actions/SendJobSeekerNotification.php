@@ -16,7 +16,7 @@ class SendJobSeekerNotification
 
         Notification::create([
             'id_job_seeker' => $jobSeeker->id,
-            'id_company' => $company?->id,
+            'id_company' => null, // Job seeker notification - id_company should be null
             'message' => $message,
             'link_url' => $linkUrl,
         ]);

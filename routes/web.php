@@ -9,6 +9,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\InterviewController;
 use App\Http\Controllers\JobSeekerSkillController;
+use App\Http\Controllers\JobSeekerJobController;
 use App\Http\Controllers\PaymentTransactionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\NotificationController;
 use App\Jobs\sendEmail;
+use App\Http\Controllers\JobSeekerController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -180,7 +182,17 @@ Route::middleware('auth')->group(function () {
         // Job Seeker Skills
         Route::get('/my-skills', [JobSeekerSkillController::class, 'index'])->name('skills.index');
         Route::post('/my-skills', [JobSeekerSkillController::class, 'store'])->name('skills.store');
+        Route::put('/my-skills', [JobSeekerSkillController::class, 'update'])->name('skills.update');
         Route::delete('/my-skills/{skill}', [JobSeekerSkillController::class, 'destroy'])->name('skills.destroy');
+
+        // Job Seeker Profile
+        Route::get('/job-seeker/profile/create', [JobSeekerController::class, 'create'])->name('job-seekers.create');
+        Route::post('/job-seeker/profile', [JobSeekerController::class, 'store'])->name('job-seekers.store');
+        Route::get('/job-seeker/profile', [JobSeekerController::class, 'edit'])->name('job-seekers.edit');
+        Route::put('/job-seeker/profile', [JobSeekerController::class, 'update'])->name('job-seekers.update');
+
+        // Job Listings tailored for user
+        Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');
     });
 
 

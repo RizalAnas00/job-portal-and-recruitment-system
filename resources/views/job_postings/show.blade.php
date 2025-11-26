@@ -5,7 +5,7 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $jobPosting->job_title }}</h1>
         <div class="text-md text-gray-600 dark:text-gray-400 mt-2 mb-4">
-            {{ $jobPosting->company?->name ?? '-' }} — {{ $jobPosting->location }} — {{ $jobPosting->job_type }}
+            {{ $jobPosting->company?->company_name ?? '-' }} — {{ $jobPosting->location }} — {{ str_replace('_', ' ', $jobPosting->job_type) }}
         </div>
 
         <div class="prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 mb-6">
@@ -22,8 +22,12 @@
                 <span class="text-gray-700 dark:text-gray-300">{{ $jobPosting->salary_range ?? '-' }}</span>
             </div>
             <div class="mb-2">
+                <strong class="text-gray-900 dark:text-white">Buka:</strong>
+                <span class="text-gray-700 dark:text-gray-300">{{ optional($jobPosting->posted_date)->format('d F Y H:i') ?? '-' }}</span>
+            </div>
+            <div class="mb-2">
                 <strong class="text-gray-900 dark:text-white">Tutup:</strong> 
-                <span class="text-gray-700 dark:text-gray-300">{{ optional($jobPosting->closing_date)->format('d F Y') ?? '-' }}</span>
+                <span class="text-gray-700 dark:text-gray-300">{{ optional($jobPosting->closing_date)->format('d F Y H:i') ?? '-' }}</span>
             </div>
         </div>
 

@@ -13,6 +13,35 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
+        {{-- Notification Counter Script - For Companies and Job Seekers --}}
+        @if(Auth::check() && (Auth::user()->hasRole('company') || Auth::user()->hasRole('user')))
+        <script>
+            // Function to update unread notification count
+            function updateUnreadCount() {
+                fetch('{{ route("notifications.unread-count") }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('unread-notification-badge');
+                        if (badge) {
+                            if (data.count > 0) {
+                                badge.textContent = data.count > 99 ? '99+' : data.count;
+                                badge.style.display = 'flex';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching unread count:', error));
+            }
+
+            // Update count when page loads
+            document.addEventListener('DOMContentLoaded', function() {
+                updateUnreadCount();
+                // Update every 30 seconds
+                setInterval(updateUnreadCount, 30000);
+            });
+        </script>
+        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex">

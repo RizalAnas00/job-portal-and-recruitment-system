@@ -43,11 +43,6 @@
 
                     <!-- Content -->
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white {{ !$notification->is_read ? 'font-bold' : '' }}">
-                            @if($notification->company)
-                                <span class="text-blue-600 dark:text-blue-400">{{ $notification->company->company_name }}</span>
-                            @endif
-                        </p>
                         <p class="text-sm text-gray-700 dark:text-gray-300 mt-1 {{ !$notification->is_read ? 'font-semibold' : '' }}">
                             {{ $notification->message }}
                         </p>
@@ -59,7 +54,7 @@
                     <!-- Actions -->
                     <div class="flex-shrink-0 flex gap-2">
                         @if($notification->link_url)
-                            <form action="{{ route('notifications.mark-as-read', $notification) }}" method="POST" class="inline-block">
+                            <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
@@ -67,7 +62,7 @@
                                 </button>
                             </form>
                         @elseif(!$notification->is_read)
-                            <form action="{{ route('notifications.mark-as-read', $notification) }}" method="POST" class="inline-block">
+                            <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 text-sm font-medium">
