@@ -153,6 +153,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/subscriptions/{plan}', [SubscriptionController::class, 'confirmationOrder'])->name('subscriptions.confirm');
         Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
         Route::post('/subscriptions/cancel/{subscription}', [SubscriptionController::class, 'cancelSubscription'])->name('subscriptions.cancel')->withTrashed();
+
+        // Resume / CV
+        Route::get('/resume/{jobPosting}', [ResumeController::class, 'JobSeekerResume'])->name('resume.index');
     });
 
 
@@ -165,9 +168,6 @@ Route::middleware('auth')->group(function () {
 
         // User Dashboard
         Route::get('/dashboard', fn() => view('user.dashboard'))->name('dashboard');
-
-        // Resume / CV
-        Route::get('/resume', [ResumeController::class, 'index'])->name('resume.index');
 
         // Applications (User)
         Route::prefix('applications')->name('applications.')->group(function () {

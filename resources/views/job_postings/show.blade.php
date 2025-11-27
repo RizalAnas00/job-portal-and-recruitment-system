@@ -32,7 +32,7 @@
         </div>
 
         <div class="mt-6">
-            <a href="{{ route('job-postings.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            <a href="{{ back()->getTargetUrl() }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                 Kembali ke Daftar
             </a>
         </div>

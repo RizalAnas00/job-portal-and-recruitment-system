@@ -19,7 +19,13 @@
             </div>
         </div>
         <div class="px-4 my-2">
-            <strong class="text-primary-600 dark:text-primary-400 text-xl">Rp {{ $job->salary_range }}</strong>
+        @if (!$job->salary_range)
+            <span class="text-gray-500 dark:text-gray-400">Gaji Tidak Dilampirkan</span>
+        @else
+            <strong class="text-primary-600 dark:text-primary-400 text-xl">
+                @salary($job->salary_range)
+            </strong>
+        @endif
         </div>
     </div>
 
@@ -48,7 +54,7 @@
         <span class="text-gray-600 dark:text-gray-400">
             {{ ucfirst($job->type ?? 'Full-time') }}
         </span>
-        <a href="#"
+        <a href="{{ route('job-postings.show', $job) }}"
            class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
             {{ __('View details') }} →
         </a>

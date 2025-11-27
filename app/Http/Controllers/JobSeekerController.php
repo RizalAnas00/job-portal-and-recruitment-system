@@ -10,6 +10,7 @@ class JobSeekerController extends Controller
 {
     public function create()
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         abort_unless($user->hasRole('user'), 403);
         if ($user->jobSeeker) {
@@ -24,6 +25,8 @@ class JobSeekerController extends Controller
 
     public function store(Request $request)
     {
+        /** @var \App\Models\User */
+
         $user = Auth::user();
         abort_unless($user->hasRole('user'), 403);
 
@@ -51,6 +54,7 @@ class JobSeekerController extends Controller
 
     public function edit()
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         abort_unless($user->hasRole('user') && $user->jobSeeker, 403);
 
@@ -66,6 +70,7 @@ class JobSeekerController extends Controller
 
     public function update(Request $request)
     {
+        /** @var \App\Models\User */
         $user = Auth::user();
         abort_unless($user->hasRole('user') && $user->jobSeeker, 403);
 

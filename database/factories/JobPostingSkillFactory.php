@@ -16,8 +16,12 @@ class JobPostingSkillFactory extends Factory
      */
     public function definition(): array
     {
+        $skillIds = \App\Models\Skill::pluck('id')->toArray();
+        $jobPostingIds = \App\Models\JobPosting::pluck('id')->toArray();
+
         return [
-            //
+            'id_job_posting' => $this->faker->randomElement($jobPostingIds),
+            'id_skill' => $this->faker->randomElement($skillIds),    
         ];
     }
 }

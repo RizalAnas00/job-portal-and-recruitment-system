@@ -14,8 +14,6 @@ class JobPostingSeeder extends Seeder
     public function run(): void
     {
         // Create 50 job postings
-        for ($i = 0; $i < 50; $i++) {
-            JobPosting::factory()->create();
-        }
+        JobPosting::factory(50)->create();
     }
 }

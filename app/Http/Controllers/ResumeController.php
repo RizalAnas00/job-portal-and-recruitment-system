@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Resume;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -27,6 +29,12 @@ class ResumeController extends Controller
         return view('resumes.index', compact('resumes'));
     }
 
+    public function JobSeekerResume(JobPosting $jobPosting)
+    {        
+        Log::info('Job Posting for Resume List: ', ['jobPosting' => $jobPosting]);
+        return view('resumes.index', compact('jobPosting'));
+    }
+    
     /**
      * Show the form for creating a new resource.
      */

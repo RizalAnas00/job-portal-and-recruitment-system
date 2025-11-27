@@ -31,5 +31,9 @@ class AppServiceProvider extends ServiceProvider
             $user = Auth::user();
             return $user && $user->hasPermission($permission);
         });
+
+        Blade::directive('salary', function ($expression) {
+            return "<?php echo \\App\\Helpers\\FormatSalaryOldVersion::salaryRange($expression); ?>";
+        });
     }
 }
