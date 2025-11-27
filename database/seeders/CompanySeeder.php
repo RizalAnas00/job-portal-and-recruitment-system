@@ -51,6 +51,7 @@ class CompanySeeder extends Seeder
                 ]),
                 'address' => fake()->address(),
                 'is_verified' => fake()->boolean(20),
+                'logo_path' => fake()->imageUrl(),
             ]);
         }
     }

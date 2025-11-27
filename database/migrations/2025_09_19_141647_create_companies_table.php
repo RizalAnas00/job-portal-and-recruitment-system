@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('website');
             $table->string('industry');
             $table->text('address');
+            $table->string('logo_path')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->timestamps();
             // $table->softDeletes();

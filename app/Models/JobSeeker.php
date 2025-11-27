@@ -17,6 +17,7 @@ class JobSeeker extends Model
         'phone_number',
         'address',
         'profile_summary',
+        'profile_picture_path',
     ];
 
     // protected $hidden = [

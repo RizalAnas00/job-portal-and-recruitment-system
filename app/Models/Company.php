@@ -26,6 +26,7 @@ class Company extends Model
         'industry',
         'address',
         'is_verified',
+        'logo_path',
     ];
 
     /**

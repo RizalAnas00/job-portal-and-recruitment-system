@@ -30,18 +30,19 @@
                         @method('PUT')
 
                         <div>
-                            <x-input-label for="skills" value="Daftar Skill" />
-                            <select id="skills" name="skills[]" multiple size="8"
-                                class="mt-2 block w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
                                 @foreach ($allSkills as $skill)
-                                    <option value="{{ $skill->id }}" @selected($mySkillIds->contains($skill->id))>
-                                        {{ $skill->skill_name }}
-                                    </option>
+                                    <x-check-box-one
+                                        :skill="$skill"
+                                        :checked="$mySkillIds->contains($skill->id)"
+                                    />
                                 @endforeach
-                            </select>
+                            </div>
+
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                Tekan Ctrl/Cmd untuk memilih lebih dari satu skill.
+                                Centang skill yang sesuai dengan kemampuan Anda.
                             </p>
+
                         </div>
 
                         <div class="flex justify-end">

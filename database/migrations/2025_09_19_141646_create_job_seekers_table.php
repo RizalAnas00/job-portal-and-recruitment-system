@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('phone_number')->nullable();
             $table->text('address')->nullable();
+            $table->string('profile_picture_path')->nullable();
             $table->text('profile_summary')->nullable();
             $table->timestamps();
             // $table->softDeletes();

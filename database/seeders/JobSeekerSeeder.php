@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\JobSeeker;
+use App\Models\Skill;
 use Illuminate\Database\Seeder;
 
 class JobSeekerSeeder extends Seeder
@@ -11,27 +12,36 @@ class JobSeekerSeeder extends Seeder
     public function run(): void
     {
         $users = User::where('role_id', 2)->get();
+        $skills = Skill::all();
 
         if ($users->isEmpty()) {
-            echo "⚠️ Tidak ada user role_id = 2. Melewati JobSeekerSeeder...\n";
             return;
         }
 
+        // if ($skills->isEmpty()) {
+        // }
+
         foreach ($users as $user) {
-            // Cegah duplikasi JobSeeker untuk user yang sama
+
             if (JobSeeker::where('user_id', $user->id)->exists()) {
                 continue;
             }
 
-            JobSeeker::create([
+            $jobSeeker = JobSeeker::create([
                 'user_id' => $user->id,
                 'first_name' => fake()->firstName(),
                 'last_name' => fake()->lastName(),
                 'phone_number' => fake()->phoneNumber(),
                 'address' => fake()->address(),
                 'profile_summary' => fake()->paragraphs(3, true),
+                'profile_picture_path' => fake()->imageUrl(),
             ]);
-        }
 
+            // Assign 3–16 skill random unik
+            if ($skills->isNotEmpty()) {
+                $randomSkills = $skills->random(rand(3, 16))->pluck('id')->toArray();
+                $jobSeeker->skills()->sync($randomSkills);
+            }
+        }
     }
 }

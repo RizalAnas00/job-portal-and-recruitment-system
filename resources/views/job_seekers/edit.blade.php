@@ -56,21 +56,48 @@
                                 placeholder="Ceritakan pengalaman, keahlian utama, atau tujuan karier Anda.">{{ old('profile_summary', $jobSeeker->profile_summary) }}</textarea>
                         </div>
 
-                        <div>
+                        <div x-data="{ search: '' }">
                             <x-input-label for="skills" value="Skill yang Dikuasai" />
+
                             @php
                                 $selectedSkills = collect(old('skills', $selectedSkillIds?->toArray() ?? []));
                             @endphp
-                            <select id="skills" name="skills[]" multiple size="8"
-                                class="mt-2 block w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                                @foreach ($skills as $skill)
-                                    <option value="{{ $skill->id }}" @selected($selectedSkills->contains($skill->id))>
-                                        {{ $skill->skill_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <input
+                                type="text"
+                                x-model="search"
+                                placeholder="Cari skill..."
+                                class="mt-2 w-full rounded-lg border-gray-300 dark:border-gray-700 
+                                    dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600
+                                    focus:ring-indigo-500 dark:focus:ring-indigo-600 p-2"
+                            />
+
+                            <!-- Scroll Container -->
+                            <div class="mt-3 p-4 border border-gray-300 dark:border-gray-700 rounded-xl 
+                                        bg-white dark:bg-gray-900 max-h-80 overflow-y-auto">
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                                    @foreach ($skills as $skill)
+                                        <div
+                                            x-show="{{ json_encode(
+                                                strtolower($skill->skill_name)
+                                            ) }}.includes(search.toLowerCase())"
+                                            x-transition
+                                        >
+                                            <x-check-box-one
+                                                :skill="$skill"
+                                                :checked="$selectedSkills->contains($skill->id)"
+                                            />
+                                        </div>
+                                    @endforeach
+
+                                </div>
+
+                            </div>
+
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                Pilih skill yang relevan. Kami akan menggunakan data ini untuk rekomendasi lowongan.
+                                Centang skill yang sesuai dengan kemampuan Anda.
                             </p>
                         </div>
 

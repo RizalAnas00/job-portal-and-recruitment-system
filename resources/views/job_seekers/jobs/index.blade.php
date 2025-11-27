@@ -25,13 +25,13 @@
                             :value="$filters['location']" placeholder="Jakarta, Remote, dll." />
                     </div>
                     <div>
-                        <x-input-label for="job_type" value="Tipe Pekerjaan" />
-                        <select id="job_type" name="job_type"
-                            class="mt-1 block w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                            @foreach ($jobTypes as $value => $label)
-                                <option value="{{ $value }}" @selected($filters['job_type'] === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        <x-select-field-one
+                            id="job_type"
+                            name="job_type"
+                            label="Tipe Pekerjaan"
+                            :options="$jobTypes"
+                            :selected="$filters['job_type']"
+                        />
                     </div>
                     <div class="flex items-end">
                         <x-primary-button class="w-full justify-center">
