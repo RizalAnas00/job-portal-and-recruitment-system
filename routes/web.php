@@ -193,6 +193,9 @@ Route::middleware('auth')->group(function () {
 
         // Resume / CV
         Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
+        Route::get('resume/download/{resume}', [ResumeController::class, 'download'])->name('resume.download');
+        Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('resume.view');
+
 
         // Job Listings tailored for user
         Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');

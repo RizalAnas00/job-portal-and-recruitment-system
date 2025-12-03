@@ -3,6 +3,17 @@
     {{-- Left: Grid list --}}
     <div class="{{ $selectedResume ? 'w-1/2' : 'w-full' }}">
         <h1 class="text-2xl font-bold mb-4">Resume Saya</h1>
+        <div class="flex justify-end mb-4">
+        <button wire:click="openUploadModal" 
+                class="px-4 py-2 bg-primary-600 text-white rounded">
+            + Tambah Resume
+        </button>
+        </div>
+
+        @if($showUploadModal)
+            @include('livewire.resumes.upload-modal')
+        @endif
+
         <div 
             class="grid gap-4 
                 grid-cols-2 
@@ -22,7 +33,7 @@
                         h-36 flex flex-col justify-center items-center text-center
 
                         {{ $isActive 
-                                ? 'border-primary-400 shadow-md scale-105 bg-blue-50 dark:bg-blue-900/20' 
+                                ? 'border-primary-400 shadow-md scale-105 bg-primary-50 dark:bg-primary-900/20' 
                                 : 'hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-800' 
                         }}"
                 >
@@ -61,6 +72,19 @@
         >
             <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
                 {{ $selectedResume->resume_title }}
+                {{-- <a 
+                    href="{{ route('user.resume.download', $selectedResume) }}"
+                    class="text-sm text-primary-600 hover:underline ml-4"
+                >   
+                    Download
+                </a> --}}
+                <a 
+                    href="{{ route('user.resume.view', $selectedResume) }}"
+                    target="_blank"
+                    class="text-sm text-primary-600 dark:text-primary-400 hover:underline ml-2"
+                >   
+                    Lihat Full
+                </a>
             </h2>
 
             <div class="text-sm text-gray-600 dark:text-gray-300 mb-4">
@@ -73,5 +97,16 @@
             </div>
         </div>
     @endif
+
+    {{-- <div class="prose dark:prose-invert max-w-none">
+
+    @if ($selectedResume)
+        <iframe 
+            src="{{ asset('storage/' . $selectedResume['file_path']) }}"
+            class="w-full h-[80vh] border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm"
+        ></iframe>
+    @endif
+
+    </div> --}}
 
 </div>

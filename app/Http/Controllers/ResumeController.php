@@ -30,6 +30,26 @@ class ResumeController extends Controller
         return view('resumes.index', compact('resumes'));
     }
 
+    public function download(Resume $resume)
+    {
+        $path = Storage::disk('public')->path($resume->file_path);
+        return response()->download($path, $resume->file_name);
+    }
+
+    public function view(Resume $resume)
+    {
+        $path = Storage::disk('public')->path($resume->file_path);
+
+        if (!file_exists($path)) {
+            abort(404, "File tidak ditemukan.");
+        }
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$resume->resume_title.'.pdf"',
+        ]);
+    }
+
     public function userResume()
     {
         /**
