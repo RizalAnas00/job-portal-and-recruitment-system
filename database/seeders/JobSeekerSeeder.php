@@ -18,26 +18,34 @@ class JobSeekerSeeder extends Seeder
             return;
         }
 
-        // if ($skills->isEmpty()) {
-        // }
-
         foreach ($users as $user) {
 
             if (JobSeeker::where('user_id', $user->id)->exists()) {
                 continue;
             }
 
+            $first = fake()->firstName();
+            $last = fake()->lastName();
+            $fullName = "{$first} {$last}";
+
+            // Random warna HEX 6 digit
+            $bgColor = substr(str_shuffle('ABCDEF0123456789'), 0, 6);
+            $textColor = substr(str_shuffle('ABCDEF0123456789'), 0, 6);
+
+            // Placeholder dengan nama job seeker
+            $profilePicture = "https://placehold.co/640x640/{$bgColor}/{$textColor}?text=" . urlencode($fullName);
+
             $jobSeeker = JobSeeker::create([
                 'user_id' => $user->id,
-                'first_name' => fake()->firstName(),
-                'last_name' => fake()->lastName(),
-                'phone_number' => fake()->phoneNumber(),
+                'first_name' => $first,
+                'last_name' => $last,
+                'phone_number' => fake()->unique()->numerify('+62##########'),
                 'address' => fake()->address(),
                 'profile_summary' => fake()->paragraphs(3, true),
-                'profile_picture_path' => fake()->imageUrl(),
+                'profile_picture_path' => $profilePicture,
             ]);
 
-            // Assign 3–16 skill random unik
+            // Assign 3–16 random unique skills
             if ($skills->isNotEmpty()) {
                 $randomSkills = $skills->random(rand(3, 16))->pluck('id')->toArray();
                 $jobSeeker->skills()->sync($randomSkills);

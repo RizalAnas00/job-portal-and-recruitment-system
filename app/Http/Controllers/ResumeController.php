@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Resume;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -27,6 +28,23 @@ class ResumeController extends Controller
         }
 
         return view('resumes.index', compact('resumes'));
+    }
+
+    public function userResume()
+    {
+        /**
+         * @var User
+         */
+        $user = Auth::user();
+        $jobSeeker = $user->jobSeeker;
+
+        if (!$jobSeeker) {
+            abort(404, 'Job Seeker tidak ditemukan.');
+        }
+
+        $resumes = $jobSeeker->resumes()->get();
+
+        return view('resumes.user.my-resumes', compact('resumes'));
     }
 
     public function JobSeekerResume(JobPosting $jobPosting)

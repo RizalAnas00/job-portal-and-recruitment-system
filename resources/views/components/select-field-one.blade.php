@@ -29,10 +29,17 @@
         >
             <span x-text="selectedText" class="text-sm dark:text-gray-300"></span>
 
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none"
-                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <svg 
+                :class="open ? 'rotate-180 w-4 h-4 text-gray-500 dark:text-gray-400 ml-2' 
+                            : 'w-4 h-4 text-gray-500 dark:text-gray-400 ml-2'"
+                class="transition-transform duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+            >
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M19 9l-7 7-7-7" />
+                    d="M19 9l-7 7-7-7" />
             </svg>
         </button>
 

@@ -6,11 +6,22 @@
         <h1 class="text-gray-900 dark:text-gray-100 text-2xl font-bold">Daftar Lowongan</h1>
         <div class="flex items-center space-x-2">
             <form action="{{ route('job-postings.index') }}" method="GET" class="flex items-center space-x-2">
-                <select name="status" id="status" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                    <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Semua Status</option>
-                    <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open</option>
-                    <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Closed</option>
-                </select>
+                <div>
+                    @php
+                        $jobTypes = [
+                            'all' => 'Semua Tipe',
+                            'open' => 'Dibuka',
+                            'closed' => 'Ditutup',
+                        ];
+                    @endphp
+                    <x-select-field-one
+                        id="status"
+                        name="status"
+                        label="Status Lowongan"
+                        :options="$jobTypes"
+                        :selected="request('status') ?? 'all'"
+                    />
+                </div>
                 <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md">Filter</button>
             </form>
             @if(Auth::user()->hasRole('company'))

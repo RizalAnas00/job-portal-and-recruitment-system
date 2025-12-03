@@ -4,8 +4,8 @@
     <!-- Header -->
     <div class="flex flex-col border-b border-gray-100 dark:border-gray-700">
         <div class="px-4 pt-4 flex items-center gap-3">
-            @if ($job->company && $job->company->logo)
-                <img src="{{ asset('storage/' . $job->company->logo) }}" alt="{{ $job->company->company_name }}" class="w-12 h-12 rounded-lg object-cover">
+            @if ($job->company && $job->company->logo_path)
+                <img src="{{ $job->company->logo_path }}" alt="{{ $job->company->company_name }}" class="w-14 h-14 rounded-lg object-cover">
             @else
                 <div class="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">
                     @svg('fluentui-building-20', 'w-6 h-6')

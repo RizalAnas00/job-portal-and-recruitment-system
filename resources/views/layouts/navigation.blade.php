@@ -72,6 +72,9 @@
                                 <x-dropdown-link :href="route('user.skills.index')">
                                     {{ __('Skill & Rekomendasi') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('user.resume.my-resumes')">
+                                    {{ __('Resume Saya') }}
+                                </x-dropdown-link>
                             @endif
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Profil Saya') }}

@@ -191,6 +191,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/job-seeker/profile', [JobSeekerController::class, 'edit'])->name('job-seekers.edit');
         Route::put('/job-seeker/profile', [JobSeekerController::class, 'update'])->name('job-seekers.update');
 
+        // Resume / CV
+        Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
+
         // Job Listings tailored for user
         Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');
     });
