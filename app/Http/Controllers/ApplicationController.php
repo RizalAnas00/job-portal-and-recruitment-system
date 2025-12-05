@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\JobPosting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class ApplicationController extends Controller
@@ -29,7 +30,7 @@ class ApplicationController extends Controller
 
         if ($user->hasRole('user')) {
             // User hanya melihat lamaran miliknya
-            $query->where('job_seeker_id', $user->jobSeeker->id);
+            $query->where('id_job_seeker', $user->jobSeeker->id);
         } elseif ($user->hasRole('company')) {
             // Company melihat lamaran untuk semua lowongan miliknya
             $companyId = $user->company->id;
@@ -38,8 +39,17 @@ class ApplicationController extends Controller
             });
         }
 
+        // Log::info('Fetching applications for user ID: ' . $query->toSql());
+
         $applications = $query->latest()->paginate(10);
-        return view('applications.index', compact('applications'));
+
+        if ($user->hasRole('user')) {
+            return view('applications.user-applied-jobs', compact('applications'));
+        } elseif ($user->hasRole('company')) {
+            return view('applications.index_by_job_posting', compact('applications'));
+        } else {
+            abort(403, 'AKSES DITOLAK');
+        }
     }
 
     /**

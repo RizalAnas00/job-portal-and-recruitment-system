@@ -99,7 +99,7 @@
                 @endif
                 
                 @if (Auth::user()->hasRole('user'))
-                    <a href="{{ route('company.job-postings.index') }}"
+                    <a href="{{ route('user.applications.index') }}"
                         class="block px-2 py-1.5 rounded-md text-sm hover:bg-[#0f14aa]/20 transition {{ request()->routeIs('company.job-postings.create') ? 'bg-[#0f14aa]/20' : '' }}">
                         {{ __('My Applied Jobs') }}
                     </a>
@@ -118,14 +118,14 @@
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('user.jobs.*') ? 'bg-[#0f14aa]/30' : '' }}">
                 @svg('ionicon-briefcase-outline', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
-                    Job Recommendations
+                    {{ __('Recommended Jobs') }}
                 </span>
             </a>
             <a href="{{ route('user.skills.index') }}"
                 class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('user.skills.*') ? 'bg-[#0f14aa]/30' : '' }}">
                 @svg('ionicon-ribbon-outline', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
-                    My Skills
+                    {{ __('My Skills') }}
                 </span>
             </a>
         @endif
