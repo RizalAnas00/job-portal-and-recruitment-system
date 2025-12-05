@@ -210,6 +210,8 @@ Route::middleware('auth')->group(function () {
     // Job Postings (semua auth user)
     Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
 
+    Route::get('apply{application}', [ApplicationController::class, 'show'])->name('applications.show')->middleware('permission:application.read.own,application.read');
+
     // Interviews
     Route::prefix('interviews')->name('interviews.')->group(function () {
         Route::get('/', [InterviewController::class, 'index'])->name('index');

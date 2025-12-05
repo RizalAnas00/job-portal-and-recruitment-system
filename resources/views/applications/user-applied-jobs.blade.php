@@ -24,16 +24,16 @@
 
                 <td class="px-6 py-4">{{ $application->jobPosting->job_title ?? 'N/A' }}</td>
 
-                <td class="px-6 py-4">{{ $application->jobPosting->company->name ?? 'N/A' }}</td>
+                <td class="px-6 py-4">{{ $application->jobPosting->company->company_name ?? 'N/A' }}</td>
 
                 <td class="px-6 py-4">{{ $application->application_date }}</td>
 
                 <td class="px-6 py-4 capitalize">
-                    {{ str_replace('_', ' ', $application->status) }}
+                    {{ __(ucfirst(str_replace('_', ' ', $application->status))) }}
                 </td>
 
                 <td class="px-6 py-4">
-                    <a href="#" 
+                    <a href="{{ route( 'applications.show', $application ) }}" 
                     class="text-indigo-600 hover:text-indigo-900">
                         View Details
                     </a>

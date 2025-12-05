@@ -52,6 +52,28 @@ class ApplicationController extends Controller
         }
     }
 
+    public function show(Application $application)
+    {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
+        // Otorisasi: Hanya user pemilik lamaran atau company pemilik lowongan yang bisa melihat
+        if (
+            ($user->hasRole('user') && $user->jobSeeker?->id !== $application->id_job_seeker) &&
+            !($user->hasRole('company') && $user->company?->id === $application->jobPosting->id_company)
+        ) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
+        if ($user->hasRole('user')) {
+            return view('applications.user-show-app', compact('application'));
+        } elseif ($user->hasRole('company')) {
+            return view('applications.show', compact('application'));
+        } else {
+            abort(403, 'AKSES DITOLAK');
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */
