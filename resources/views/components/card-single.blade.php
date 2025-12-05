@@ -37,7 +37,7 @@
 
         <div class="flex flex-wrap gap-2 mt-2">
             @forelse ($job->skills->take(3) as $skill)
-                <span class="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-xs px-2 py-1 rounded-md">
+                <span class="bg-transparent border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-gray-100 text-xs px-2 py-1 rounded-md">
                     {{ $skill->skill_name }}
                 </span>
             @empty

@@ -10,7 +10,7 @@
     {{-- Header --}}
     <button @click="open = !open"
         class="w-full flex justify-between items-center px-5 py-4 
-               bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 
+               bg-gray-300 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 
                font-semibold text-gray-900 dark:text-white">
 
         <span>{{ $title }}</span>

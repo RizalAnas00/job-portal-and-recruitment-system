@@ -2,6 +2,6 @@
 
 @section('content')
 
-    <x-job-detail :jobPosting="$application->jobPosting" />
+    <x-job-detail :jobPosting="$jobPosting" />
 
 @endsection

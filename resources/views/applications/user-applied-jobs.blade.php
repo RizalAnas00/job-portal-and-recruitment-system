@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-6">
-    <div class="flex justify-between items-center mb-4">
+    {{-- <div class="flex justify-between items-center mb-4">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Applied Jobs</h1>
-    </div>
+    </div> --}}
 
     @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -18,7 +18,7 @@
         </div>
     @endif
 
-    <x-table :headers="['Job Title', 'Company', 'Applied On', 'Status', 'Actions']">
+    <x-table :headers="['Pekerjaan', 'Perusahaan', 'Tanggal Melamar', 'Status', 'Aksi']">
         @forelse($applications as $application)
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750">
 
@@ -29,7 +29,7 @@
                 <td class="px-6 py-4">{{ $application->application_date }}</td>
 
                 <td class="px-6 py-4 capitalize">
-                    {{ __(ucfirst(str_replace('_', ' ', $application->status))) }}
+                    {{ __(ucfirst(str_replace('_', ' ', $application->status)) ) }}
                 </td>
 
                 <td class="px-6 py-4">
@@ -44,7 +44,7 @@
             <tr>
                 <td colspan="5" 
                     class="italic px-6 py-4 text-center text-gray-600 dark:text-gray-400">
-                    No applications found.
+                    Anda belum melamar lowongan pekerjaan apapun.
                 </td>
             </tr>
         @endforelse

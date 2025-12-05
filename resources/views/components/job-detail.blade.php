@@ -51,7 +51,7 @@
         {{-- COMPANY & DETAILS --}}
         <div class="mt-3 flex flex-wrap gap-3 items-center">
 
-            <span class="px-3 py-1 rounded-lg border font-semibold text-primary-600 dark:text-primary-400 
+            <span class="text-lg px-3 py-1 rounded-lg border font-semibold text-primary-600 dark:text-primary-200 
                          border-primary-400/50 bg-primary-400/10">
                 {{ $jobPosting->company?->company_name ?? '-' }}
             </span>
