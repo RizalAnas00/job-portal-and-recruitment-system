@@ -11,15 +11,21 @@
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             
-            <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ auth()->check() ? route('dashboard') : url('/') }}" class="flex items-center gap-2">
-                    <x-application-logo class="h-16 w-auto text-primary-600 dark:text-primary-400" />
-                    @auth
-                        <span class="font-bold text-lg text-gray-700 dark:text-gray-200">{{ config('app.name') }}</span>
-                    @else
-                        <span class="font-bold text-lg text-gray-100 dark:text-gray-200">{{ config('app.name') }}</span>
-                    @endauth
+
+                    <span class="block dark:hidden">
+                        <x-application-logo class="h-16 w-auto text-primary-600"/>
+                    </span>
+
+                    <span class="hidden dark:block">
+                        <x-application-logo-light class="h-16 w-auto text-primary-300"/>
+                    </span>
+
+                    <span class="font-bold text-lg text-gray-700 dark:text-gray-200">
+                        {{ config('app.name') }}
+                    </span>
+
                 </a>
             </div>
 
