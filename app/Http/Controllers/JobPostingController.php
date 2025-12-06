@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
 use App\Models\JobPosting;
 use App\Models\Skill;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -109,7 +107,8 @@ class JobPostingController extends Controller
             'location' => 'required|string|max:255',
             'job_type' => 'required|in:full_time,part_time,contract,internship,temporary,freelance,remote',
             'job_description' => 'required|string',
-            'salary_range' => 'nullable|string|max:255',
+            'min_salary' => 'nullable|numeric|min:0',
+            'max_salary' => 'nullable|numeric|min:0|gte:min_salary',
             'posted_date' => 'required|date',
             'closing_date' => 'required|date|after:posted_date',
             'skills' => 'nullable|array',
@@ -129,7 +128,8 @@ class JobPostingController extends Controller
                     'location' => $validatedData['location'],
                     'job_type' => $validatedData['job_type'],
                     'job_description' => $validatedData['job_description'],
-                    'salary_range' => $validatedData['salary_range'],
+                    'min_salary' => $validatedData['min_salary'] ?? null,
+                    'max_salary' => $validatedData['max_salary'] ?? null,
                     'posted_date' => $openAt,
                     'closing_date' => $closeAt,
                     'status' => $status,
@@ -181,17 +181,22 @@ class JobPostingController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
+        Log::info("request : ", $request->all());
+
         $validated = $request->validate([
             'job_title' => 'required|string|max:255',
             'job_description' => 'required|string',
             'location' => 'required|string|max:255',
             'job_type' => ['required', Rule::in(['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote'])],
-            'salary_range' => 'nullable|string|max:100',
+            'min_salary' => 'nullable|numeric|min:0',
+            'max_salary' => 'nullable|numeric|min:0|gte:min_salary',           
             'posted_date' => 'required|date',
             'closing_date' => 'required|date|after:posted_date',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id'
         ]);
+
+        Log::info("validated : ", $validated);
 
         $openAt = Carbon::parse($validated['posted_date']);
         $closeAt = Carbon::parse($validated['closing_date']);

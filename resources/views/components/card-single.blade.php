@@ -19,11 +19,14 @@
             </div>
         </div>
         <div class="px-4 my-2">
-        @if (!$job->salary_range)
+        @if (!$job->min_salary && !$job->max_salary)
             <span class="text-gray-500 dark:text-gray-400">Gaji Tidak Dilampirkan</span>
         @else
             <strong class="text-primary-600 dark:text-primary-400 text-xl">
-                @salary($job->salary_range)
+                {{ __('Rp ') }}{{ number_format($job->min_salary, 0, ',', '.') }}
+                @if ($job->max_salary)
+                    - {{ __('Rp ') }}{{ number_format($job->max_salary, 0, ',', '.') }}
+                @endif
             </strong>
         @endif
         </div>
@@ -51,12 +54,29 @@
 
     <!-- Footer -->
     <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900/40 flex justify-between items-center text-sm border-t border-gray-100 dark:border-gray-700 mt-auto">
+
         <span class="text-gray-600 dark:text-gray-400">
             {{ ucfirst($job->type ?? 'Full-time') }}
         </span>
-        <a href="{{ route('job-postings.show', $job) }}"
-           class="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
-            {{ __('View details') }} →
-        </a>
+
+        <div class="flex items-center gap-3">
+
+            @if(auth()->check() 
+                && auth()->user()->hasRole('company') 
+                && auth()->user()->company?->id === $job->company?->id)
+
+                <a href="{{ route('job-postings.edit', $job) }}"
+                    class="text-gray-600 dark:text-gray-400 font-normal hover:underline">
+                    {{ __('Edit') }}
+                </a>
+            @endif
+
+            <a href="{{ route('job-postings.show', $job) }}"
+            class="text-primary-600 dark:text-primary-400 font-medium hover:underline">
+                {{ __('View details') }} →
+            </a>
+        </div>
+
     </div>
+
 </div>

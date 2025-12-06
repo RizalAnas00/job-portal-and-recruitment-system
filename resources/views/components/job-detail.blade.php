@@ -69,10 +69,16 @@
 
         {{-- SALARY --}}
         <div class="mt-6">
-            <span class="text-2xl font-bold tracking-wide px-3 py-1 rounded-xl
-                         border border-primary-500 dark:border-primary-400
-                         text-primary-700 dark:text-primary-300">
-                @salary($jobPosting->salary_range)
+            <span class="{{ !$jobPosting->min_salary && !$jobPosting->max_salary ? 'text-gray-500 dark:text-gray-400 italic' : 
+            'text-2xl font-bold tracking-wide px-3 py-1 rounded-xl border border-primary-500 dark:border-primary-400 text-primary-700 dark:text-primary-300' }}">
+                @if (!$jobPosting->min_salary && !$jobPosting->max_salary)
+                    Gaji Tidak Dilampirkan
+                @else
+                    {{ __('Rp ') }}{{ number_format($jobPosting->min_salary, 0, ',', '.') }}
+                    @if ($jobPosting->max_salary)
+                        - {{ __('Rp ') }}{{ number_format($jobPosting->max_salary, 0, ',', '.') }}
+                    @endif
+                @endif
             </span>
         </div>
 

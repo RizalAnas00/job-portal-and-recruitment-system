@@ -4,8 +4,8 @@
     <div class="container">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
         <h1 class="text-gray-900 dark:text-gray-100 text-2xl font-bold">Daftar Lowongan</h1>
-        <div class="flex items-center space-x-2">
-            <form action="{{ route('job-postings.index') }}" method="GET" class="flex items-center space-x-2">
+        <div class="flex items-end space-x-2">
+            <form action="{{ route('job-postings.index') }}" method="GET" class="flex flex-wrap gap-3 items-end">
                 <div>
                     @php
                         $jobTypes = [
@@ -15,17 +15,21 @@
                         ];
                     @endphp
                     <x-select-field-one
-                        id="status"
-                        name="status"
-                        label="Status Lowongan"
-                        :options="$jobTypes"
-                        :selected="request('status') ?? 'all'"
-                    />
-                </div>
-                <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md">Filter</button>
+                            id="status"
+                            name="status"
+                            label="Status Lowongan"
+                            :options="$jobTypes"
+                            :selected="request('status') ?? 'all'"
+                        />
+                    </div>
+
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-5 rounded-md h-fit">
+                        Filter
+                    </button>
             </form>
             @if(Auth::user()->hasRole('company'))
-                <a href="{{ route('company.job-postings.create') }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md">
+                <a href="{{ route('company.job-postings.create') }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2.5 px-4 rounded-md">
                     Buat Lowongan Baru
                 </a>
             @endif
@@ -68,7 +72,10 @@
                 </p>
                 <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     <span>Skills: {{ $job->skills->pluck('skill_name')->join(', ') ?: '-' }}</span> |
-                    <span>Gaji: {{ $job->salary_range ?? '-' }}</span> |
+                    <span>Gaji: 
+                        {{ $job->min_salary ? 'Rp ' . number_format($job->min_salary, 0, ',', '.') : '-' }} 
+                        - {{ $job->max_salary ? 'Rp ' . number_format($job->max_salary, 0, ',', '.') : '-' }}
+                    </span> |
                     <span>Buka: {{ optional($job->posted_date)->format('d M Y H:i') ?? '-' }}</span> |
                     <span>Tutup: {{ optional($job->closing_date)->format('d M Y H:i') ?? '-' }}</span>
                 </div>
@@ -105,7 +112,7 @@
         </ul>
         
     @else
-        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-3 list-none">
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 list-none">
             @forelse($jobPostings as $job)
                 <li><x-card-single :job="$job" /></li>
             @empty

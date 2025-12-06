@@ -5,6 +5,12 @@
 
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            @if (session('error'))
+                <div class="bg-red-100 dark:bg-red-600/20 border border-red-400 dark:border-red-400 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg relative" role="alert">
+                    <strong class="font-bold">Error!</strong>
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>  
+            @endif
 
             <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
                 @php

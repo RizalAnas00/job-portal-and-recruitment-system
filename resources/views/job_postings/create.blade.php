@@ -44,18 +44,33 @@
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label for="salary_range" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gaji (Contoh: Rp 5.000.000 - Rp 7.000.000)</label>
-                <input type="text" id="salary_range" name="salary_range" value="{{ old('salary_range') }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+            <div class="grid md:grid-cols-2 md:gap-6 mb-6">
+                <x-input-currency name="min_salary" label="Gaji Minimum (Rp)"/>
+                <x-input-currency name="max_salary" label="Gaji Maksimum (Rp)"/>
             </div>
 
             <div class="mb-4">
-                <label for="skills" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Skills (Ctrl/Cmd + click untuk memilih banyak)</label>
-                <select id="skills" name="skills[]" multiple class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    @foreach($skills as $skill)
-                        <option value="{{ $skill->id }}" {{ in_array($skill->id, old('skills', [])) ? 'selected' : '' }}>{{ $skill->skill_name }}</option>
-                    @endforeach
-                </select>
+                <div class="mt-3 p-4 border border-gray-300 dark:border-gray-500 rounded-xl 
+                            bg-gray-50 dark:bg-gray-800 max-h-80 overflow-y-auto">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+
+                        @foreach ($skills as $skill)
+                            <div
+                                x-show="{{ json_encode(
+                                    strtolower($skill->skill_name)
+                                ) }}.includes(search.toLowerCase())"
+                                x-transition
+                            >
+                                <x-check-box-one
+                                    :skill="$skill"
+                                />
+                            </div>
+                        @endforeach
+
+                    </div>
+
+                </div>
             </div>
 
             <div class="grid md:grid-cols-2 md:gap-6 mb-6">

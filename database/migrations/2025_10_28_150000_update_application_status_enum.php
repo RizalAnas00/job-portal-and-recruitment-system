@@ -13,12 +13,30 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'mysql') {
-            DB::statement("ALTER TABLE applications MODIFY status ENUM('pending','reviewed','accepted','rejected','applied','under_review','interview_scheduled','interviewing','offered','hired') DEFAULT 'pending'");
+
+            DB::statement("
+                UPDATE applications
+                SET status='pending'
+                WHERE status NOT IN (
+                    'pending','reviewed','accepted','rejected',
+                    'applied','under_review','interview_scheduled',
+                    'interviewing','offered','hired'
+                ) OR status IS NULL OR status=''
+            ");
+
+            DB::statement("
+                ALTER TABLE applications MODIFY status ENUM(
+                    'pending','reviewed','accepted','rejected',
+                    'applied','under_review','interview_scheduled',
+                    'interviewing','offered','hired'
+                ) DEFAULT 'pending'
+            ");
+
             return;
         }
 
         if ($driver === 'pgsql') {
-            $values = ['applied', 'under_review', 'interview_scheduled', 'interviewing', 'offered', 'hired'];
+            $values = ['applied','under_review','interview_scheduled','interviewing','offered','hired'];
 
             foreach ($values as $value) {
                 DB::statement(<<<SQL
@@ -35,19 +53,20 @@ SQL);
             return;
         }
 
-        // SQLite doesn't support ALTER COLUMN for ENUM, so we need to recreate the table
         if ($driver === 'sqlite') {
-            // SQLite workaround: Create new table with updated enum values
             DB::statement('PRAGMA foreign_keys=off');
-            
-            // Create temporary table with new schema
+
             DB::statement("
                 CREATE TABLE applications_new (
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     id_job_seeker INTEGER NOT NULL,
                     id_job_posting INTEGER NOT NULL,
                     application_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                    status TEXT DEFAULT 'pending' NOT NULL CHECK(status IN ('pending','reviewed','accepted','rejected','applied','under_review','interview_scheduled','interviewing','offered','hired')),
+                    status TEXT DEFAULT 'pending' NOT NULL CHECK(status IN (
+                        'pending','reviewed','accepted','rejected',
+                        'applied','under_review','interview_scheduled',
+                        'interviewing','offered','hired'
+                    )),
                     cover_letter TEXT,
                     created_at DATETIME,
                     updated_at DATETIME,
@@ -56,21 +75,14 @@ SQL);
                     FOREIGN KEY (id_job_posting) REFERENCES job_postings(id)
                 )
             ");
-            
-            // Copy data from old table
+
             DB::statement("INSERT INTO applications_new SELECT * FROM applications");
-            
-            // Drop old table
             DB::statement("DROP TABLE applications");
-            
-            // Rename new table
             DB::statement("ALTER TABLE applications_new RENAME TO applications");
-            
             DB::statement('PRAGMA foreign_keys=on');
-            
-            return;
         }
     }
+
 
     /**
      * Reverse the migrations.
@@ -80,11 +92,28 @@ SQL);
         $driver = DB::getDriverName();
 
         if ($driver === 'mysql') {
-            DB::statement("ALTER TABLE applications MODIFY status ENUM('pending','reviewed','accepted','rejected') DEFAULT 'pending'");
+
+            // 🔥 convert semua status baru menjadi pending dulu
+            DB::statement("
+                UPDATE applications
+                SET status='pending'
+                WHERE status NOT IN ('pending','reviewed','accepted','rejected');
+            ");
+
+            DB::statement("
+                ALTER TABLE applications MODIFY status ENUM(
+                    'pending','reviewed','accepted','rejected'
+                ) DEFAULT 'pending'
+            ");
+        }
+        
+        if ($driver === 'mysql') {
+            DB::statement("
+                ALTER TABLE applications MODIFY status ENUM(
+                    'pending','reviewed','accepted','rejected'
+                ) DEFAULT 'pending'
+            ");
         }
 
-        // PostgreSQL enumerations cannot remove values easily; no-op for other drivers.
     }
 };
-
-

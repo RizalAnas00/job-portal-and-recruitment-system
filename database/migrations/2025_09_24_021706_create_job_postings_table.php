@@ -18,7 +18,8 @@ return new class extends Migration
             $table->text('job_description')->nullable();
             $table->string('location'); // not null
             $table->enum('job_type', ['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote'])->default('full_time');
-            $table->string('salary_range')->nullable();
+            $table->decimal('min_salary', 15, 0)->nullable();
+            $table->decimal('max_salary', 15, 0)->nullable();
             $table->timestamp('posted_date')->useCurrent();
             $table->timestamp('closing_date')->nullable();
             $table->enum('status', ['draft', 'open', 'paused', 'closed', 'archived'])->default('open');
