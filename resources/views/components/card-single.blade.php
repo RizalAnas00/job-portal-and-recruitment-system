@@ -5,7 +5,7 @@
     <div class="flex flex-col border-b border-gray-100 dark:border-gray-700">
         <div class="px-4 pt-4 flex items-center gap-3">
             @if ($job->company && $job->company->logo_path)
-                <img src="{{ $job->company->logo_path }}" alt="{{ $job->company->company_name }}" class="w-14 h-14 rounded-lg object-cover">
+                <img src="{{ $job->company->logo_path }}" alt="{{ $job->company->company_name }}" class="max-h-[88px] max-w-[88px] rounded-lg object-cover">
             @else
                 <div class="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400">
                     @svg('fluentui-building-20', 'w-6 h-6')
@@ -14,8 +14,19 @@
     
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $job->job_title }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-300">{{ $job->company->company_name ?? 'N/A' }}</p>
+                @if (Auth::user()->hasRole('user'))                
+                    <p class="text-sm text-gray-500 dark:text-gray-300">{{ $job->company->company_name ?? 'N/A' }}</p>
+                @endif
                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ $job->location ?? 'N/A' }}</p>
+                @if ($job->status === 'archived')
+                    <span class="px-2 py-1 mt-2 min-w-28 justify-center inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-600/20 dark:border dark:border-red-400 dark:text-red-200">
+                        Archived
+                    </span>
+                @elseif ($job->status === 'draft')
+                    <span class="px-2 py-1 mt-2 min-w-28 justify-center inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-600/20 dark:border dark:border-yellow-400 dark:text-yellow-200">
+                        Draft
+                    </span>
+                @endif
             </div>
         </div>
         <div class="px-4 my-2">
@@ -49,6 +60,7 @@
             @if ($job->skills->count() > 3)
                 <span class="text-xs text-gray-500">+{{ $job->skills->count() - 3 }} {{ __('more') }}</span>
             @endif
+            
         </div>
     </div>
 

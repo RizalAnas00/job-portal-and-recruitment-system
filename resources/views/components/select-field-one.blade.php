@@ -27,11 +27,11 @@
                    rounded-md text-left shadow-sm hover:bg-gray-50
                    dark:hover:bg-gray-800 transition"
         >
-            <span x-text="selectedText" class="text-sm dark:text-gray-300"></span>
+            <span x-text="selectedText" class="text-sm text-gray-700 dark:text-gray-300"></span>
 
             <svg 
-                :class="open ? 'rotate-180 w-4 h-4 text-gray-500 dark:text-gray-400 ml-2' 
-                            : 'w-4 h-4 text-gray-500 dark:text-gray-400 ml-2'"
+                :class="open ? 'rotate-180 w-4 h-4 text-gray-700 dark:text-gray-400 ml-2' 
+                            : 'w-4 h-4 text-gray-700 dark:text-gray-400 ml-2'"
                 class="transition-transform duration-200"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -57,9 +57,9 @@
                     <button
                         type="button"
                         class="w-full text-left px-4 py-2 text-sm
-                               hover:bg-indigo-50 dark:hover:bg-indigo-900/40
-                               hover:text-indigo-600 dark:hover:text-indigo-300
-                               dark:text-gray-200"
+                               hover:bg-primary-50 dark:hover:bg-primary-900/40
+                               hover:text-primary-600 dark:hover:text-primary-300
+                               dark:text-gray-200 text-gray-800"
                         @click="
                             selectedText = '{{ $text }}';
                             $el.closest('[x-data]').querySelector('input').value = '{{ $value }}';

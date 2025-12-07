@@ -70,7 +70,7 @@ class JobPosting extends Model
         static::query()
             ->whereNotNull('posted_date')
             ->whereNotNull('closing_date')
-            ->whereIn('status', ['draft', 'open', 'closed'])
+            ->whereIn('status', ['open', 'closed'])
             ->whereColumn('posted_date', '<=', 'closing_date')
             ->where('posted_date', '<=', $now)
             ->where('closing_date', '>=', $now)
@@ -80,7 +80,7 @@ class JobPosting extends Model
         static::query()
             ->whereNotNull('posted_date')
             ->whereNotNull('closing_date')
-            ->whereIn('status', ['draft', 'open', 'closed'])
+            ->whereIn('status', ['open', 'closed'])
             ->where(function ($query) use ($now) {
                 $query->where('closing_date', '<', $now)
                     ->orWhere('posted_date', '>', $now);

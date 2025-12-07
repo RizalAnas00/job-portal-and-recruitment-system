@@ -22,7 +22,64 @@ class JobPostingController extends Controller
         /** @var \App\Models\User */
         $user = Auth::user();
         JobPosting::refreshScheduledStatuses();
-        $query = JobPosting::with('company', 'skills')->latest();
+        // $query = JobPosting::with('company', 'skills')->latest();
+        
+        $query = JobPosting::with(['company', 'skills']);
+        if($user->hasRole('user')) {
+            $query->where('posted_date', '<=', now())
+                ->where(function($q) {
+                    $q->whereNull('closing_date')
+                        ->orWhere('closing_date', '>=', now());
+                })
+                ->whereNotIn('status', ['draft', 'archived']);
+        }
+
+        if ($user->hasRole('company')) {
+            if ($user->company && !$request->boolean('all')) {
+                $query->where('id_company', $user->company->id);
+            }
+        }
+
+        $query->when($request->filled('search'), function($q) use ($request) {
+            $search = $request->search;
+
+            $q->where(function($x) use ($search) {
+                $x->where('job_title', 'LIKE', "%$search%")
+                ->orWhere('location', 'LIKE', "%$search%")
+                ->orWhereHas('company', fn($c) => $c->where('company_name', 'LIKE', "%$search%"))
+                ->orWhereHas('skills', fn($s) => $s->where('skill_name', 'LIKE', "%$search%"));
+            });
+
+            $q->select('*')->selectSub(function($sq) use ($search) {
+                $sq->selectRaw("
+                    CASE
+                        WHEN job_title = ? THEN 6
+                        WHEN job_title LIKE ? THEN 5
+                        WHEN job_title LIKE ? THEN 4
+                        WHEN EXISTS (SELECT 1 FROM companies c WHERE c.id = job_postings.id_company AND c.company_name LIKE ?) THEN 3
+                        WHEN location LIKE ? THEN 2
+                        WHEN EXISTS (
+                            SELECT 1 FROM job_posting_skill jps
+                            JOIN skills s ON s.id = jps.id_skill
+                            WHERE jps.id_job_posting = job_postings.id
+                            AND s.skill_name LIKE ?
+                        ) THEN 1
+                        ELSE 0
+                    END
+                ", [
+                    $search,          // exact
+                    "$search%",       // starts with search
+                    "%$search%",      // contains anywhere
+                    "%$search%",      // company
+                    "%$search%",      // location
+                    "%$search%"       // skill
+                ]);
+            }, 'relevance');
+
+            // Sorting berdasarkan relevansi lalu terbaru
+            $q->orderByDesc('relevance')
+            ->orderBy('created_at', 'desc');
+        });
 
         // Jika yang login adalah 'company', tampilkan hanya lowongan milik mereka.
         if ($user->hasRole('company')) {
@@ -37,11 +94,15 @@ class JobPostingController extends Controller
             }
         }
 
-        // Apply status filter if present
-        if ($request->has('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
+        if ($request->filled('status') && $request->status !== 'all') {
+            if ($user->hasRole('user')) {
+                $query->where('status', $request->status)
+                    ->whereNotIn('status', ['draft', 'archived']);
+            } else {
+                $query->where('status', $request->status);
+            }
         }
-
+        
         $jobPostings = $query->paginate(12);
         // Log::info("query : ", $jobPostings->toArray());
         return view('job_postings.index', compact('jobPostings'));
@@ -49,10 +110,41 @@ class JobPostingController extends Controller
 
     public function show(JobPosting $jobPosting)
     {
-        // Eager load relasi untuk ditampilkan di halaman detail
         JobPosting::refreshScheduledStatuses();
+        
         $jobPosting->load('company', 'skills');
-        return view('job_postings.show', compact('jobPosting'));
+
+        /** @var \App\Models\User */
+        $user        = Auth::user();
+
+        $userSkills  = $user?->jobSeeker?->skills->pluck('skill_name')->toArray() ?? [];
+        $postingSkills = $jobPosting->skills->pluck('skill_name')->toArray();
+
+        $deadline   = $jobPosting->closing_date;
+        $isExpired  = $deadline && now()->greaterThan($deadline);
+        $hoursLeft  = $deadline ? now()->diffInHours($deadline, false) : null;
+        $isUrgent   = !$isExpired && $hoursLeft !== null && $hoursLeft <= 24;
+
+        $matchedSkills = array_intersect($userSkills, $postingSkills);
+        $matchCount    = count($matchedSkills);
+
+        $isCompanyOwner = $user?->hasRole('company') &&
+                        $user?->company?->id == $jobPosting->company?->id;
+
+        $hasApplied = $user?->jobSeeker?->applications()
+            ->where('id_job_posting', $jobPosting->id)
+            ->exists();
+
+        return view('job_postings.show', compact(
+            'jobPosting',
+            'matchedSkills',
+            'matchCount',
+            'isExpired',
+            'isUrgent',
+            'hoursLeft',
+            'isCompanyOwner',
+            'hasApplied'
+        ));
     }
 
     /**
@@ -165,7 +257,9 @@ class JobPostingController extends Controller
         }
 
         $skills = Skill::orderBy('skill_name')->get();
-        return view('job_postings.edit', compact('jobPosting', 'skills'));
+        $selectedSkillIds = $jobPosting->skills()->pluck('skills.id');
+
+        return view('job_postings.edit', compact('jobPosting', 'skills', 'selectedSkillIds'));
     }
 
     /**

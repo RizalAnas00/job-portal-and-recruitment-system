@@ -22,22 +22,22 @@
 
             <div class="mb-4">
                 <label for="job_title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul</label>
-                <input type="text" id="job_title" name="job_title" value="{{ old('job_title', $jobPosting->job_title) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                <input type="text" id="job_title" name="job_title" value="{{ old('job_title', $jobPosting->job_title) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
             </div>
 
             <div class="mb-4">
                 <label for="job_description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi</label>
-                <textarea id="job_description" name="job_description" rows="6" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>{{ old('job_description', $jobPosting->job_description) }}</textarea>
+                <textarea id="job_description" name="job_description" rows="6" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>{{ old('job_description', $jobPosting->job_description) }}</textarea>
             </div>
 
             <div class="grid md:grid-cols-2 md:gap-6">
                 <div class="mb-4">
                     <label for="location" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lokasi</label>
-                    <input type="text" id="location" name="location" value="{{ old('location', $jobPosting->location) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
+                    <input type="text" id="location" name="location" value="{{ old('location', $jobPosting->location) }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>
                 </div>
                 <div class="mb-4">
                     <label for="job_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Pekerjaan</label>
-                    <select id="job_type" name="job_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                    <select id="job_type" name="job_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                         @foreach(['full_time','part_time','contract','internship','temporary','freelance','remote'] as $type)
                             <option value="{{ $type }}" {{ old('job_type', $jobPosting->job_type) == $type ? 'selected' : '' }}>{{ str_replace('_', ' ', ucfirst($type)) }}</option>
                         @endforeach
@@ -46,9 +46,13 @@
             </div>
 
             <div class="grid md:grid-cols-2 md:gap-6 mb-6">
-                <x-input-currency name="min_salary" label="Gaji Minimum (Rp)"/>
-                <x-input-currency name="max_salary" label="Gaji Maksimum (Rp)"/>
+                <x-input-currency name="min_salary" label="Gaji Minimum (Rp)" value="{{ old('min_salary', $jobPosting->min_salary) }}"/>
+                <x-input-currency name="max_salary" label="Gaji Maksimum (Rp)" value="{{ old('max_salary', $jobPosting->max_salary)}}"/>
             </div>
+
+            @php
+                $selectedSkills = collect(old('skills', $selectedSkillIds?->toArray() ?? []));
+            @endphp
 
             <div class="mb-4">
                 <div class="mt-3 p-4 border border-gray-300 dark:border-gray-500 rounded-xl 
@@ -65,6 +69,7 @@
                             >
                                 <x-check-box-one
                                     :skill="$skill"
+                                    :checked="$selectedSkills->contains($skill->id)"
                                 />
                             </div>
                         @endforeach
@@ -79,18 +84,18 @@
                     <label for="posted_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Waktu Buka (Open Date)</label>
                     <input type="datetime-local" id="posted_date" name="posted_date"
                         value="{{ old('posted_date', optional($jobPosting->posted_date)->format('Y-m-d\TH:i')) }}"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
                 <div>
                     <label for="closing_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Waktu Tutup (Close Date)</label>
                     <input type="datetime-local" id="closing_date" name="closing_date"
                         value="{{ old('closing_date', optional($jobPosting->closing_date)->format('Y-m-d\TH:i')) }}"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                 </div>
             </div>
 
             <div class="flex items-center space-x-4">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Perbarui</button>
+                <button type="submit" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded">Perbarui</button>
                 <a href="{{ route('job-postings.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">Batal</a>
             </div>
         </form>

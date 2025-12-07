@@ -1,46 +1,54 @@
-@extends('layouts.app')
+@extends('job_postings.layout')
 
 @section('content')
     <div class="container">
+        @if(session('success'))
+            <div class="bg-green-100 dark:bg-green-600/20 border border-green-400 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        <h1 class="text-gray-900 dark:text-gray-100 text-3xl font-bold mb-6">
+            Daftar Lowongan
+        </h1>
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
-        <h1 class="text-gray-900 dark:text-gray-100 text-2xl font-bold">Daftar Lowongan</h1>
-        <div class="flex items-end space-x-2">
-            <form action="{{ route('job-postings.index') }}" method="GET" class="flex flex-wrap gap-3 items-end">
-                <div>
-                    @php
-                        $jobTypes = [
-                            'all' => 'Semua Tipe',
-                            'open' => 'Dibuka',
-                            'closed' => 'Ditutup',
-                        ];
-                    @endphp
-                    <x-select-field-one
-                            id="status"
-                            name="status"
-                            label="Status Lowongan"
-                            :options="$jobTypes"
-                            :selected="request('status') ?? 'all'"
-                        />
+            <div class="flex items-end space-x-2">
+                <form action="{{ route('job-postings.index') }}" method="GET" class="flex flex-wrap gap-3 items-end">
+                    <x-search-input
+                        name="search"
+                        placeholder="Cari berdasarkan judul, perusahaan, lokasi..."
+                        :value="request('search')"
+                        width="300px"
+                    />
+                    <div>
+
+                        @php
+                            $jobTypes = [
+                                'all' => 'Semua Tipe',
+                                'open' => 'Dibuka',
+                                'closed' => 'Ditutup',
+                            ];
+                        @endphp
+                        <x-select-field-one
+                                id="status"
+                                name="status"
+                                {{-- label="Status Lowongan" --}}
+                                :options="$jobTypes"
+                                :selected="request('status') ?? 'all'"
+                            />
                     </div>
 
                     <button type="submit"
                         class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-5 rounded-md h-fit">
                         Filter
                     </button>
-            </form>
+                </form>
+            </div>
             @if(Auth::user()->hasRole('company'))
                 <a href="{{ route('company.job-postings.create') }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2.5 px-4 rounded-md">
                     Buat Lowongan Baru
                 </a>
             @endif
         </div>
-    </div>
-
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('success') }}</span>
-        </div>
-    @endif
 
     @if(Auth::user()->hasRole('admin'))
         <ul class="list-unstyled mt-3 space-y-4">

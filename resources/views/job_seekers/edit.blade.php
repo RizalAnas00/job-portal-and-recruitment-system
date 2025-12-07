@@ -45,14 +45,14 @@
                         <div>
                             <x-input-label for="address" value="Alamat Lengkap" />
                             <textarea id="address" name="address" rows="3"
-                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 rounded-md shadow-sm"
                                 required>{{ old('address', $jobSeeker->address) }}</textarea>
                         </div>
 
                         <div>
                             <x-input-label for="profile_summary" value="Ringkasan Profil (Opsional)" />
                             <textarea id="profile_summary" name="profile_summary" rows="4"
-                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 rounded-md shadow-sm"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 rounded-md shadow-sm"
                                 placeholder="Ceritakan pengalaman, keahlian utama, atau tujuan karier Anda.">{{ old('profile_summary', $jobSeeker->profile_summary) }}</textarea>
                         </div>
 
@@ -68,8 +68,8 @@
                                 x-model="search"
                                 placeholder="Cari skill..."
                                 class="mt-2 w-full rounded-lg border-gray-300 dark:border-gray-700 
-                                    dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600
-                                    focus:ring-indigo-500 dark:focus:ring-indigo-600 p-2"
+                                    dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600
+                                    focus:ring-primary-500 dark:focus:ring-primary-600 p-2"
                             />
 
                             <!-- Scroll Container -->
@@ -102,7 +102,7 @@
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <a href="{{ route('dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-500">
+                            <a href="{{ route('dashboard') }}" class="text-sm text-primary-600 hover:text-primary-500">
                                 Kembali ke Dashboard
                             </a>
 
