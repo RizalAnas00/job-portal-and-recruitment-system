@@ -41,9 +41,17 @@
         </a>
 
         @if (Auth::user()->hasRole('admin'))
-        <a href="{{ route('admin.role.index') }}" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition">
+        <a href="{{ route('admin.role.index') }}" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('admin.role.*') ? 'bg-[#0f14aa]/30' : '' }}">
             @svg('carbon-user-role', 'h-6 w-6 flex-shrink-0 text-xl')
             <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Role</span>
+        </a>
+        <a href="{{ route('admin.skill.index') }}" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('admin.skill.*') ? 'bg-[#0f14aa]/30' : '' }}">
+            @svg('ionicon-ribbon-outline', 'h-6 w-6 flex-shrink-0 text-xl')
+            <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Skill</span>
+        </a>
+        <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 p-3 rounded-md hover:bg-[#0f14aa]/30 transition {{ request()->routeIs('admin.users.*') ? 'bg-[#0f14aa]/30' : '' }}">
+            @svg('carbon-user-multiple', 'h-6 w-6 flex-shrink-0 text-xl')
+            <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Kelola User</span>
         </a>
         @endif
 

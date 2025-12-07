@@ -14,6 +14,8 @@ use App\Http\Controllers\PaymentTransactionController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SkillController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\NotificationController;
 use App\Jobs\sendEmail;
@@ -100,6 +102,47 @@ Route::middleware('auth')->group(function () {
 
             // Menghapus data role (Delete)
             Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:role.delete');
+        });
+
+        // Route for Skill Management
+        Route::prefix('skill')->name('skill.')->group(function () {
+
+            // Menampilkan semua skill (Read)
+            Route::get('/', [SkillController::class, 'index'])->name('index');
+
+            // Menampilkan form tambah skill (Create)
+            Route::get('/create', [SkillController::class, 'create'])->name('create');
+
+            // Menyimpan data skill baru (Create)
+            Route::post('/', [SkillController::class, 'store'])->name('store');
+
+            // Menampilkan form edit skill (Update)
+            Route::get('/{skill}/edit', [SkillController::class, 'edit'])->name('edit');
+
+            // Mengupdate data skill (Update)
+            Route::put('/{skill}', [SkillController::class, 'update'])->name('update');
+
+            // Menghapus data skill (Delete)
+            Route::delete('/{skill}', [SkillController::class, 'destroy'])->name('destroy');
+        });
+
+        // Route for User Management
+        Route::prefix('users')->name('users.')->group(function () {
+
+            // Menampilkan semua users (Job Seeker & Company)
+            Route::get('/', [UserManagementController::class, 'index'])->name('index');
+
+            // Toggle user active status (activate/deactivate)
+            Route::patch('/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
+
+            // Show reset password form
+            Route::get('/{user}/reset-password', [UserManagementController::class, 'showResetPasswordForm'])->name('reset-password');
+
+            // Reset user password
+            Route::post('/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('reset-password.store');
+
+            // Hapus akun (Hard Delete)
+            Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
         });
 
         // Admin - Job Postings
