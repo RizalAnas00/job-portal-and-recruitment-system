@@ -39,7 +39,7 @@
                             <x-input-label for="address" value="Alamat" />
                             <textarea id="address" name="address"
                                 class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                rows="4">{{ old('address', $company->address) }}</textarea>
+                                rows="4" required>{{ old('address', $company->address) }}</textarea>
                             <x-input-error :messages="$errors->get('address')" class="mt-2" />
                         </div>
 
@@ -47,7 +47,7 @@
                             <x-input-label for="company_description" value="Deskripsi" />
                             <textarea id="company_description" name="company_description"
                                 class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                rows="4">{{ old('company_description', $company->company_description) }}</textarea>
+                                rows="4" required>{{ old('company_description', $company->company_description) }}</textarea>
                             <x-input-error :messages="$errors->get('company_description')" class="mt-2" />
                         </div>
 

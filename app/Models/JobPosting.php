@@ -35,6 +35,8 @@ class JobPosting extends Model
         'posted_date',
         'closing_date',
         'status',
+        'moderation_status',
+        'rejection_reason',
     ];
 
     /**
@@ -60,6 +62,13 @@ class JobPosting extends Model
         return $now->between($openAt, $closeAt) ? 'open' : 'closed';
     }
 
+    public function scopeActiveAndApproved($query)
+    {
+        return $query->where('status', 'open')
+                     ->where('moderation_status', 'approved')
+                     ->whereDate('closing_date', '>=', now());
+    }
+
     /**
      * Sync statuses with their scheduled window (open between, closed outside).
      */
@@ -71,6 +80,7 @@ class JobPosting extends Model
             ->whereNotNull('posted_date')
             ->whereNotNull('closing_date')
             ->whereIn('status', ['open', 'closed'])
+            ->where('moderation_status', 'approved')
             ->whereColumn('posted_date', '<=', 'closing_date')
             ->where('posted_date', '<=', $now)
             ->where('closing_date', '>=', $now)

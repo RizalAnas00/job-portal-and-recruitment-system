@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\JobPostingController;
+use App\Http\Controllers\JobModerationController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ResumeController;
@@ -102,6 +103,12 @@ Route::middleware('auth')->group(function () {
 
             // Menghapus data role (Delete)
             Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:role.delete');
+        });
+
+        Route::controller(JobModerationController::class)->group(function () {
+        Route::get('/moderation/jobs', 'index')->name('jobs.moderation.index');
+        Route::patch('/moderation/jobs/{jobPosting}/approve', 'approve')->name('jobs.approve');
+        Route::patch('/moderation/jobs/{jobPosting}/reject', 'reject')->name('jobs.reject');
         });
 
         // Route for Skill Management
