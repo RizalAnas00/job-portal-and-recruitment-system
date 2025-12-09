@@ -7,14 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubscriptionPlan extends Model
 {
-    /** @use HasFactory<\Database\Factories\SubscriptionPlanFactory> */
     use HasFactory;
-    
+
+    protected $table = 'subscription_plans'; 
+
     protected $fillable = [
-        'plan_name',
+        'plan_name',            // Sesuaikan dengan DB
         'price',
         'duration_days',
-        'job_post_limit',
-        'allow_verified_badge',
+        'job_post_limit',       // Wajib ada
+        'allow_verified_badge', // Wajib ada
     ];
 }

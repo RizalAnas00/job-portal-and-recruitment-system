@@ -199,7 +199,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'store'])->name('store');
         });
 
-        // Subscription Management
+        // Subscription Management (Existing code - likely for viewing subscriptions)
         Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'index'])->name('index');
             Route::get('/create', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'create'])->name('create');
@@ -207,6 +207,11 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{subscription}/extend', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'extend'])->name('extend');
             Route::patch('/{subscription}/cancel', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'cancel'])->name('cancel');
         });
+
+        // [BARU] Subscription Plan Management (CRUD Paket Harga/Durasi) - Controller yang baru kita buat
+            Route::resource('subscription-plans', \App\Http\Controllers\Admin\SubscriptionPlanController::class)
+                ->names('subscription_plans'); 
+
 
         // Payment Management
         Route::prefix('payments')->name('payments.')->group(function () {
@@ -397,7 +402,9 @@ Route::middleware(['auth', 'role:company'])->group(function () {
 // Route Resumes
 Route::resource('resumes', ResumeController::class)->except(['show']);
 
-// Route Subscription Plans (Admin Only)
+// Route Subscription Plans (Admin Only) -> NOTE: Ini yang lama (mungkin mengarah ke controller publik?), 
+// tapi karena kita sudah buat yang khusus admin di atas (di dalam group 'role:admin'), yang ini biarkan saja
+// atau bisa dikomentari kalau bikin konflik. Tapi karena URL admin pakai prefix /admin, harusnya aman.
 Route::resource('subscription-plans', SubscriptionPlanController::class);
 
 // Webhook Route for Payment Gateway (No Auth)
