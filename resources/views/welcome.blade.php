@@ -99,8 +99,8 @@
                             @foreach ($row as $company)
                                 <div
                                     class="flex w-full max-w-xs items-center gap-3 rounded-xl bg-gray-50/40 p-4 shadow-sm backdrop-blur-md transition hover:shadow-md dark:bg-gray-800/70">
-                                    @if ($company->logo_url)
-                                        <img src="{{ $company->logo_url }}" alt="{{ $company->name }}"
+                                    @if ($company->logo_path)
+                                        <img src="{{ $company->logo_path }}" alt="{{ $company->name }}"
                                             class="h-12 w-12 rounded-lg border border-gray-200 bg-white object-contain dark:border-gray-700 dark:bg-gray-700">
                                     @else
                                         @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-800 dark:text-gray-200')

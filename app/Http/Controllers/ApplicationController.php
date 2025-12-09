@@ -79,7 +79,12 @@ class ApplicationController extends Controller
      */
     public function create(JobPosting $jobPosting)
     {
-        return view('applications.create', compact('jobPosting'));
+        $userResumes = Auth::user()->jobSeeker?->resumes;
+        if (!$userResumes || $userResumes->isEmpty()) {
+            return redirect()->route('resumes.create')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
+        }
+
+        return view('applications.create', compact('jobPosting', 'userResumes'));
     }
 
     /**
@@ -95,6 +100,7 @@ class ApplicationController extends Controller
 
         $request->validate([
             'cover_letter' => 'nullable|string',
+            'id_resume' => 'required|exists:resumes,id'
         ]);
 
         // Mencegah duplikat lamaran
@@ -109,7 +115,8 @@ class ApplicationController extends Controller
         Application::create([
             'id_job_seeker' => $user->jobSeeker->id,
             'id_job_posting' => $jobPosting->id, 
-            'cover_letter' => $request->cover_letter,
+            'cover_letter' => $request->input('cover_letter'),
+            'id_resume' => $request->input('id_resume'),
             'status' => 'applied'
         ]);
 
@@ -125,7 +132,7 @@ class ApplicationController extends Controller
             );
         }
 
-        return redirect()->route('applications.index')->with('success', 'Lamaran berhasil dikirim.');
+        return redirect()->route('user.applications.index')->with('success', 'Lamaran berhasil dikirim.');
     }
 
     /**

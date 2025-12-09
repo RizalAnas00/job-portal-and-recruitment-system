@@ -23,4 +23,9 @@ class Resume extends Model
     {
         return $this->belongsTo(JobSeeker::class);
     }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
 }
