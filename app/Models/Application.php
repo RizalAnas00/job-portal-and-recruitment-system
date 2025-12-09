@@ -20,6 +20,10 @@ class Application extends Model
 		'cover_letter',
 	];
 
+	protected $casts = [
+		'application_date' => 'datetime',
+	];
+
 	public function jobSeeker()
 	{
 		return $this->belongsTo(JobSeeker::class, 'id_job_seeker');

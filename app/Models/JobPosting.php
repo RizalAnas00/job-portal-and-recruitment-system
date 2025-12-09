@@ -122,4 +122,12 @@ class JobPosting extends Model
     {
         return $this->hasMany(Application::class, 'id_job_posting');
     }
+
+    /**
+     * Get the location of the job posting.
+     */
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
 }

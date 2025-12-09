@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -120,7 +121,14 @@ class UserManagementController extends Controller
                            ->with('error', 'Tidak dapat mengubah status akun admin lain.');
         }
 
+        $oldStatus = $user->is_active;
         $user->update(['is_active' => !$user->is_active]);
+
+        AuditLog::log(
+            $user->is_active ? 'user.activated' : 'user.deactivated',
+            $user,
+            "User {$user->email} " . ($user->is_active ? 'activated' : 'deactivated') . " by admin"
+        );
 
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
         return redirect()->route('admin.users.index')
@@ -139,6 +147,12 @@ class UserManagementController extends Controller
         $user->update([
             'password' => Hash::make($request->new_password),
         ]);
+
+        AuditLog::log(
+            'user.password_reset',
+            $user,
+            "Password reset for user {$user->email} by admin"
+        );
 
         return redirect()->route('admin.users.index')
                          ->with('success', "Password untuk akun {$user->email} berhasil direset.");
@@ -170,7 +184,15 @@ class UserManagementController extends Controller
         }
 
         $email = $user->email;
+        $userData = $user->toArray();
         $user->delete(); // Hard delete
+
+        AuditLog::log(
+            'user.deleted',
+            null,
+            "User {$email} deleted by admin",
+            $userData
+        );
 
         return redirect()->route('admin.users.index')
                          ->with('success', "Akun {$email} berhasil dihapus.");

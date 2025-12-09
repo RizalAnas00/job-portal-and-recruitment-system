@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
 
         // Admin Dashboard
-        Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('dashboard');
 
         // Route for Role Management
         Route::prefix('role')->name('role.')->group(function () {
@@ -105,10 +105,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:role.delete');
         });
 
-        Route::controller(JobModerationController::class)->group(function () {
-        Route::get('/moderation/jobs', 'index')->name('jobs.moderation.index');
-        Route::patch('/moderation/jobs/{jobPosting}/approve', 'approve')->name('jobs.approve');
-        Route::patch('/moderation/jobs/{jobPosting}/reject', 'reject')->name('jobs.reject');
+        // Job Moderation Routes
+        Route::controller(JobModerationController::class)->prefix('moderation/jobs')->name('jobs.moderation.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{jobPosting}', 'show')->name('show');
+            Route::get('/{jobPosting}/edit', 'edit')->name('edit');
+            Route::put('/{jobPosting}', 'update')->name('update');
+            Route::patch('/{jobPosting}/approve', 'approve')->name('approve');
+            Route::patch('/{jobPosting}/reject', 'reject')->name('reject');
+            Route::delete('/{jobPosting}', 'destroy')->name('destroy');
         });
 
         // Route for Skill Management
@@ -159,6 +164,64 @@ Route::middleware('auth')->group(function () {
 
         // Admin - Applications
         Route::resource('applications', ApplicationController::class)->only(['index', 'destroy']);
+
+        // Company Moderation Routes
+        Route::prefix('companies')->name('companies.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'index'])->name('index');
+            Route::get('/{company}/edit', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'edit'])->name('edit');
+            Route::put('/{company}', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'update'])->name('update');
+            Route::patch('/{company}/verify', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'verify'])->name('verify');
+            Route::patch('/{company}/unverify', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'unverify'])->name('unverify');
+            Route::delete('/{company}', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'destroy'])->name('destroy');
+        });
+
+        // Master Data - Industries
+        Route::resource('industries', \App\Http\Controllers\Admin\IndustryController::class);
+
+        // Master Data - Locations
+        Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class);
+
+        // Analytics & Reporting
+        Route::prefix('analytics')->name('analytics.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('index');
+            Route::get('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'export'])->name('export');
+        });
+
+        // Audit Logs
+        Route::prefix('audit-logs')->name('audit-logs.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('index');
+            Route::get('/{auditLog}', [\App\Http\Controllers\Admin\AuditLogController::class, 'show'])->name('show');
+        });
+
+        // Broadcast Notifications
+        Route::prefix('broadcast-notifications')->name('broadcast-notifications.')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'store'])->name('store');
+        });
+
+        // Subscription Management
+        Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'store'])->name('store');
+            Route::patch('/{subscription}/extend', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'extend'])->name('extend');
+            Route::patch('/{subscription}/cancel', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'cancel'])->name('cancel');
+        });
+
+        // Payment Management
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'index'])->name('index');
+            Route::get('/{payment}', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'show'])->name('show');
+            Route::patch('/{payment}/status', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'updateStatus'])->name('update-status');
+        });
+
+        // System Settings
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'index'])->name('index');
+            Route::put('/', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'update'])->name('update');
+            Route::get('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'files'])->name('files');
+            Route::delete('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'deleteFile'])->name('files.delete');
+        });
     });
 
 
