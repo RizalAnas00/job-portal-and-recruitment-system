@@ -63,7 +63,7 @@
                         @foreach ($jobPostings as $jobPosting)
                             @php
                                 $matchingSkills = $jobPosting->skills->whereIn('id', $skillIds);
-                                $applied = $jobPosting->hasApplied();
+                                $applied = $jobPosting->hasApplied;
                             @endphp
                             <div class="border rounded-lg p-6
                                 {{ $applied ? 'bg-green-100/20 dark:bg-green-800/10 border-green-500' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' }}
@@ -129,7 +129,7 @@
                                         Lihat Detail
                                         @svg('ionicon-arrow-forward-outline', 'h-4 w-4')
                                     </a>
-                                    @if (!$applied)
+                                    @if (!$jobPosting->hasApplied)
                                         <a href="{{ route('user.applications.create', $jobPosting) }}"
                                             class="inline-flex items-center gap-2 px-4 py-2 border border-primary-200 text-primary-600 dark:text-primary-400 text-sm font-semibold rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition">
                                             Lamar Sekarang

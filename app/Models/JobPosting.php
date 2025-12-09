@@ -100,21 +100,21 @@ class JobPosting extends Model
             ->update(['status' => 'closed']);
     }
 
-    public function hasApplied(): bool
-    {
-        /** @var \App\Models\User */
-        $user = Auth::user();
+    // public function hasApplied(): bool
+    // {
+    //     /** @var \App\Models\User */
+    //     $user = Auth::user();
 
-        if (!Auth::check()) {
-            return false;
-        } else if (!$user->hasRole('user') || !$user->jobSeeker) {
-            return false;
-        }
+    //     if (!Auth::check()) {
+    //         return false;
+    //     } else if (!$user->hasRole('user') || !$user->jobSeeker) {
+    //         return false;
+    //     }
 
-        return $this->applications()
-            ->where('id_job_seeker', $user->jobSeeker->id)
-            ->exists();
-    }
+    //     return $this->applications()
+    //         ->where('id_job_seeker', $user->jobSeeker->id)
+    //         ->exists();
+    // }
 
     /**
      * Get the company that posted the job.

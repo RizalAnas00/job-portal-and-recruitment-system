@@ -1,7 +1,7 @@
 @props(['job'])
 
 @php
-    $applied = $job->hasApplied();
+    $applied = $job->hasApplied;
 @endphp
 
 

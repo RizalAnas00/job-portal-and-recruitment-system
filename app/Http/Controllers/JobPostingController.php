@@ -103,8 +103,18 @@ class JobPostingController extends Controller
             }
         }
         
+        $jobSeeker = $user->jobSeeker;
+        $appliedJobIds = $jobSeeker
+        ? $jobSeeker->applications()->pluck('id_job_posting')->toArray()
+            : [];
+            
         $jobPostings = $query->paginate(12);
         // Log::info("query : ", $jobPostings->toArray());
+
+        foreach ($jobPostings as $job) {
+            $job->hasApplied = in_array($job->id, $appliedJobIds);
+        }
+
         return view('job_postings.index', compact('jobPostings'));
     }
 
