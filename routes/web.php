@@ -227,6 +227,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'files'])->name('files');
             Route::delete('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'deleteFile'])->name('files.delete');
         });
+
+        // System Monitoring & Health
+        Route::prefix('monitoring')->name('monitoring.')->group(function () {
+            // Health Check
+            Route::get('/health', [\App\Http\Controllers\Admin\HealthCheckController::class, 'index'])->name('health');
+            
+            // Queue Monitoring
+            Route::prefix('queue')->name('queue.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'index'])->name('index');
+                Route::post('/retry-all', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retryAll'])->name('retry-all');
+                Route::delete('/flush', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'flush'])->name('flush');
+                Route::post('/{id}/retry', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retry'])->name('retry');
+                Route::delete('/{id}', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'delete'])->name('delete');
+            });
+        });
     });
 
 

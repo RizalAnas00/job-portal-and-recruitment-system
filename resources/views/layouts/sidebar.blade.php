@@ -53,6 +53,52 @@
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Moderasi Lowongan</span>
             </a>
 
+            <!-- System Monitoring Accordion -->
+            <div class="w-full">
+                <button
+                    @click="
+                        if (!open) {
+                            open = true;
+                            setTimeout(() => activeAccordion = 'monitoring', 250);
+                        } else {
+                            activeAccordion === 'monitoring' ? activeAccordion = '' : activeAccordion = 'monitoring';
+                        }
+                    "
+                    class="flex w-full items-center justify-between rounded-md p-3 transition hover:bg-[#0f14aa]/30"
+                    :class="activeAccordion === 'monitoring' ? 'bg-[#0f14aa]/30' : ''">
+
+                    <div class="flex items-center gap-2">
+                        @svg('ionicon-pulse-outline', 'h-6 w-6 flex-shrink-0 text-xl')
+                        <span class="truncate text-left" :class="open ? 'w-40' : 'w-0 overflow-hidden'">
+                            System Monitoring
+                        </span>
+                    </div>
+
+                    <svg x-show="open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor"
+                        class="h-5 w-5 flex-shrink-0 text-xl transition-transform duration-200"
+                        :class="activeAccordion === 'monitoring' ? 'rotate-180' : ''">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <!-- Accordion Content -->
+                <div x-show="activeAccordion === 'monitoring' && open" x-collapse class="ml-8 mt-1 space-y-1">
+                    <a href="{{ route('admin.monitoring.health') }}"
+                        class="{{ request()->routeIs('admin.monitoring.health') ? 'bg-[#0f14aa]/20' : '' }} block rounded-md px-2 py-1.5 text-sm transition hover:bg-[#0f14aa]/20">
+                        Health Check
+                    </a>
+                    <a href="{{ route('admin.monitoring.queue.index') }}"
+                        class="{{ request()->routeIs('admin.monitoring.queue.*') ? 'bg-[#0f14aa]/20' : '' }} block rounded-md px-2 py-1.5 text-sm transition hover:bg-[#0f14aa]/20">
+                        Queue Monitor
+                    </a>
+                    <a href="{{ route('admin.broadcast-notifications.create') }}"
+                        class="{{ request()->routeIs('admin.broadcast-notifications.*') ? 'bg-[#0f14aa]/20' : '' }} block rounded-md px-2 py-1.5 text-sm transition hover:bg-[#0f14aa]/20">
+                        Broadcast Notif
+                    </a>
+                </div>
+            </div>
+
             {{-- MENU BARU: PAKET LANGGANAN (ADMIN) --}}
             <a href="{{ route('admin.subscription_plans.index') }}"
                 class="{{ request()->routeIs('admin.subscription_plans.*') ? 'bg-[#0f14aa]/30' : '' }} flex items-center gap-3 rounded-md p-3 transition hover:bg-[#0f14aa]/30">
