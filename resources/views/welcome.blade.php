@@ -21,8 +21,8 @@
         </div>
 
         <!-- Decorative Shapes -->
-        <div class="absolute top-0 left-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute top-0 left-0 w-64 h-64 bg-primary-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-primary-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
     </section>
 
     <!-- Category Section -->
@@ -95,8 +95,8 @@
                         
                         @foreach ($row as $company)
                             <div class="flex items-center gap-3 bg-gray-50/40 dark:bg-gray-800/70 rounded-xl p-4 w-full max-w-xs shadow-sm hover:shadow-md transition backdrop-blur-md">
-                                @if ($company->logo_url)
-                                    <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" class="h-12 w-12 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700">
+                                @if ($company->logo_path)
+                                    <img src="{{ $company->logo_path }}" alt="{{ $company->name }}" class="h-12 w-12 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700">
                                 @else
                                     @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-800 dark:text-gray-200')
                                 @endif
@@ -152,17 +152,17 @@
         </div>
     </section>
 
-    <section class="relative bg-gradient-to-br from-indigo-600 to-blue-600 text-white overflow-hidden">
+    <section class="relative bg-gradient-to-br from-primary-600 to-primary-600 text-white overflow-hidden">
         <div class="container mx-auto pt-20 pb-28 flex flex-col-reverse md:flex-row items-center justify-between relative z-10">
             <div class="w-full md:w-1/2 text-center md:text-left">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">
                     Perusahaan Anda Sedang Mencari Talenta?
                 </h2>
-                <p class="text-lg text-blue-100 mb-8">
+                <p class="text-lg text-primary-100 mb-8">
                     Pasang lowongan dan temukan kandidat terbaik untuk perusahaan Anda.
                 </p>
                 <a href="@auth {{ route('job-postings.create') }} @else {{ route('login') }} @endauth"
-                class="inline-block bg-white text-indigo-700 font-semibold px-6 py-3 rounded-full shadow 
+                class="inline-block bg-white text-primary-700 font-semibold px-6 py-3 rounded-full shadow 
                         hover:bg-gray-100 transition duration-300">
                     Pasang Lowongan Sekarang
                 </a>
