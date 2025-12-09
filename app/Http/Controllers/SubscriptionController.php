@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\CheckActiveSubscription;
+use App\Actions\checkActiveSubscription;
 use App\Actions\checkPendingPayment;
 use App\Models\Company;
 use App\Models\CompanySubscription;
