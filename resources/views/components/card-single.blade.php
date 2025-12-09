@@ -1,6 +1,18 @@
 @props(['job'])
 
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col h-full">
+@php
+    $applied = $job->hasApplied();
+@endphp
+
+
+<div class="rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col h-full
+    border {{ $applied ? 'border-green-500 bg-green-50/60 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800' }}">
+    @if($applied)
+        <span class="mx-2 mt-2 px-2 py-2 font-medium text-sm text-center rounded-lg bg-green-300 text-green-900 dark:bg-green-700/40 dark:text-green-300">
+            Sudah Melamar
+        </span>
+    @endif
+
     <!-- Header -->
     <div class="flex flex-col border-b border-gray-100 dark:border-gray-700">
         <div class="px-4 pt-4 flex items-center gap-3">

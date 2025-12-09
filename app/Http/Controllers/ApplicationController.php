@@ -132,7 +132,7 @@ class ApplicationController extends Controller
             );
         }
 
-        return redirect()->route('applications.index')->with('success', 'Lamaran berhasil dikirim.');
+        return redirect()->route('user.applications.index')->with('success', 'Lamaran berhasil dikirim.');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -97,6 +98,19 @@ class JobPosting extends Model
             })
             ->where('status', '!=', 'closed')
             ->update(['status' => 'closed']);
+    }
+
+    public function hasApplied(): bool
+    {
+        if (!Auth::check()) {
+            return false;
+        }
+
+        /** @var \App\Models\User */
+        $user = Auth::user();
+        return $this->applications()
+            ->where('id_job_seeker', $user->jobSeeker->id)
+            ->exists();
     }
 
     /**
