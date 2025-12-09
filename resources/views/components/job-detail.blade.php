@@ -99,14 +99,12 @@
                         </p>
         
                     @else
-                        <form action="#" method="POST">
-                            @csrf
-                            <button type="submit"
-                                class="w-full py-3 font-bold text-white text-lg rounded-lg
-                                    bg-primary-600 hover:bg-primary-700 transition shadow-lg">
-                                Lamar Sekarang
-                            </button>
-                        </form>
+                        <a href="{{ route('user.applications.create', $jobPosting) }}"
+                           class="mx-auto block w-full max-w-screen-2xl text-center px-6 py-3 rounded-lg 
+                                  bg-primary-600 hover:bg-primary-700 text-white font-semibold 
+                                  shadow-md transition">
+                            Lamar Pekerjaan
+                        </a>
                     @endif
         
                 </div>
