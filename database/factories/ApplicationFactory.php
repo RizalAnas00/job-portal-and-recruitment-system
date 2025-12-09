@@ -19,11 +19,14 @@ class ApplicationFactory extends Factory
     public function definition(): array
     {
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected'];
-        
+        $jobSeeker = JobSeeker::inRandomOrder()->first()->id ?? JobSeeker::factory();
+        $resumes = $jobSeeker ? \App\Models\Resume::where('id_job_seeker', $jobSeeker)->get() : collect();
+
         return [
-            'id_job_seeker' => JobSeeker::inRandomOrder()->first()->id ?? JobSeeker::factory(),
+            'id_job_seeker' => $jobSeeker,
             'id_job_posting' => JobPosting::inRandomOrder()->first()->id ?? JobPosting::factory(),
             'application_date' => $this->faker->dateTimeBetween('-15 days', 'now'),
+            'id_resume' => $resumes->isNotEmpty() ? $resumes->random()->id : null,
             'status' => $this->faker->randomElement($statuses),
             'cover_letter' => $this->faker->paragraphs(3, true),
         ];

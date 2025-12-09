@@ -40,7 +40,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
     
     {{-- Chart Section (Lebar 2/3) --}}
-    <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border">
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Tren Pendaftar (30 Hari Terakhir)</h3>
         <div class="relative h-80 w-full">
             <canvas id="companyChart"></canvas>
@@ -48,7 +48,7 @@
     </div>
 
     {{-- Tabel Pelamar Terbaru (Lebar 1/3) --}}
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md overflow-hidden">
         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Pelamar Terbaru</h3>
         <div class="overflow-y-auto max-h-80">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">

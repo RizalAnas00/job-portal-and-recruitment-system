@@ -16,6 +16,7 @@ class Application extends Model
 		'id_job_seeker',
 		'id_job_posting',
 		'application_date',
+		'id_resume',
 		'status',
 		'cover_letter',
 	];
@@ -32,5 +33,10 @@ class Application extends Model
 	public function jobPosting()
 	{
 		return $this->belongsTo(JobPosting::class, 'id_job_posting');
+	}
+
+	public function resume()
+	{
+		return $this->belongsTo(Resume::class, 'id_resume');
 	}
 }

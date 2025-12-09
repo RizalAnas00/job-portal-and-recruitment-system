@@ -38,6 +38,12 @@ class ResumeController extends Controller
 
     public function view(Resume $resume)
     {
+        /** @var User */
+        $user = Auth::user();
+        if ($user->jobSeeker?->id !== $resume->job_seeker_id) {
+            abort(403, 'AKSES DITOLAK');
+        }
+
         $path = Storage::disk('public')->path($resume->file_path);
 
         if (!file_exists($path)) {
