@@ -102,12 +102,15 @@ class JobPosting extends Model
 
     public function hasApplied(): bool
     {
+        /** @var \App\Models\User */
+        $user = Auth::user();
+
         if (!Auth::check()) {
+            return false;
+        } else if (!$user->hasRole('user') || !$user->jobSeeker) {
             return false;
         }
 
-        /** @var \App\Models\User */
-        $user = Auth::user();
         return $this->applications()
             ->where('id_job_seeker', $user->jobSeeker->id)
             ->exists();
