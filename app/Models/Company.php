@@ -74,6 +74,14 @@ class Company extends Model
     }
 
     /**
+     * Get the industry of the company.
+     */
+    public function industry(): BelongsTo
+    {
+        return $this->belongsTo(Industry::class, 'industry_id');
+    }
+
+    /**
     * Calculate the total number of applicants across all job postings of the company.
     */
     public function totalApplicants(): int
