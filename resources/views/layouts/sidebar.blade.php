@@ -8,7 +8,6 @@
     :class="open ? 'w-64 rounded-r-xl' : 'w-16'"
     class="sticky top-0 flex h-screen flex-col bg-gradient-to-b from-[#3f36f7] to-[#171ee0] text-white shadow-lg transition-all duration-300 ease-in-out">
 
-    <!-- Logo & Toggle -->
     <div class="flex items-center justify-between p-4">
         <span x-show="open" x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 -translate-x-2" x-transition:enter-end="opacity-100 translate-x-0"
@@ -22,7 +21,6 @@
         </button>
     </div>
 
-    <!-- Menu -->
     <nav class="flex-1 space-y-2 px-2 py-4">
 
         <a href="{{ route('dashboard') }}"
@@ -54,6 +52,15 @@
                 @svg('ionicon-document-text-outline', 'h-6 w-6 flex-shrink-0 text-xl')
                 <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Moderasi Lowongan</span>
             </a>
+
+            {{-- MENU BARU: PAKET LANGGANAN (ADMIN) --}}
+            <a href="{{ route('admin.subscription_plans.index') }}"
+                class="{{ request()->routeIs('admin.subscription_plans.*') ? 'bg-[#0f14aa]/30' : '' }} flex items-center gap-3 rounded-md p-3 transition hover:bg-[#0f14aa]/30">
+                @svg('ionicon-pricetags-outline', 'h-6 w-6 flex-shrink-0 text-xl') 
+                <span class="truncate" :class="open ? 'w-40' : 'w-0 overflow-hidden'">Paket Langganan</span>
+            </a>
+            {{-- END MENU BARU --}}
+
         @endif
 
         <div class="w-full">
@@ -84,7 +91,6 @@
                 </svg>
             </button>
 
-            <!-- Accordion Content -->
             <div x-show="activeAccordion === 'job' && open" x-collapse class="ml-8 mt-1 space-y-1">
                 @if (Auth::user()->hasRole('company'))
                     <a href="{{ route('company.job-postings.create') }}"
