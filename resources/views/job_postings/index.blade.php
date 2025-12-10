@@ -1,0 +1,138 @@
+@extends('job_postings.layout')
+
+@section('content')
+    <div class="container">
+        @if(session('success'))
+            <div class="bg-green-100 dark:bg-green-600/20 border border-green-400 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg relative mb-4" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        <h1 class="text-gray-900 dark:text-gray-100 text-3xl font-bold mb-6">
+            Daftar Lowongan
+        </h1>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
+            <div class="flex items-end space-x-2">
+                <form action="{{ route('job-postings.index') }}" method="GET" class="flex flex-wrap gap-3 items-end">
+                    <x-search-input
+                        name="search"
+                        placeholder="Cari berdasarkan judul, perusahaan, lokasi..."
+                        :value="request('search')"
+                        width="300px"
+                    />
+                    <div>
+
+                        @php
+                            $jobTypes = [
+                                'all' => 'Semua Tipe',
+                                'open' => 'Dibuka',
+                                'closed' => 'Ditutup',
+                            ];
+                        @endphp
+                        <x-select-field-one
+                                id="status"
+                                name="status"
+                                {{-- label="Status Lowongan" --}}
+                                :options="$jobTypes"
+                                :selected="request('status') ?? 'all'"
+                            />
+                    </div>
+
+                    <button type="submit"
+                        class="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-5 rounded-md h-fit">
+                        Filter
+                    </button>
+                </form>
+            </div>
+            @if(Auth::user()->hasRole('company'))
+                <a href="{{ route('company.job-postings.create') }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2.5 px-4 rounded-md">
+                    Buat Lowongan Baru
+                </a>
+            @endif
+        </div>
+
+    @if(Auth::user()->hasRole('admin'))
+        <ul class="list-unstyled mt-3 space-y-4">
+        @forelse($jobPostings as $job)
+            <li class="p-4 border rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <a href="{{ route('job-postings.show', $job) }}" class="text-lg font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                            {{ $job->job_title }}
+                        </a>
+                        <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            {{ $job->company?->company_name ?? '-' }} — {{ $job->location }} — {{ str_replace('_', ' ', $job->job_type) }}
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        @if($job->status === 'open')
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                                Open
+                            </span>
+                        @else
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100">
+                                Closed
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <p class="mt-2 text-gray-700 dark:text-gray-300">
+                    {{ \Illuminate\Support\Str::limit($job->job_description, 200) }}
+                </p>
+                <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    <span>Skills: {{ $job->skills->pluck('skill_name')->join(', ') ?: '-' }}</span> |
+                    <span>Gaji: 
+                        {{ $job->min_salary ? 'Rp ' . number_format($job->min_salary, 0, ',', '.') : '-' }} 
+                        - {{ $job->max_salary ? 'Rp ' . number_format($job->max_salary, 0, ',', '.') : '-' }}
+                    </span> |
+                    <span>Buka: {{ optional($job->posted_date)->format('d M Y H:i') ?? '-' }}</span> |
+                    <span>Tutup: {{ optional($job->closing_date)->format('d M Y H:i') ?? '-' }}</span>
+                </div>
+
+                @if(Auth::user()->hasRole('company') && Auth::user()->company?->id === $job->id_company || Auth::user()->hasRole('admin'))
+                    <div class="mt-4 flex items-center space-x-2">
+                        <a href="{{ route('company.job-postings.edit', $job) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600">
+                            Edit
+                        </a>
+                        <form action="{{ route('company.job-postings.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job posting?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">
+                                Delete
+                            </button>
+                        </form>
+                        <a href="{{ route('company.job-postings.applications.index', $job) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                            View Applicants
+                        </a>
+                        <form action="{{ route('company.job-postings.update-status', $job) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" value="{{ $job->status === 'open' ? 'closed' : 'open' }}">
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white {{ $job->status === 'open' ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:bg-yellow-400 dark:hover:bg-yellow-500">
+                                {{ $job->status === 'open' ? 'Close Job' : 'Open Job' }}
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            </li>
+        @empty
+            <li class="text-gray-900 dark:text-gray-100">Tidak ada lowongan yang tersedia saat ini.</li>
+        @endforelse
+        </ul>
+        
+    @else
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 list-none">
+            @forelse($jobPostings as $job)
+                <li><x-card-single :job="$job" /></li>
+            @empty
+                <li class="col-span-full text-gray-600 text-center italic py-6 dark:text-gray-400">
+                    Tidak ada lowongan yang tersedia saat ini.
+                </li>
+            @endforelse
+        </ul>
+    @endif
+
+    <div class="mt-3">
+        {{ $jobPostings->links() }}
+    </div>
+</div>
+@endsection

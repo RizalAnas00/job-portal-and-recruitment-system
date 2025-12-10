@@ -1,7 +1,416 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\JobPostingController;
+use App\Http\Controllers\JobModerationController;
+use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ResumeController;
+use App\Http\Controllers\InterviewController;
+use App\Http\Controllers\JobSeekerSkillController;
+use App\Http\Controllers\JobSeekerJobController;
+use App\Http\Controllers\PaymentTransactionController;
+use App\Http\Controllers\SubscriptionPlanController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SkillController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\NotificationController;
+use App\Jobs\sendEmail;
+use App\Http\Controllers\JobSeekerController;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+// ------ Test Job Send Email Dummy --- ///
+Route::get('/send-email', function () {
+    $start = now();
+
+    Log::info('email sending at : '. $start->toDateTimeString());
+
+    sendEmail::dispatch();
+
+    $end = now();
+    Log::info('email sent at : '. $end->toDateTimeString());
+
+    return response()->json([
+        'message' => 'success',
+        'duration' => $end->diffInSeconds($start) . ' detik',
+    ]);
 });
+// ------ Test Job Send Email Dummy --- ///
+
+// ------------------------- LANDING PAGE ------------------------- //
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
+// ------------------------- LANDING PAGE ------------------------- //
+
+Route::get('/test-cache', function () {
+    $name = ['first' => 'aa', 'last' => 'bb'];
+
+    return Cache::rememberForever('testtt', function () use ($name) {
+        return $name;
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Main Group)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+ 
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+
+        // Admin Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('dashboard');
+
+        // Route for Role Management
+        Route::prefix('role')->name('role.')->group(function () {
+
+            // Menampilkan semua role (Read)
+            Route::get('/', [RoleController::class, 'index'])->name('index')->middleware('permission:role.read');
+
+            // Menampilkan form tambah role (Create)
+            Route::get('/create', [RoleController::class, 'create'])->name('create')->middleware('permission:role.create');
+
+            // Menyimpan data role baru (Create)
+            Route::post('/', [RoleController::class, 'store'])->name('store')->middleware('permission:role.create');
+
+            // Menampilkan detail satu role (Read)
+            Route::get('/{role}', [RoleController::class, 'show'])->name('show')->middleware('permission:role.read');
+
+            // Menampilkan form edit role (Update)
+            Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit')->middleware('permission:role.update');
+
+            // Mengupdate data role (Update)
+            Route::put('/{role}', [RoleController::class, 'update'])->name('update')->middleware('permission:role.update');
+
+            // Menghapus data role (Delete)
+            Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:role.delete');
+        });
+
+        // Job Moderation Routes
+        Route::controller(JobModerationController::class)->prefix('moderation/jobs')->name('jobs.moderation.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{jobPosting}', 'show')->name('show');
+            Route::get('/{jobPosting}/edit', 'edit')->name('edit');
+            Route::put('/{jobPosting}', 'update')->name('update');
+            Route::patch('/{jobPosting}/approve', 'approve')->name('approve');
+            Route::patch('/{jobPosting}/reject', 'reject')->name('reject');
+            Route::delete('/{jobPosting}', 'destroy')->name('destroy');
+        });
+
+        // Route for Skill Management
+        Route::prefix('skill')->name('skill.')->group(function () {
+
+            // Menampilkan semua skill (Read)
+            Route::get('/', [SkillController::class, 'index'])->name('index');
+
+            // Menampilkan form tambah skill (Create)
+            Route::get('/create', [SkillController::class, 'create'])->name('create');
+
+            // Menyimpan data skill baru (Create)
+            Route::post('/', [SkillController::class, 'store'])->name('store');
+
+            // Menampilkan form edit skill (Update)
+            Route::get('/{skill}/edit', [SkillController::class, 'edit'])->name('edit');
+
+            // Mengupdate data skill (Update)
+            Route::put('/{skill}', [SkillController::class, 'update'])->name('update');
+
+            // Menghapus data skill (Delete)
+            Route::delete('/{skill}', [SkillController::class, 'destroy'])->name('destroy');
+        });
+
+        // Route for User Management
+        Route::prefix('users')->name('users.')->group(function () {
+
+            // Menampilkan semua users (Job Seeker & Company)
+            Route::get('/', [UserManagementController::class, 'index'])->name('index');
+
+            // Toggle user active status (activate/deactivate)
+            Route::patch('/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
+
+            // Show reset password form
+            Route::get('/{user}/reset-password', [UserManagementController::class, 'showResetPasswordForm'])->name('reset-password');
+
+            // Reset user password
+            Route::post('/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('reset-password.store');
+
+            // Hapus akun (Hard Delete)
+            Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
+        });
+
+        // Admin - Job Postings
+        Route::match(['put', 'patch'], '/job-postings/{job_posting}', [JobPostingController::class, 'update'])->name('job-postings.update');
+        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status')->middleware('permission:job_posting.update_status');
+        Route::delete('/job-postings/{job_posting}', [JobPostingController::class, 'destroy'])->name('job-postings.destroy');
+
+        // Admin - Applications
+        Route::resource('applications', ApplicationController::class)->only(['index', 'destroy']);
+
+        // Company Moderation Routes
+        Route::prefix('companies')->name('companies.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'index'])->name('index');
+            Route::get('/{company}/edit', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'edit'])->name('edit');
+            Route::put('/{company}', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'update'])->name('update');
+            Route::patch('/{company}/verify', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'verify'])->name('verify');
+            Route::patch('/{company}/unverify', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'unverify'])->name('unverify');
+            Route::delete('/{company}', [\App\Http\Controllers\Admin\CompanyModerationController::class, 'destroy'])->name('destroy');
+        });
+
+        // Master Data - Industries
+        Route::resource('industries', \App\Http\Controllers\Admin\IndustryController::class);
+
+        // Master Data - Locations
+        Route::resource('locations', \App\Http\Controllers\Admin\LocationController::class);
+
+        // Analytics & Reporting
+        Route::prefix('analytics')->name('analytics.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('index');
+            Route::get('/export', [\App\Http\Controllers\Admin\AnalyticsController::class, 'export'])->name('export');
+        });
+
+        // Audit Logs
+        Route::prefix('audit-logs')->name('audit-logs.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AuditLogController::class, 'index'])->name('index');
+            Route::get('/{auditLog}', [\App\Http\Controllers\Admin\AuditLogController::class, 'show'])->name('show');
+        });
+
+        // Broadcast Notifications
+        Route::prefix('broadcast-notifications')->name('broadcast-notifications.')->group(function () {
+            Route::get('/create', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'store'])->name('store');
+        });
+
+        // Subscription Management (Existing code - likely for viewing subscriptions)
+        Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'store'])->name('store');
+            Route::patch('/{subscription}/extend', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'extend'])->name('extend');
+            Route::patch('/{subscription}/cancel', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'cancel'])->name('cancel');
+        });
+
+        // [BARU] Subscription Plan Management (CRUD Paket Harga/Durasi) - Controller yang baru kita buat
+            Route::resource('subscription-plans', \App\Http\Controllers\Admin\SubscriptionPlanController::class)
+                ->names('subscription_plans'); 
+
+
+        // Payment Management
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'index'])->name('index');
+            Route::get('/{payment}', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'show'])->name('show');
+            Route::patch('/{payment}/status', [\App\Http\Controllers\Admin\PaymentManagementController::class, 'updateStatus'])->name('update-status');
+        });
+
+        // System Settings
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'index'])->name('index');
+            Route::put('/', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'update'])->name('update');
+            Route::get('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'files'])->name('files');
+            Route::delete('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'deleteFile'])->name('files.delete');
+        });
+
+        // System Monitoring & Health
+        Route::prefix('monitoring')->name('monitoring.')->group(function () {
+            // Health Check
+            Route::get('/health', [\App\Http\Controllers\Admin\HealthCheckController::class, 'index'])->name('health');
+            
+            // Queue Monitoring
+            Route::prefix('queue')->name('queue.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'index'])->name('index');
+                Route::post('/retry-all', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retryAll'])->name('retry-all');
+                Route::delete('/flush', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'flush'])->name('flush');
+                Route::post('/{id}/retry', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retry'])->name('retry');
+                Route::delete('/{id}', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'delete'])->name('delete');
+            });
+        });
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Company Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:company')->prefix('company')->name('company.')->group(function () {
+
+        // Company Profile create
+        Route::get('/create-profile', [CompanyController::class, 'create'])->name('profile.create');
+        Route::post('/create-profile', [CompanyController::class, 'store'])->name('profile.store');
+
+        // Company Dashboard
+        Route::get('/dashboard', fn() => view('company.dashboard'))->name('dashboard');
+
+        // Company Profile edit
+        Route::get('/profile/{company}/edit', [CompanyController::class, 'edit'])->name('profile.edit');
+        Route::match(['put', 'patch'], '/profile/{company}', [CompanyController::class, 'update'])->name('profile.update');
+
+        // Job Postings (Company Only)
+        Route::resource('job-postings', JobPostingController::class)->except(['show']);
+        Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status');
+
+        // Applications (Company Only)
+        Route::resource('applications', ApplicationController::class)->only(['index', 'show', 'edit', 'update']);
+        Route::get('/job-postings/{jobPosting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
+        Route::get('/job-postings/{jobPosting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
+        // Route::patch('/applications/{application}/update-status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status')->middleware('permission:application.update_status');
+        
+        // Payment & Subscription (Company Only)
+        Route::get('/payment/history', [PaymentTransactionController::class, 'index'])->name('payment.index');
+        Route::post('/payment/process/{subscription}', [PaymentTransactionController::class, 'processPayment'])->name('payment.process');
+        Route::get('/payment/waiting/{payment}', [PaymentTransactionController::class, 'waitingPayment'])->name('payment.waiting');
+        Route::get('/payment/success/{paymentTransaction}', fn($paymentTransaction) => "Payment Successful!". $paymentTransaction)->name('payment.success');
+        Route::get('/payment/failure', fn() => "Payment Failed!")->name('payment.failure');
+        Route::post('/payment/cancel/{payment}', [PaymentTransactionController::class, 'cancelPayment'])->name('payment.cancel');
+        Route::get('payment/check-status/{payment}', [PaymentTransactionController::class, 'checkPaymentStatus'])->name('payment.check-status');
+
+        // Subscription Pages
+        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+        Route::get('/subscriptions/{plan}', [SubscriptionController::class, 'confirmationOrder'])->name('subscriptions.confirm');
+        Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+        Route::post('/subscriptions/cancel/{subscription}', [SubscriptionController::class, 'cancelSubscription'])->name('subscriptions.cancel')->withTrashed();
+
+        // Resume / CV
+        Route::get('/resume/{jobPosting}', [ResumeController::class, 'JobSeekerResume'])->name('resume.index');
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:user')->prefix('user')->name('user.')->group(function () {
+
+        // User Dashboard
+        Route::get('/dashboard', fn() => view('user.dashboard'))->name('dashboard');
+
+        // Applications (User)
+        Route::prefix('applications')->name('applications.')->group(function () {
+            Route::get('/', [ApplicationController::class, 'index'])->name('index');
+            Route::get('/apply/{jobPosting}', [ApplicationController::class, 'create'])->name('create');
+            Route::post('/apply/{jobPosting}', [ApplicationController::class, 'store'])->name('store');
+            Route::get('/{application}/edit', [ApplicationController::class, 'edit'])->name('edit');
+            Route::match(['put', 'patch'], '/{application}', [ApplicationController::class, 'update'])->name('update');
+            Route::delete('/{application}', [ApplicationController::class, 'destroy'])->name('destroy');
+        });
+
+        // Job Seeker Skills
+        Route::get('/my-skills', [JobSeekerSkillController::class, 'index'])->name('skills.index');
+        Route::post('/my-skills', [JobSeekerSkillController::class, 'store'])->name('skills.store');
+        Route::put('/my-skills', [JobSeekerSkillController::class, 'update'])->name('skills.update');
+        Route::delete('/my-skills/{skill}', [JobSeekerSkillController::class, 'destroy'])->name('skills.destroy');
+
+        // Job Seeker Profile
+        Route::get('/job-seeker/profile/create', [JobSeekerController::class, 'create'])->name('job-seekers.create');
+        Route::post('/job-seeker/profile', [JobSeekerController::class, 'store'])->name('job-seekers.store');
+        Route::get('/job-seeker/profile/{jobSeeker}/edit', [JobSeekerController::class, 'edit'])->name('job-seekers.edit');
+        Route::put('/job-seeker/profile/{jobSeeker}', [JobSeekerController::class, 'update'])->name('job-seekers.update');
+
+        // Resume / CV
+        Route::delete('/resume/{resume}', [ResumeController::class, 'destroy'])->name('resume.destroy');
+        Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
+        Route::get('resume/download/{resume}', [ResumeController::class, 'download'])->name('resume.download');
+        
+        
+        // Job Listings tailored for user
+        Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');
+    });
+    
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Shared Auth Routes (All Roles)
+    |--------------------------------------------------------------------------
+    */
+    // Job Postings (semua auth user)
+    Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
+    
+    Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('user.resume.view')->middleware('role:user,company');
+    
+    Route::get('apply{application}', [ApplicationController::class, 'show'])->name('applications.show')->middleware('permission:application.read.own,application.read');
+
+    // Interviews
+    Route::prefix('interviews')->name('interviews.')->group(function () {
+        Route::get('/', [InterviewController::class, 'index'])->name('index');
+        Route::get('/{interview}', [InterviewController::class, 'show'])->name('show');
+
+        // Only company
+        Route::middleware('role:company')->group(function () {
+            Route::get('/applications/{application}/create', [InterviewController::class, 'create'])->name('create');
+            Route::post('/', [InterviewController::class, 'store'])->name('store');
+        });
+
+        // Company or Admin
+        Route::middleware('role:company,admin')->group(function () {
+            Route::get('/{interview}/edit', [InterviewController::class, 'edit'])->name('edit');
+            Route::put('/{interview}', [InterviewController::class, 'update'])->name('update');
+            Route::delete('/{interview}', [InterviewController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    // Notifications
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::put('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('mark-as-read');
+        Route::put('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('mark-all-read');
+        Route::get('/unread-count', [NotificationController::class, 'getUnreadCount'])->name('unread-count');
+    });
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Other Global Routes (Public / Mixed)
+|--------------------------------------------------------------------------
+*/
+
+// Route Companies
+Route::resource('companies', CompanyController::class);
+
+// Public view untuk daftar & detail (autentikasi sudah ada jika perlu)
+Route::middleware('auth')->group(function () {
+    Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
+    Route::get('/job-postings/{job_posting}', [JobPostingController::class, 'show'])->name('job-postings.show');
+    Route::get('/job-postings/create', [JobPostingController::class, 'create'])->name('job-postings.create');
+});
+
+// Company management (create/store/edit/update/destroy) - requires company role
+Route::middleware(['auth', 'role:company'])->group(function () {
+    Route::get('/job-postings/create', [JobPostingController::class, 'create'])->name('job-postings.create');
+    Route::post('/job-postings', [JobPostingController::class, 'store'])->name('job-postings.store');
+    Route::get('/job-postings/{job_posting}/edit', [JobPostingController::class, 'edit'])->name('job-postings.edit');
+    Route::put('/job-postings/{job_posting}', [JobPostingController::class, 'update'])->name('job-postings.update');
+    Route::delete('/job-postings/{job_posting}', [JobPostingController::class, 'destroy'])->name('job-postings.destroy');
+});
+
+// Route Resumes
+Route::resource('resumes', ResumeController::class)->except(['show']);
+
+// Route Subscription Plans (Admin Only) -> NOTE: Ini yang lama (mungkin mengarah ke controller publik?), 
+// tapi karena kita sudah buat yang khusus admin di atas (di dalam group 'role:admin'), yang ini biarkan saja
+// atau bisa dikomentari kalau bikin konflik. Tapi karena URL admin pakai prefix /admin, harusnya aman.
+Route::resource('subscription-plans', SubscriptionPlanController::class);
+
+// Webhook Route for Payment Gateway (No Auth)
+Route::post('/webhook/payment', [WebhookController::class, 'handlePayment'])->name('webhook.payment');
+
+require __DIR__.'/auth.php';
