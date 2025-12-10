@@ -98,6 +98,6 @@ class Company extends Model
     {
         return Application::whereHas('jobPosting', function ($query) {
             $query->where('id_company', $this->id);
-        })->where('status', 'hired')->count();
+        })->whereIn('status', ['hired', 'accepted'])->count();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Resume;
@@ -40,8 +41,22 @@ class ResumeController extends Controller
     {
         /** @var User */
         $user = Auth::user();
-        if ($user->jobSeeker?->id !== $resume->job_seeker_id) {
-            abort(403, 'AKSES DITOLAK');
+
+        $isOwner = $user->jobSeeker?->id === $resume->job_seeker_id;
+
+        $isAuthorizedCompany = false;
+
+        if (!$isOwner && $user->hasRole('company') && $user->company) {
+            $isAuthorizedCompany = Application::query()
+                ->where('id_resume', $resume->id) 
+                ->whereHas('jobPosting', function ($query) use ($user) {
+                    $query->where('id_company', $user->company->id);
+                })
+                ->exists();
+        }
+
+        if (!$isOwner && !$isAuthorizedCompany) {
+            abort(403, 'AKSES DITOLAK. Anda tidak memiliki izin melihat dokumen ini.');
         }
 
         $path = Storage::disk('public')->path($resume->file_path);
