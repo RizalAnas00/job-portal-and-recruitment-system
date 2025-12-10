@@ -68,7 +68,7 @@ class ApplicationController extends Controller
         if ($user->hasRole('user')) {
             return view('applications.user-show-app', compact('application'));
         } elseif ($user->hasRole('company')) {
-            return view('applications.show', compact('application'));
+            return view('applications.user-show-app', compact('application'));
         } else {
             abort(403, 'AKSES DITOLAK');
         }
@@ -159,7 +159,7 @@ class ApplicationController extends Controller
         } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->id_company) {
             // Company hanya boleh mengupdate status
             $data = $request->validate([
-                'status' => 'required|in:applied,under_review,interview_scheduled,interviewing,offered,hired,rejected',
+                'status' => 'required|in:pending,reviewed,interview_scheduled,interviewing,accepted,rejected',
             ]);
 
             $application->update($data);
@@ -245,7 +245,7 @@ class ApplicationController extends Controller
             $query->where('status', $request->status);
         }
 
-        $applications = $query->latest()->paginate(10);
+        $applications = $query->latest()->paginate(12);
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
 
         return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));
@@ -265,7 +265,7 @@ class ApplicationController extends Controller
         }
 
         $validated = $request->validate([
-            'status' => ['nullable', 'string', Rule::in(['all', 'pending', 'reviewed', 'accepted', 'rejected'])],
+            'status' => ['nullable', 'string', Rule::in(['all', 'pending', 'reviewed', 'interview_scheduled', 'interviewing', 'accepted', 'rejected'])],
         ]);
 
         $query = $jobPosting->applications()->with('jobSeeker.user');
@@ -274,7 +274,7 @@ class ApplicationController extends Controller
             $query->where('status', $validated['status']);
         }
 
-        $applications = $query->latest()->paginate(10);
+        $applications = $query->latest()->paginate(12);
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
 
         return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));

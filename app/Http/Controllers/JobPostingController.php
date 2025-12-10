@@ -122,28 +122,21 @@ class JobPostingController extends Controller
     {
         JobPosting::refreshScheduledStatuses();
         
+        // Eager load relasi yang dibutuhkan accessors/methods
         $jobPosting->load('company', 'skills');
 
-        /** @var \App\Models\User */
-        $user        = Auth::user();
+        /** @var \App\Models\User|null */
+        $user = Auth::user();
 
-        $userSkills  = $user?->jobSeeker?->skills->pluck('skill_name')->toArray() ?? [];
-        $postingSkills = $jobPosting->skills->pluck('skill_name')->toArray();
+        $matchedSkills  = $jobPosting->getMatchedSkillsWith($user);
+        $matchCount     = count($matchedSkills);
+        
+        $isExpired      = $jobPosting->is_expired;
+        $hoursLeft      = $jobPosting->hours_left;
+        $isUrgent       = $jobPosting->is_urgent;
 
-        $deadline   = $jobPosting->closing_date;
-        $isExpired  = $deadline && now()->greaterThan($deadline);
-        $hoursLeft  = $deadline ? now()->diffInHours($deadline, false) : null;
-        $isUrgent   = !$isExpired && $hoursLeft !== null && $hoursLeft <= 24;
-
-        $matchedSkills = array_intersect($userSkills, $postingSkills);
-        $matchCount    = count($matchedSkills);
-
-        $isCompanyOwner = $user?->hasRole('company') &&
-                        $user?->company?->id == $jobPosting->company?->id;
-
-        $hasApplied = $user?->jobSeeker?->applications()
-            ->where('id_job_posting', $jobPosting->id)
-            ->exists();
+        $isCompanyOwner = $jobPosting->isOwnedBy($user);
+        $hasApplied     = $jobPosting->hasApplicant($user);
 
         return view('job_postings.show', compact(
             'jobPosting',
@@ -266,6 +259,11 @@ class JobPostingController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
+        if($jobPosting->hasApplicants()) {
+            return redirect()->route('job-postings.index')
+                ->with('error', 'Maaf, lowongan dengan pelamar aktif(tidak berstatus accepted ataupun rejected) tidak dapat diedit.');
+        }
+
         $skills = Skill::orderBy('skill_name')->get();
         $selectedSkillIds = $jobPosting->skills()->pluck('skills.id');
 
@@ -283,6 +281,11 @@ class JobPostingController extends Controller
         // Otorisasi: Hanya admin atau pemilik perusahaan yang bisa mengupdate
         if (!$user->hasRole('admin') && !($user->hasRole('company') && $user->company?->id === $jobPosting->id_company)) {
             abort(403, 'AKSES DITOLAK');
+        }
+
+        if($jobPosting->hasApplicants()) {
+            return redirect()->route('job-postings.index')
+                ->with('error', 'Maaf, lowongan dengan pelamar aktif(tidak berstatus accepted ataupun rejected) tidak dapat diedit.');
         }
 
         Log::info("request : ", $request->all());

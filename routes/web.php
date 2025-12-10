@@ -268,10 +268,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status');
 
         // Applications (Company Only)
-        Route::resource('applications', ApplicationController::class)->only(['index', 'edit', 'update']);
-        Route::get('/job-postings/{job_posting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
-        Route::get('/job-postings/{job_posting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
-
+        Route::resource('applications', ApplicationController::class)->only(['index', 'show', 'edit', 'update']);
+        Route::get('/job-postings/{jobPosting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
+        Route::get('/job-postings/{jobPosting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
+        // Route::patch('/applications/{application}/update-status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status')->middleware('permission:application.update_status');
+        
         // Payment & Subscription (Company Only)
         Route::get('/payment/history', [PaymentTransactionController::class, 'index'])->name('payment.index');
         Route::post('/payment/process/{subscription}', [PaymentTransactionController::class, 'processPayment'])->name('payment.process');

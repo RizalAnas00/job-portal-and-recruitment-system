@@ -23,39 +23,43 @@
         </x-accordion-1>
 
         <x-accordion-1 title="{{ __('Your Job Application') }}">
+            @if(auth()->user()->hasRole('user'))
+            
+                <p class="mb-1 rounded-md border px-3 py-2 bg-transparent
+                        border-gray-300 dark:border-gray-700
+                        text-gray-800 dark:text-gray-200">
+                    <span class="font-semibold">Status :</span>
+                    <span class="
+                        @if ($application->status === 'applied') text-gray-400
+                        @elseif ($application->status === 'reviewed') text-gray-200
+                        @elseif ($application->status === 'pending') text-primary-300
+                        @elseif ($application->status === 'under_review') text-primary-400
+                        @elseif ($application->status === 'interview_scheduled') text-primary-500
+                        @elseif ($application->status === 'interviewing') text-teal-500
+                        @elseif ($application->status === 'offered') text-teal-300
+                        @elseif ($application->status === 'accepted') text-teal-400
+                        @elseif ($application->status === 'hired') text-teal-500
+                        @elseif ($application->status === 'rejected') text-red-500
+                        @endif font-bold
+                    ">
+                        {{ __(ucfirst(str_replace('_', ' ', $application->status))) }}
+                    </span>
+                </p>
 
-            <p class="mb-1 rounded-md border px-3 py-2 bg-transparent
-                    border-gray-300 dark:border-gray-700
-                    text-gray-800 dark:text-gray-200">
-                <span class="font-semibold">Status :</span>
-                <span class="
-                    @if ($application->status === 'applied') text-gray-400
-                    @elseif ($application->status === 'reviewed') text-gray-200
-                    @elseif ($application->status === 'pending') text-primary-300
-                    @elseif ($application->status === 'under_review') text-primary-400
-                    @elseif ($application->status === 'interview_scheduled') text-primary-500
-                    @elseif ($application->status === 'interviewing') text-teal-500
-                    @elseif ($application->status === 'offered') text-teal-300
-                    @elseif ($application->status === 'accepted') text-teal-400
-                    @elseif ($application->status === 'hired') text-teal-500
-                    @elseif ($application->status === 'rejected') text-red-500
-                    @endif font-bold
-                ">
-                    {{ __(ucfirst(str_replace('_', ' ', $application->status))) }}
-                </span>
-            </p>
+                <p><span class="font-semibold">Dilamar pada :</span>
+                    {{ $application->created_at->format('d F Y H:i') }}
+                </p>
 
-            <p><span class="font-semibold">Dilamar pada :</span>
-               {{ $application->created_at->format('d F Y H:i') }}
-            </p>
-
-            @if($application->cover_letter)
-                <div class="mt-4">
-                    <span class="font-semibold">Cover Letter:</span>
-                    <div class="p-4 mt-1 rounded-lg bg-gray-100 dark:bg-gray-800 border dark:border-gray-700">
-                        {!! nl2br(e($application->cover_letter)) !!}
+                @if($application->cover_letter)
+                    <div class="mt-4">
+                        <span class="font-semibold">Cover Letter:</span>
+                        <div class="p-4 mt-1 rounded-lg bg-gray-100 dark:bg-gray-800 border dark:border-gray-700">
+                            {!! nl2br(e($application->cover_letter)) !!}
+                        </div>
                     </div>
-                </div>
+                @endif
+            @elseif(auth()->user()->hasRole('company'))
+                @include('applications.components.company-detail', ['application' => $application])
             @endif
 
         </x-accordion-1>
