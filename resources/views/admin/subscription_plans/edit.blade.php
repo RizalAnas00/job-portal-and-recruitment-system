@@ -58,6 +58,17 @@
                             </select>
                         </div>
 
+                        {{-- IS ACTIVE (STATUS AKTIF/NONAKTIF) --}}
+                        <div class="mb-4">
+                            <label for="is_active" class="block text-gray-700 text-sm font-bold mb-2">Status Paket:</label>
+                            <select name="is_active" id="is_active" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                {{-- Jika nilai dari DB adalah 1 (true), maka pilih Aktif --}}
+                                <option value="1" {{ old('is_active', $subscriptionPlan->is_active) == '1' ? 'selected' : '' }}>Aktif (Tersedia untuk dijual)</option>
+                                {{-- Jika nilai dari DB adalah 0 (false), maka pilih Nonaktif --}}
+                                <option value="0" {{ old('is_active', $subscriptionPlan->is_active) == '0' ? 'selected' : '' }}>Nonaktif (Tidak dijual)</option>
+                            </select>
+                        </div>
+                        
                         {{-- Tombol Aksi --}}
                         <div class="flex items-center justify-between mt-6">
                             <a href="{{ route('admin.subscription_plans.index') }}" class="text-gray-600 hover:underline">Batal</a>

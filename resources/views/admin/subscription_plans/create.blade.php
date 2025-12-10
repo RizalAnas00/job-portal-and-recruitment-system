@@ -56,6 +56,16 @@
                                 <option value="1" {{ old('allow_verified_badge') == '1' ? 'selected' : '' }}>Ya</option>
                             </select>
                         </div>
+                        
+                        {{-- IS ACTIVE (STATUS AKTIF/NONAKTIF) --}}
+                        <div class="mb-4">
+                            <label for="is_active" class="block text-gray-700 text-sm font-bold mb-2">Status Paket:</label>
+                            <select name="is_active" id="is_active" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                {{-- Defaultnya adalah AKTIF (1) di form Create --}}
+                                <option value="1" {{ old('is_active', 1) == '1' ? 'selected' : '' }}>Aktif (Tersedia untuk dijual)</option>
+                                <option value="0" {{ old('is_active', 1) == '0' ? 'selected' : '' }}>Nonaktif (Tidak dijual)</option>
+                            </select>
+                        </div>
 
                         {{-- Tombol --}}
                         <div class="flex items-center justify-between mt-6">

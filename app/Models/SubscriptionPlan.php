@@ -12,10 +12,11 @@ class SubscriptionPlan extends Model
     protected $table = 'subscription_plans'; 
 
     protected $fillable = [
-        'plan_name',            // Sesuaikan dengan DB
+        'plan_name',            
         'price',
         'duration_days',
-        'job_post_limit',       // Wajib ada
-        'allow_verified_badge', // Wajib ada
+        'job_post_limit',       
+        'allow_verified_badge',
+        'is_active',
     ];
 }

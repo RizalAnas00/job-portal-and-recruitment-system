@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\SubscriptionPlan;
+use App\Models\SubscriptionPlan; // Pastikan ini di-import
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +49,7 @@ class SubscriptionPlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'job_post_limit' => 'required|integer|min:0',
             'allow_verified_badge' => 'required|boolean',
+            'is_active' => 'required|boolean', // <-- VALIDASI BARU DITAMBAHKAN
         ]);
 
         SubscriptionPlan::create($validated);
@@ -90,6 +91,7 @@ class SubscriptionPlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'job_post_limit' => 'required|integer|min:0',
             'allow_verified_badge' => 'required|boolean',
+            'is_active' => 'required|boolean', // <-- VALIDASI BARU DITAMBAHKAN
         ]);
 
         $subscriptionPlan->update($validated);

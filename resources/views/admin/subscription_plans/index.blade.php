@@ -24,13 +24,15 @@
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Durasi</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Limit Post</th>
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Badge</th>
+                                {{-- KOLOM BARU DITAMBAHKAN --}}
+                                <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                                {{-- END KOLOM BARU --}}
                                 <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($plans as $plan)
                             <tr>
-                                {{-- Ubah name jadi plan_name --}}
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm font-bold">{{ $plan->plan_name }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">Rp {{ number_format($plan->price, 0, ',', '.') }}</td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $plan->duration_days }} Hari</td>
@@ -42,6 +44,15 @@
                                         <span class="bg-gray-200 text-gray-800 py-1 px-2 rounded-full text-xs">Tidak</span>
                                     @endif
                                 </td>
+                                {{-- SEL BARU DITAMBAHKAN (STATUS IS_ACTIVE) --}}
+                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    @if($plan->is_active)
+                                        <span class="bg-blue-200 text-blue-800 py-1 px-2 rounded-full text-xs font-semibold">Aktif</span>
+                                    @else
+                                        <span class="bg-red-200 text-red-800 py-1 px-2 rounded-full text-xs font-semibold">Nonaktif</span>
+                                    @endif
+                                </td>
+                                {{-- END SEL BARU --}}
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                     <a href="{{ route('admin.subscription_plans.edit', $plan->id) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
                                     
@@ -54,7 +65,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">Belum ada paket data.</td>
+                                <td colspan="7" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">Belum ada paket data.</td>
                             </tr>
                             @endforelse
                         </tbody>
