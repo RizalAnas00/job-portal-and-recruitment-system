@@ -25,7 +25,8 @@ class JobSeekerJobController extends Controller
         $skillIds = $jobSeeker->skills()->pluck('skills.id');
 
         $query = JobPosting::with('company', 'skills')
-            ->where('status', 'open');
+            ->where('status', 'open')
+            ->where('moderation_status', 'approved');
 
         if ($request->filled('q')) {
             $search = $request->input('q');

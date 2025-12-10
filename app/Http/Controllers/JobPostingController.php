@@ -31,6 +31,7 @@ class JobPostingController extends Controller
                     $q->whereNull('closing_date')
                         ->orWhere('closing_date', '>=', now());
                 })
+                ->where('moderation_status', 'approved')
                 ->whereNotIn('status', ['draft', 'archived']);
         }
 
