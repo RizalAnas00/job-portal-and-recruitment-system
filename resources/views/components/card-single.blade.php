@@ -5,7 +5,7 @@
 @endphp
 
 
-<div class="rounded-xl shadow-md hover:shadow-lg transition overflow-visible flex flex-col h-full
+<div class="rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col h-full
     border {{ $applied ? 'border-green-500 bg-green-50/60 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800' }}">
     @if($applied)
         <span class="mx-2 mt-2 px-2 py-2 font-medium text-sm text-center rounded-lg bg-green-300 text-green-900 dark:bg-green-700/40 dark:text-green-300">
