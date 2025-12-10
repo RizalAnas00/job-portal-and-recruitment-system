@@ -74,7 +74,7 @@
 
                         <div class="flex flex-wrap gap-4">
                             @if (Auth::user()->jobSeeker)
-                                <a href="{{ route('user.job-seekers.edit') }}"
+                                <a href="{{ route('user.job-seekers.edit', Auth::user()->jobSeeker) }}"
                                     class="bg-primary-700 hover:bg-primary-700 text-white font-semibold py-2.5 px-4 rounded-lg transition">
                                     Edit Profil Job Seeker
                                 </a>

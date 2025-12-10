@@ -18,9 +18,75 @@
                     @endif
                     <x-input-error :messages="$errors->all()" class="mb-4" />
 
-                    <form method="POST" action="{{ route('user.job-seekers.update') }}" class="space-y-5">
+                    <form method="POST" action="{{ route('user.job-seekers.update', $jobSeeker) }}" class="space-y-5" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
+
+                        {{-- 
+                            INPUT FOTO PROFIL DENGAN LIVE PREVIEW 
+                            x-data menyimpan state 'photoPreview' yang defaultnya null
+                        --}}
+                        <div class="border-b border-gray-200 dark:border-gray-700 pb-5 mb-5" 
+                             x-data="{ photoPreview: null }">
+                            
+                            <x-input-label for="profile_picture" value="Foto Profil" />
+                            
+                            <div class="mt-2 flex items-center gap-x-5">
+                                
+                                {{-- AREA FOTO --}}
+                                <div class="shrink-0">
+                                    {{-- 1. Tampilkan Preview jika user baru saja upload (photoPreview tidak null) --}}
+                                    <div x-show="photoPreview" style="display: none;">
+                                        <span class="block h-16 w-16 rounded-full bg-cover bg-center bg-no-repeat border border-gray-300 dark:border-gray-600"
+                                              :style="'background-image: url(\'' + photoPreview + '\');'">
+                                        </span>
+                                    </div>
+
+                                    {{-- 2. Tampilkan Foto Lama jika tidak ada preview baru --}}
+                                    <div x-show="!photoPreview">
+                                        @if($jobSeeker->profile_picture_path)
+                                            <img class="h-16 w-16 object-cover rounded-full border border-gray-300 dark:border-gray-600" 
+                                                 src="{{ asset('storage/' . $jobSeeker->profile_picture_path) }}" 
+                                                 alt="{{ $jobSeeker->first_name }}" />
+                                        @else
+                                            <div class="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                                                @svg('carbon-user-avatar-filled', 'h-16 w-16')
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- INPUT FILE & BUTTON --}}
+                                <div class="w-full relative">
+                                    {{-- Input File Asli (Hidden tapi tetap berfungsi) --}}
+                                    <input class="hidden" 
+                                           id="profile_picture" 
+                                           name="profile_picture" 
+                                           type="file"
+                                           accept="image/png, image/jpeg, image/jpg"
+                                           x-ref="photo"
+                                           x-on:change="
+                                                const file = $refs.photo.files[0];
+                                                if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => { photoPreview = e.target.result; };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                           ">
+
+                                    {{-- Tombol Custom untuk Trigger Input --}}
+                                    <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.photo.click()">
+                                        Pilih Foto Baru
+                                    </x-secondary-button>
+
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" id="file_input_help">
+                                        PNG, JPG or JPEG (MAX. 2MB).
+                                    </p>
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('profile_picture')" class="mt-2" />
+                        </div>
+                        {{-- Batas Input Foto Profil --}}
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
@@ -72,9 +138,8 @@
                                     focus:ring-primary-500 dark:focus:ring-primary-600 p-2"
                             />
 
-                            <!-- Scroll Container -->
                             <div class="mt-3 p-4 border border-gray-300 dark:border-gray-700 rounded-xl 
-                                        bg-white dark:bg-gray-900 max-h-80 overflow-y-auto">
+                                            bg-white dark:bg-gray-900 max-h-80 overflow-y-auto">
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
 
@@ -116,4 +181,3 @@
         </div>
     </div>
 </x-app-layout>
-

@@ -14,9 +14,61 @@
                     <x-auth-session-status class="mb-4" :status="session('error')" />
                     <x-input-error :messages="$errors->all()" class="mb-4" />
 
-                    <form method="POST" action="{{ route('user.job-seekers.store') }}" class="space-y-5">
+                    {{-- Form Start --}}
+                    <form method="POST" action="{{ route('user.job-seekers.store') }}" class="space-y-5" enctype="multipart/form-data">
                         @csrf
 
+                        {{-- Input Foto Profil dengan Preview --}}
+                        <div class="border-b border-gray-200 dark:border-gray-700 pb-5 mb-5" 
+                             x-data="{ photoPreview: null }">
+                            
+                            <x-input-label for="profile_picture" value="Foto Profil (Opsional)" />
+                            
+                            <div class="mt-2 flex items-center gap-x-5">
+                                {{-- Area Preview Foto --}}
+                                <div class="shrink-0">
+                                    <div x-show="photoPreview" style="display: none;">
+                                        <span class="block h-20 w-20 rounded-full bg-cover bg-center bg-no-repeat border border-gray-300 dark:border-gray-600"
+                                              :style="'background-image: url(\'' + photoPreview + '\');'">
+                                        </span>
+                                    </div>
+                                    <div x-show="!photoPreview">
+                                        <div class="h-20 w-20 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 border border-gray-300 dark:border-gray-600">
+                                            @svg('carbon-user-avatar-filled', 'h-20 w-20')
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Input File Button --}}
+                                <div class="w-full relative">
+                                    <input class="hidden" 
+                                           id="profile_picture" 
+                                           name="profile_picture" 
+                                           type="file"
+                                           accept="image/png, image/jpeg, image/jpg"
+                                           x-ref="photo"
+                                           x-on:change="
+                                                const file = $refs.photo.files[0];
+                                                if (file) {
+                                                    const reader = new FileReader();
+                                                    reader.onload = (e) => { photoPreview = e.target.result; };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                           ">
+
+                                    <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.photo.click()">
+                                        Pilih Foto
+                                    </x-secondary-button>
+
+                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                        PNG, JPG or JPEG (MAX. 2MB).
+                                    </p>
+                                </div>
+                            </div>
+                            <x-input-error :messages="$errors->get('profile_picture')" class="mt-2" />
+                        </div>
+
+                        {{-- Nama --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <x-input-label for="first_name" value="Nama Depan" />
@@ -31,15 +83,17 @@
                             </div>
                         </div>
 
+                        {{-- Kontak --}}
                         <div>
                             <x-input-label for="phone_number" value="Nomor Telepon" />
                             <x-text-input id="phone_number" name="phone_number" type="text" class="mt-1 block w-full"
                                 :value="old('phone_number')" autocomplete="tel" required />
-                            <p class="text-sm text-gray-500 mt-1">
-                                Gunakan nomor aktif agar perusahaan mudah menghubungi Anda.
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Gunakan nomor aktif (WhatsApp) agar perusahaan mudah menghubungi Anda.
                             </p>
                         </div>
 
+                        {{-- Alamat --}}
                         <div>
                             <x-input-label for="address" value="Alamat Lengkap" />
                             <textarea id="address" name="address" rows="3"
@@ -47,34 +101,51 @@
                                 required>{{ old('address') }}</textarea>
                         </div>
 
+                        {{-- Ringkasan --}}
                         <div>
                             <x-input-label for="profile_summary" value="Ringkasan Profil (Opsional)" />
                             <textarea id="profile_summary" name="profile_summary" rows="4"
                                 class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 rounded-md shadow-sm"
-                                placeholder="Ceritakan pengalaman, keahlian utama, atau tujuan karier Anda.">{{ old('profile_summary') }}</textarea>
+                                placeholder="Ceritakan pengalaman singkat, keahlian utama, atau tujuan karier Anda.">{{ old('profile_summary') }}</textarea>
                         </div>
 
-                        <div>
+                        {{-- Skill Selection dengan Pencarian --}}
+                        <div x-data="{ search: '' }">
                             <x-input-label for="skills" value="Skill yang Dikuasai" />
-                            @php
-                                $selectedSkills = collect(old('skills', $selectedSkillIds?->toArray() ?? []));
-                            @endphp
-                            <select id="skills" name="skills[]" multiple size="8"
-                                class="mt-2 block w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600">
-                                @foreach ($skills as $skill)
-                                    <option value="{{ $skill->id }}" @selected($selectedSkills->contains($skill->id))>
-                                        {{ $skill->skill_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <input
+                                type="text"
+                                x-model="search"
+                                placeholder="Cari skill..."
+                                class="mt-2 w-full rounded-lg border-gray-300 dark:border-gray-700 
+                                    dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600
+                                    focus:ring-primary-500 dark:focus:ring-primary-600 p-2 text-sm"
+                            />
+
+                            <div class="mt-3 p-4 border border-gray-300 dark:border-gray-700 rounded-xl 
+                                            bg-white dark:bg-gray-900 max-h-60 overflow-y-auto">
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach ($skills as $skill)
+                                        <div x-show="{{ json_encode(strtolower($skill->skill_name)) }}.includes(search.toLowerCase())"
+                                             x-transition>
+                                            <x-check-box-one
+                                                :skill="$skill"
+                                                :checked="collect(old('skills', []))->contains($skill->id)"
+                                            />
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                Tekan Ctrl/Cmd untuk memilih lebih dari satu skill. Anda dapat mengubahnya kapan saja.
+                                Pilih keahlian yang relevan untuk meningkatkan peluang Anda.
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-end">
+                        {{-- Tombol Aksi --}}
+                        <div class="flex items-center justify-end mt-6">
                             <x-primary-button>
-                                Simpan Profil
+                                Simpan Profil & Lanjutkan
                             </x-primary-button>
                         </div>
                     </form>
@@ -83,4 +154,3 @@
         </div>
     </div>
 </x-app-layout>
-

@@ -53,7 +53,34 @@
                             <button class="flex items-center gap-2 px-2.5 py-1.5 rounded-full bg-transparent
                                            text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700
                                            transition shadow-sm">
-                                <img src="https://i.pravatar.cc/40" class="h-8 w-8 rounded-full border border-gray-300" />
+                                @php
+                                    $user = Auth::user();
+                                    $avatarPath = null;
+
+                                    if ($user->hasRole('company') && $user->company) {
+                                        $avatarPath = $user->company->logo_path;
+                                    } elseif ($user->hasRole('user') && $user->jobSeeker) {
+                                        $avatarPath = $user->jobSeeker->profile_picture_path;
+                                    }
+
+                                    $avatarUrl = 'https://i.pravatar.cc/40?u=' . $user->id; // Default
+
+                                    if ($avatarPath) {
+                                        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($avatarPath)) {
+                                            $avatarUrl = asset('storage/' . $avatarPath);
+                                        } else {
+                                            $avatarUrl = asset($avatarPath);
+                                        }
+                                    } 
+                                @endphp
+                                
+                                @if ($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" 
+                                        alt="{{ $user->name }}" 
+                                        class="h-8 w-8 rounded-full border border-gray-300 object-cover" />
+                                @else
+                                    @svg('ionicon-person', 'h-8 w-8 text-gray-400')                                
+                                @endif
                                 <span class="hidden sm:block ml-2">{{ Auth::user()->email }}</span>
                                 @if (Auth::user()->company && Auth::user()->company->is_verified)
                                     @svg('gmdi-verified-s', 'h-5 w-5 text-blue-500 ml-1')

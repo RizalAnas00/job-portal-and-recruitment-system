@@ -322,8 +322,8 @@ Route::middleware('auth')->group(function () {
         // Job Seeker Profile
         Route::get('/job-seeker/profile/create', [JobSeekerController::class, 'create'])->name('job-seekers.create');
         Route::post('/job-seeker/profile', [JobSeekerController::class, 'store'])->name('job-seekers.store');
-        Route::get('/job-seeker/profile', [JobSeekerController::class, 'edit'])->name('job-seekers.edit');
-        Route::put('/job-seeker/profile', [JobSeekerController::class, 'update'])->name('job-seekers.update');
+        Route::get('/job-seeker/profile/{jobSeeker}/edit', [JobSeekerController::class, 'edit'])->name('job-seekers.edit');
+        Route::put('/job-seeker/profile/{jobSeeker}', [JobSeekerController::class, 'update'])->name('job-seekers.update');
 
         // Resume / CV
         Route::delete('/resume/{resume}', [ResumeController::class, 'destroy'])->name('resume.destroy');
