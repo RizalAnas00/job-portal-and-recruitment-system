@@ -49,9 +49,15 @@
                             Ditemukan {{ $jobPostings->total() }} lowongan yang cocok dengan skill Anda.
                         </p>
                     </div>
-                    <a href="{{ route('user.job-seekers.edit') }}" class="text-sm text-primary-600 hover:text-primary-500">
-                        Perbarui Profil & Skill →
-                    </a>
+                    @if(Auth::user()->jobSeeker)
+                        <a href="{{ route('user.job-seekers.edit', Auth::user()->jobSeeker) }}" class="text-sm text-primary-600 hover:text-primary-500">
+                            Perbarui Profil & Skill →
+                        </a>
+                    @elseif(!Auth::user()->jobSeeker)
+                        <a href="{{ route('user.job-seekers.create') }}" class="text-sm text-primary-600 hover:text-primary-500">
+                            Buat Profil & Skill →
+                        </a>   
+                    @endif
                 </div>
 
                 @if ($jobPostings->isEmpty())
