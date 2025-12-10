@@ -4,6 +4,7 @@
     'label' => null,
     'options' => [],
     'selected' => null,
+    'spawn_in' => 'bottom',
 ])
 
 <div class="w-full">
@@ -22,10 +23,10 @@
         <button 
             type="button"
             @click="open = !open"
-            class="mt-1 w-full flex justify-between items-center px-4 py-2.5
+            {{ $attributes->merge(['class' => 'mt-1 w-full flex justify-between items-center px-4 py-2.5
                    bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700
-                   rounded-md text-left shadow-sm hover:bg-gray-50
-                   dark:hover:bg-gray-800 transition"
+                   rounded-lg text-left shadow-sm hover:bg-gray-50
+                   dark:hover:bg-gray-800 transition']) }}
         >
             <span x-text="selectedText" class="text-sm text-gray-700 dark:text-gray-300"></span>
 
@@ -50,7 +51,7 @@
             x-transition.origin.top.left
             class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 
                    rounded-md shadow-lg border border-gray-200 dark:border-gray-700
-                   py-2 max-h-60 overflow-auto"
+                   py-2 max-h-60 overflow-auto {{ $spawn_in === 'bottom' ? '' : 'bottom-full mb-2' }}"
         >
             @foreach ($options as $value => $text)
                 <li>

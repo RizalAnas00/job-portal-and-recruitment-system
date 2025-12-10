@@ -53,15 +53,15 @@
 
                     <!-- Actions -->
                     <div class="flex-shrink-0 flex gap-2">
-                        @if($notification->link_url)
+                        {{-- @if($notification->link_url)
                             <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
                                     Lihat Detail
                                 </button>
-                            </form>
-                        @elseif(!$notification->is_read)
+                            </form> --}}
+                        @if(!$notification->is_read)
                             <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')

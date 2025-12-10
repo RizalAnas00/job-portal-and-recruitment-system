@@ -24,6 +24,22 @@ class Application extends Model
 	protected $casts = [
 		'application_date' => 'datetime',
 	];
+	
+	protected static function booted()
+	{
+		static::addGlobalScope('active', function ($query) {
+			$query->whereNull('deleted_at');
+		});	
+	}
+
+	/**
+	 * Update status lamaran
+	 */
+	public function updateStatus($status)
+	{
+		$this->status = $status;
+		$this->save();
+	}
 
 	public function jobSeeker()
 	{

@@ -75,9 +75,9 @@ class NotificationController extends Controller
 
         $notification->update(['is_read' => true]);
 
-        if ($notification->link_url) {
-            return redirect($notification->link_url);
-        }
+        // if ($notification->link_url) {
+        //     return redirect($notification->link_url);
+        // }
 
         return redirect()->route('notifications.index')->with('success', 'Notifikasi ditandai sebagai sudah dibaca.');
     }

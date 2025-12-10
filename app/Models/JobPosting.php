@@ -100,20 +100,85 @@ class JobPosting extends Model
             ->update(['status' => 'closed']);
     }
 
-    public function hasApplied(): bool
+/**
+     * Cek apakah lowongan sudah expired.
+     * Usage: $jobPosting->is_expired
+     */
+    public function getIsExpiredAttribute(): bool
     {
-        /** @var \App\Models\User */
-        $user = Auth::user();
+        return $this->closing_date && now()->greaterThan($this->closing_date);
+    }
 
-        if (!Auth::check()) {
-            return false;
-        } else if (!$user->hasRole('user') || !$user->jobSeeker) {
+    /**
+     * Hitung sisa jam (bisa minus jika sudah lewat).
+     * Usage: $jobPosting->hours_left
+     */
+    public function getHoursLeftAttribute(): ?int
+    {
+        return $this->closing_date ? now()->diffInHours($this->closing_date, false) : null;
+    }
+
+    /**
+     * Cek apakah lowongan mendesak (kurang dari 24 jam dan belum expired).
+     * Usage: $jobPosting->is_urgent
+     */
+    public function getIsUrgentAttribute(): bool
+    {
+        return !$this->is_expired && 
+               $this->hours_left !== null && 
+               $this->hours_left <= 24;
+    }
+
+    /* |--------------------------------------------------------------------------
+    | User Context Methods (Butuh parameter User)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Mendapatkan skill yang cocok antara pelamar dan lowongan.
+     */
+    public function getMatchedSkillsWith(?User $user): array
+    {
+        if (!$user || !$user->jobSeeker) {
+            return [];
+        }
+
+        // Ambil skill user (cache jika perlu, tapi ini raw logicnya)
+        $userSkills = $user->jobSeeker->skills->pluck('skill_name')->toArray();
+        
+        // Ambil skill postingan ini
+        $postingSkills = $this->skills->pluck('skill_name')->toArray();
+
+        return array_intersect($userSkills, $postingSkills);
+    }
+
+    /**
+     * Cek apakah user yang login adalah pemilik perusahaan lowongan ini.
+     */
+    public function isOwnedBy(?User $user): bool
+    {
+        return $user && 
+               $user->hasRole('company') && 
+               $user->company?->id === $this->company?->id;
+    }
+
+    /**
+     * Cek apakah user sudah melamar di lowongan ini.
+     */
+    public function hasApplicant(?User $user): bool
+    {
+        if (!$user || !$user->jobSeeker) {
             return false;
         }
 
-        return $this->applications()
-            ->where('id_job_seeker', $user->jobSeeker->id)
+        return $user->jobSeeker->applications()
+            ->where('id_job_posting', $this->id)
             ->exists();
+    }
+
+    public function hasApplicants(): bool
+    {
+        return $this->applications()->exists();
     }
 
     /**
