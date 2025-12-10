@@ -326,6 +326,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/job-seeker/profile', [JobSeekerController::class, 'update'])->name('job-seekers.update');
 
         // Resume / CV
+        Route::delete('/resume/{resume}', [ResumeController::class, 'destroy'])->name('resume.destroy');
         Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
         Route::get('resume/download/{resume}', [ResumeController::class, 'download'])->name('resume.download');
         

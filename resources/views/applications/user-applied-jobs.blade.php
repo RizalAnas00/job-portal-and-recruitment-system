@@ -7,7 +7,7 @@
     </div> --}}
 
     @if(session('success'))
-        <div class="bg-green-100 dark:bg-green-600/20 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <div class="bg-green-100 dark:bg-green-600/20 border border-green-400 text-green-700 dark:text-green-400 px-4 py-3 rounded relative mb-4" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
         </div>
     @endif
