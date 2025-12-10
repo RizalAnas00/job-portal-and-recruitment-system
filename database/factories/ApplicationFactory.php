@@ -19,8 +19,8 @@ class ApplicationFactory extends Factory
     public function definition(): array
     {
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected'];
-        $jobSeeker = JobSeeker::inRandomOrder()->first()->id ?? JobSeeker::factory();
-        $resumes = $jobSeeker ? \App\Models\Resume::where('id_job_seeker', $jobSeeker)->get() : collect();
+        $jobSeeker = JobSeeker::whereHas('resumes')->inRandomOrder()->first()->id;
+        $resumes = $jobSeeker ? \App\Models\Resume::where('job_seeker_id', $jobSeeker)->get() : collect();
 
         return [
             'id_job_seeker' => $jobSeeker,

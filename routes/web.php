@@ -328,14 +328,13 @@ Route::middleware('auth')->group(function () {
         // Resume / CV
         Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
         Route::get('resume/download/{resume}', [ResumeController::class, 'download'])->name('resume.download');
-        Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('resume.view');
-
-
+        
+        
         // Job Listings tailored for user
         Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');
     });
-
-
+    
+    
     /*
     |--------------------------------------------------------------------------
     | Shared Auth Routes (All Roles)
@@ -343,7 +342,9 @@ Route::middleware('auth')->group(function () {
     */
     // Job Postings (semua auth user)
     Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
-
+    
+    Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('user.resume.view')->middleware('role:user,company');
+    
     Route::get('apply{application}', [ApplicationController::class, 'show'])->name('applications.show')->middleware('permission:application.read.own,application.read');
 
     // Interviews

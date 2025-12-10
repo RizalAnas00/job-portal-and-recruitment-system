@@ -72,7 +72,7 @@
                 </p>
 
                 {{-- Resume View --}}
-                <a href="{{ route('user.resume.view', $application->jobSeeker->user_id) }}"
+                <a href="{{ route('user.resume.view', $application->resume->id) }}"
                     class="inline-block mt-3 px-3 py-1 rounded-md shadow text-sm 
                            bg-primary-600 text-white hover:bg-primary-700">
                     📄 Lihat Resume
