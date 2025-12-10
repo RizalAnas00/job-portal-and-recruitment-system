@@ -262,7 +262,7 @@
         </div>
     </div>
 
-    @section('scripts')
+    @push('scripts')
         <script>
             function openRejectModal(actionUrl) {
                 document.getElementById('rejectForm').action = actionUrl;
@@ -274,5 +274,5 @@
                 document.getElementById('rejectForm').reset();
             }
         </script>
-    @endsection
+    @endpush
 </x-app-layout>
