@@ -29,7 +29,11 @@
                                     Pekerjaan</label>
                                 <input type="text" name="job_title"
                                     value="{{ old('job_title', $jobPosting->job_title) }}"
+<<<<<<< HEAD
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+=======
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                     required>
                             </div>
 
@@ -38,7 +42,11 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipe
                                     Pekerjaan</label>
                                 <select name="job_type"
+<<<<<<< HEAD
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+=======
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                     @foreach (['full_time', 'part_time', 'contract', 'internship', 'temporary', 'freelance', 'remote'] as $type)
                                         <option value="{{ $type }}"
                                             {{ old('job_type', $jobPosting->job_type) == $type ? 'selected' : '' }}>
@@ -53,7 +61,11 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lokasi</label>
                                 <input type="text" name="location"
                                     value="{{ old('location', $jobPosting->location) }}"
+<<<<<<< HEAD
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+=======
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                     required>
                             </div>
                         </div>
@@ -62,7 +74,11 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Deskripsi
                                 Pekerjaan</label>
                             <textarea name="job_description" rows="6"
+<<<<<<< HEAD
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+=======
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                 required>{{ old('job_description', $jobPosting->job_description) }}</textarea>
                         </div>
 
@@ -77,7 +93,11 @@
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status
                                         Moderasi</label>
                                     <select name="moderation_status"
+<<<<<<< HEAD
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-600 dark:text-white">
+=======
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-600 dark:text-white">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                         <option value="pending"
                                             {{ old('moderation_status', $jobPosting->moderation_status) == 'pending' ? 'selected' : '' }}>
                                             Pending</option>
@@ -96,7 +116,11 @@
                                         Penolakan (Opsional)</label>
                                     <input type="text" name="rejection_reason"
                                         value="{{ old('rejection_reason', $jobPosting->rejection_reason) }}"
+<<<<<<< HEAD
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-600 dark:text-white"
+=======
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-600 dark:text-white"
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                         placeholder="Isi jika status Rejected">
                                 </div>
                             </div>
@@ -109,7 +133,11 @@
                                 Batal
                             </a>
                             <button type="submit"
+<<<<<<< HEAD
                                 class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+=======
+                                class="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                 Simpan Perubahan
                             </button>
                         </div>

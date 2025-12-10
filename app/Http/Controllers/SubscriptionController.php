@@ -27,7 +27,8 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        $plans = SubscriptionPlan::all();
+        // PERUBAHAN DI SINI: Hanya ambil paket yang statusnya aktif (is_active = 1/true)
+        $plans = SubscriptionPlan::where('is_active', true)->get();
         
         /** @var \App\Models\User */
         $user = Auth::user();
@@ -82,7 +83,7 @@ class SubscriptionController extends Controller
         ]);
 
         return redirect()->route('subscriptions.index')
-                         ->with('success', "Anda berhasil berlangganan paket {$plan->plan_name}!");
+                             ->with('success', "Anda berhasil berlangganan paket {$plan->plan_name}!");
     }
 
     public function confirmationOrder(SubscriptionPlan $plan)
@@ -114,7 +115,7 @@ class SubscriptionController extends Controller
         }
 
         return redirect()->route('company.subscriptions.index')->with('info', 'Langganan ini sudah dibatalkan sebelumnya.');
-    }   
+    } 
     
     /**
      * Display the specified resource.

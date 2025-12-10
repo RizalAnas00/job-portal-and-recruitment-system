@@ -49,7 +49,7 @@
                             Ditemukan {{ $jobPostings->total() }} lowongan yang cocok dengan skill Anda.
                         </p>
                     </div>
-                    <a href="{{ route('user.job-seekers.edit') }}" class="text-sm text-indigo-600 hover:text-indigo-500">
+                    <a href="{{ route('user.job-seekers.edit') }}" class="text-sm text-primary-600 hover:text-primary-500">
                         Perbarui Profil & Skill →
                     </a>
                 </div>
@@ -63,8 +63,16 @@
                         @foreach ($jobPostings as $jobPosting)
                             @php
                                 $matchingSkills = $jobPosting->skills->whereIn('id', $skillIds);
+                                $applied = $jobPosting->hasApplied;
                             @endphp
-                            <div class="border border-gray-100 dark:border-gray-700 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+                            <div class="border rounded-lg p-6
+                                {{ $applied ? 'bg-green-100/20 dark:bg-green-800/10 border-green-500' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700' }}
+                                ">
+                                @if ($applied)
+                                    <span class="inline-block mb-2 px-3 py-1 rounded-lg bg-green-300 text-green-900 dark:bg-green-700/40 dark:text-green-300 text-sm font-medium">
+                                        Sudah Melamar
+                                    </span>                             
+                                @endif
                                 <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                     <div>
                                         <p class="text-sm uppercase tracking-wide text-gray-400 dark:text-gray-500">
@@ -74,7 +82,7 @@
                                             {{ $jobPosting->job_title }}
                                         </h3>
                                     </div>
-                                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-200 capitalize">
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-primary-50 text-primary-600 dark:bg-primary-700/40 dark:text-primary-200 capitalize">
                                         {{ str_replace('_', ' ', $jobPosting->job_type) }}
                                     </span>
                                 </div>
@@ -93,7 +101,7 @@
                                         <span>Ditutup: {{ optional($jobPosting->closing_date)->format('d M Y H:i') ?? 'Tidak ditentukan' }}</span>
                                     </div>
                                     @if ($matchingSkills->isNotEmpty())
-                                        <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                                        <div class="flex items-center gap-2 text-primary-600 dark:text-primary-400">
                                             @svg('ionicon-star', 'h-4 w-4')
                                             <span>{{ $matchingSkills->count() }} skill cocok</span>
                                         </div>
@@ -102,7 +110,7 @@
 
                                 <div class="mt-4 flex flex-wrap gap-2">
                                     @foreach ($matchingSkills as $skill)
-                                        <span class="text-xs px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-200">
+                                        <span class="text-xs px-3 py-1 rounded-full bg-primary-50 text-primary-600 dark:bg-primary-600/50 dark:text-primary-100">
                                             {{ $skill->skill_name }}
                                         </span>
                                     @endforeach
@@ -117,14 +125,16 @@
 
                                 <div class="mt-6 flex flex-wrap gap-3">
                                     <a href="{{ route('job-postings.show', $jobPosting) }}"
-                                        class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition">
                                         Lihat Detail
                                         @svg('ionicon-arrow-forward-outline', 'h-4 w-4')
                                     </a>
-                                    <a href="{{ route('user.applications.create', $jobPosting) }}"
-                                        class="inline-flex items-center gap-2 px-4 py-2 border border-indigo-200 text-indigo-600 dark:text-indigo-400 text-sm font-semibold rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition">
-                                        Lamar Sekarang
-                                    </a>
+                                    @if (!$jobPosting->hasApplied)
+                                        <a href="{{ route('user.applications.create', $jobPosting) }}"
+                                            class="inline-flex items-center gap-2 px-4 py-2 border border-primary-200 text-primary-600 dark:text-primary-400 text-sm font-semibold rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition">
+                                            Lamar Sekarang
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

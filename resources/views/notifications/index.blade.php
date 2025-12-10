@@ -9,7 +9,7 @@
             <form action="{{ route('notifications.mark-all-read') }}" method="POST" class="inline-block">
                 @csrf
                 @method('PUT')
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded">
+                <button type="submit" class="bg-primary-500 hover:bg-primary-700 text-white text-sm font-bold py-2 px-4 rounded">
                     Tandai Semua Sudah Dibaca
                 </button>
             </form>
@@ -30,12 +30,12 @@
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
         @forelse($notifications as $notification)
-            <div class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition {{ !$notification->is_read ? 'bg-blue-50 dark:bg-blue-900/20' : '' }}">
+            <div class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition {{ !$notification->is_read ? 'bg-primary-50 dark:bg-primary-900/20' : '' }}">
                 <div class="p-4 flex items-start gap-4">
                     <!-- Icon -->
                     <div class="flex-shrink-0 mt-1">
                         @if(!$notification->is_read)
-                            <div class="h-3 w-3 bg-blue-500 rounded-full"></div>
+                            <div class="h-3 w-3 bg-primary-500 rounded-full"></div>
                         @else
                             <div class="h-3 w-3 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
                         @endif
@@ -53,15 +53,15 @@
 
                     <!-- Actions -->
                     <div class="flex-shrink-0 flex gap-2">
-                        @if($notification->link_url)
+                        {{-- @if($notification->link_url)
                             <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
+                                <button type="submit" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-medium">
                                     Lihat Detail
                                 </button>
-                            </form>
-                        @elseif(!$notification->is_read)
+                            </form> --}}
+                        @if(!$notification->is_read)
                             <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('PUT')

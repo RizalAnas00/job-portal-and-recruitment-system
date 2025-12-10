@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\JobPosting;
 use App\Models\JobSeeker;
 use App\Models\Resume;
@@ -38,6 +39,26 @@ class ResumeController extends Controller
 
     public function view(Resume $resume)
     {
+        /** @var User */
+        $user = Auth::user();
+
+        $isOwner = $user->jobSeeker?->id === $resume->job_seeker_id;
+
+        $isAuthorizedCompany = false;
+
+        if (!$isOwner && $user->hasRole('company') && $user->company) {
+            $isAuthorizedCompany = Application::query()
+                ->where('id_resume', $resume->id) 
+                ->whereHas('jobPosting', function ($query) use ($user) {
+                    $query->where('id_company', $user->company->id);
+                })
+                ->exists();
+        }
+
+        if (!$isOwner && !$isAuthorizedCompany) {
+            abort(403, 'AKSES DITOLAK. Anda tidak memiliki izin melihat dokumen ini.');
+        }
+
         $path = Storage::disk('public')->path($resume->file_path);
 
         if (!file_exists($path)) {
@@ -159,12 +180,12 @@ class ResumeController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
-        if (Storage::disk('private')->exists($resume->file_path)) {
-            Storage::disk('private')->delete($resume->file_path);
+        if (Storage::disk('public')->exists($resume->file_path)) {
+            Storage::disk('public')->delete($resume->file_path);
         }
 
         $resume->delete();
 
-        return redirect()->route('resumes.index')->with('success', 'Resume berhasil dihapus.');
+        return redirect()->route('user.resume.my-resumes')->with('success', 'Resume berhasil dihapus.');
     }
 }

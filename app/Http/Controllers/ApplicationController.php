@@ -68,7 +68,7 @@ class ApplicationController extends Controller
         if ($user->hasRole('user')) {
             return view('applications.user-show-app', compact('application'));
         } elseif ($user->hasRole('company')) {
-            return view('applications.show', compact('application'));
+            return view('applications.user-show-app', compact('application'));
         } else {
             abort(403, 'AKSES DITOLAK');
         }
@@ -79,7 +79,12 @@ class ApplicationController extends Controller
      */
     public function create(JobPosting $jobPosting)
     {
-        return view('applications.create', compact('jobPosting'));
+        $userResumes = Auth::user()->jobSeeker?->resumes;
+        if (!$userResumes || $userResumes->isEmpty()) {
+            return redirect()->route('user.resume.my-resumes')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
+        }
+
+        return view('applications.create', compact('jobPosting', 'userResumes'));
     }
 
     /**
@@ -95,6 +100,7 @@ class ApplicationController extends Controller
 
         $request->validate([
             'cover_letter' => 'nullable|string',
+            'id_resume' => 'required|exists:resumes,id'
         ]);
 
         // Mencegah duplikat lamaran
@@ -109,7 +115,8 @@ class ApplicationController extends Controller
         Application::create([
             'id_job_seeker' => $user->jobSeeker->id,
             'id_job_posting' => $jobPosting->id, 
-            'cover_letter' => $request->cover_letter,
+            'cover_letter' => $request->input('cover_letter'),
+            'id_resume' => $request->input('id_resume'),
             'status' => 'applied'
         ]);
 
@@ -125,7 +132,7 @@ class ApplicationController extends Controller
             );
         }
 
-        return redirect()->route('applications.index')->with('success', 'Lamaran berhasil dikirim.');
+        return redirect()->route('user.applications.index')->with('success', 'Lamaran berhasil dikirim.');
     }
 
     /**
@@ -134,7 +141,6 @@ class ApplicationController extends Controller
     public function edit(Application $application)
     {
         return view('applications.edit', compact('application'));
-
     }
 
     /**
@@ -146,20 +152,29 @@ class ApplicationController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('user') && $user->jobSeeker?->id === $application->id_job_seeker) {
-            // User hanya boleh mengupdate cover letter
             $data = $request->validate(['cover_letter' => 'nullable|string']);
             $application->update($data);
+
         } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->id_company) {
-            // Company hanya boleh mengupdate status
             $data = $request->validate([
-                'status' => 'required|in:applied,under_review,interview_scheduled,interviewing,offered,hired,rejected',
+                'status' => 'required|in:pending,reviewed,interview_scheduled,interviewing,accepted,rejected',
             ]);
 
             $application->update($data);
 
             $application->loadMissing('jobSeeker', 'jobPosting.company');
-
             $this->maybeSendStatusNotification($application);
+
+           
+            if (
+                in_array($application->status, ['interview_scheduled', 'interviewing']) && 
+                !$application->interview
+            ) {
+                return redirect()
+                    ->route('interviews.create', ['application' => $application->id])
+                    ->with('success', 'Status diperbarui. Silakan lengkapi jadwal wawancara.');
+            }
+
         } else {
             abort(403);
         }
@@ -238,7 +253,7 @@ class ApplicationController extends Controller
             $query->where('status', $request->status);
         }
 
-        $applications = $query->latest()->paginate(10);
+        $applications = $query->latest()->paginate(12);
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
 
         return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));
@@ -258,7 +273,7 @@ class ApplicationController extends Controller
         }
 
         $validated = $request->validate([
-            'status' => ['nullable', 'string', Rule::in(['all', 'pending', 'reviewed', 'accepted', 'rejected'])],
+            'status' => ['nullable', 'string', Rule::in(['all', 'pending', 'reviewed', 'interview_scheduled', 'interviewing', 'accepted', 'rejected'])],
         ]);
 
         $query = $jobPosting->applications()->with('jobSeeker.user');
@@ -267,7 +282,7 @@ class ApplicationController extends Controller
             $query->where('status', $validated['status']);
         }
 
-        $applications = $query->latest()->paginate(10);
+        $applications = $query->latest()->paginate(12);
         $statuses = ['pending', 'reviewed', 'accepted', 'rejected']; // Define available statuses for filtering
 
         return view('applications.index_by_job_posting', compact('jobPosting', 'applications', 'statuses'));

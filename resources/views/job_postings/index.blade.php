@@ -90,7 +90,7 @@
 
                 @if(Auth::user()->hasRole('company') && Auth::user()->company?->id === $job->id_company || Auth::user()->hasRole('admin'))
                     <div class="mt-4 flex items-center space-x-2">
-                        <a href="{{ route('company.job-postings.edit', $job) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                        <a href="{{ route('company.job-postings.edit', $job) }}" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600">
                             Edit
                         </a>
                         <form action="{{ route('company.job-postings.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job posting?');">

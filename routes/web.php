@@ -199,7 +199,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [\App\Http\Controllers\Admin\BroadcastNotificationController::class, 'store'])->name('store');
         });
 
-        // Subscription Management
+        // Subscription Management (Existing code - likely for viewing subscriptions)
         Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'index'])->name('index');
             Route::get('/create', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'create'])->name('create');
@@ -207,6 +207,11 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{subscription}/extend', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'extend'])->name('extend');
             Route::patch('/{subscription}/cancel', [\App\Http\Controllers\Admin\SubscriptionManagementController::class, 'cancel'])->name('cancel');
         });
+
+        // [BARU] Subscription Plan Management (CRUD Paket Harga/Durasi) - Controller yang baru kita buat
+            Route::resource('subscription-plans', \App\Http\Controllers\Admin\SubscriptionPlanController::class)
+                ->names('subscription_plans'); 
+
 
         // Payment Management
         Route::prefix('payments')->name('payments.')->group(function () {
@@ -221,6 +226,21 @@ Route::middleware('auth')->group(function () {
             Route::put('/', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'update'])->name('update');
             Route::get('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'files'])->name('files');
             Route::delete('/files', [\App\Http\Controllers\Admin\SystemSettingsController::class, 'deleteFile'])->name('files.delete');
+        });
+
+        // System Monitoring & Health
+        Route::prefix('monitoring')->name('monitoring.')->group(function () {
+            // Health Check
+            Route::get('/health', [\App\Http\Controllers\Admin\HealthCheckController::class, 'index'])->name('health');
+            
+            // Queue Monitoring
+            Route::prefix('queue')->name('queue.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'index'])->name('index');
+                Route::post('/retry-all', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retryAll'])->name('retry-all');
+                Route::delete('/flush', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'flush'])->name('flush');
+                Route::post('/{id}/retry', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'retry'])->name('retry');
+                Route::delete('/{id}', [\App\Http\Controllers\Admin\QueueMonitorController::class, 'delete'])->name('delete');
+            });
         });
     });
 
@@ -248,10 +268,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('/job-postings/{job_posting}/status', [JobPostingController::class, 'updateStatus'])->name('job-postings.update-status');
 
         // Applications (Company Only)
-        Route::resource('applications', ApplicationController::class)->only(['index', 'edit', 'update']);
-        Route::get('/job-postings/{job_posting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
-        Route::get('/job-postings/{job_posting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
-
+        Route::resource('applications', ApplicationController::class)->only(['index', 'show', 'edit', 'update']);
+        Route::get('/job-postings/{jobPosting}/applications', [ApplicationController::class, 'indexByJobPosting'])->name('job-postings.applications.index')->middleware('permission:application.read.own');
+        Route::get('/job-postings/{jobPosting}/applications/filter', [ApplicationController::class, 'filterByStatus'])->name('job-postings.applications.filter')->middleware('permission:application.filter');
+        // Route::patch('/applications/{application}/update-status', [ApplicationController::class, 'updateStatus'])->name('applications.update-status')->middleware('permission:application.update_status');
+        
         // Payment & Subscription (Company Only)
         Route::get('/payment/history', [PaymentTransactionController::class, 'index'])->name('payment.index');
         Route::post('/payment/process/{subscription}', [PaymentTransactionController::class, 'processPayment'])->name('payment.process');
@@ -305,16 +326,16 @@ Route::middleware('auth')->group(function () {
         Route::put('/job-seeker/profile', [JobSeekerController::class, 'update'])->name('job-seekers.update');
 
         // Resume / CV
+        Route::delete('/resume/{resume}', [ResumeController::class, 'destroy'])->name('resume.destroy');
         Route::get('/resume/my-resumes', [ResumeController::class, 'userResume'])->name('resume.my-resumes'); 
         Route::get('resume/download/{resume}', [ResumeController::class, 'download'])->name('resume.download');
-        Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('resume.view');
-
-
+        
+        
         // Job Listings tailored for user
         Route::get('/jobs', [JobSeekerJobController::class, 'index'])->name('jobs.index');
     });
-
-
+    
+    
     /*
     |--------------------------------------------------------------------------
     | Shared Auth Routes (All Roles)
@@ -322,7 +343,9 @@ Route::middleware('auth')->group(function () {
     */
     // Job Postings (semua auth user)
     Route::get('/job-postings', [JobPostingController::class, 'index'])->name('job-postings.index');
-
+    
+    Route::get('/resume/view/{resume}', [ResumeController::class, 'view'])->name('user.resume.view')->middleware('role:user,company');
+    
     Route::get('apply{application}', [ApplicationController::class, 'show'])->name('applications.show')->middleware('permission:application.read.own,application.read');
 
     // Interviews
@@ -382,7 +405,9 @@ Route::middleware(['auth', 'role:company'])->group(function () {
 // Route Resumes
 Route::resource('resumes', ResumeController::class)->except(['show']);
 
-// Route Subscription Plans (Admin Only)
+// Route Subscription Plans (Admin Only) -> NOTE: Ini yang lama (mungkin mengarah ke controller publik?), 
+// tapi karena kita sudah buat yang khusus admin di atas (di dalam group 'role:admin'), yang ini biarkan saja
+// atau bisa dikomentari kalau bikin konflik. Tapi karena URL admin pakai prefix /admin, harusnya aman.
 Route::resource('subscription-plans', SubscriptionPlanController::class);
 
 // Webhook Route for Payment Gateway (No Auth)

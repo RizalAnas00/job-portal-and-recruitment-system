@@ -79,7 +79,7 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400">Jenis Interview</p>
                     <p class="text-base font-semibold text-gray-900 dark:text-white">
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {{ $interview->interview_type === 'online' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : '' }}
+                            {{ $interview->interview_type === 'online' ? 'bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200' : '' }}
                             {{ $interview->interview_type === 'offline' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : '' }}
                             {{ $interview->interview_type === 'phone_screen' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : '' }}">
                             {{ str_replace('_', ' ', ucfirst($interview->interview_type)) }}
@@ -138,8 +138,12 @@
             </a>
             
             @if(Auth::user()->hasRole('company') || Auth::user()->hasRole('admin'))
-                <a href="{{ route('interviews.edit', $interview) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <a href="{{ route('interviews.edit', $interview) }}" class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded">
                     Edit Jadwal
+                </a>
+
+                <a href="{{ route('company.applications.show', $interview->application) }}" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">
+                    Lihat Lamaran
                 </a>
                 
                 <form action="{{ route('interviews.destroy', $interview) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan jadwal interview ini? Status lamaran akan kembali ke Under Review.');">

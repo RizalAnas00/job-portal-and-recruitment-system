@@ -1,3 +1,14 @@
+{{-- @if (session()->has('error'))
+    <div class="w-full mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if (session()->has('success'))
+    <div class="w-full mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        {{ session('success') }}
+    </div>
+@endif --}}
 <div class="flex gap-6">
 
     {{-- Left: Grid list --}}
@@ -30,13 +41,27 @@
                     wire:click="openResume({{ $resume->id }})"
                     class="border rounded-lg p-4 cursor-pointer shadow-sm transition 
                         bg-white dark:bg-gray-900
-                        h-36 flex flex-col justify-center items-center text-center
+                        min-h-[9rem] h-full flex flex-col justify-center items-center text-center
 
                         {{ $isActive 
                                 ? 'border-primary-400 shadow-md scale-105 bg-primary-50 dark:bg-primary-900/20' 
                                 : 'hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-800' 
                         }}"
                 >
+                    <form method="POST"
+                          action="{{ route('user.resume.destroy', $resume) }}"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus resume ini?');"
+                            class="absolute top-2 right-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="text-red-600 hover:text-red-800"
+                                title="Hapus Resume"
+                                wire:click="deleteResume({{ $resume->id }})"        
+                        >
+                            @svg('ionicon-trash', 'w-5 h-5')
+                        </button>
+                    </form>
 
                     <svg class="w-10 h-10 text-gray-500 mb-2" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24" stroke-width="2">
@@ -44,7 +69,7 @@
                             d="M7 3h6l5 5v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
                     </svg>
 
-                    <p class="text-sm font-semibold line-clamp-1 text-gray-900 dark:text-gray-100">
+                    <p class="text-sm font-semibold line-clamp-2 break-all text-gray-900 dark:text-gray-100">
                         {{ $resume->resume_title }}
                     </p>
 
@@ -72,12 +97,6 @@
         >
             <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
                 {{ $selectedResume->resume_title }}
-                {{-- <a 
-                    href="{{ route('user.resume.download', $selectedResume) }}"
-                    class="text-sm text-primary-600 hover:underline ml-4"
-                >   
-                    Download
-                </a> --}}
                 <a 
                     href="{{ route('user.resume.view', $selectedResume) }}"
                     target="_blank"

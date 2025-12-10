@@ -25,10 +25,17 @@
 
             <!-- Decorative Shapes -->
             <div
+<<<<<<< HEAD
                 class="animate-blob absolute left-0 top-0 h-64 w-64 rounded-full bg-blue-500 opacity-30 mix-blend-multiply blur-3xl filter">
             </div>
             <div
                 class="animate-blob animation-delay-2000 absolute bottom-0 right-0 h-64 w-64 rounded-full bg-indigo-500 opacity-30 mix-blend-multiply blur-3xl filter">
+=======
+                class="animate-blob absolute left-0 top-0 h-64 w-64 rounded-full bg-primary-500 opacity-30 mix-blend-multiply blur-3xl filter">
+            </div>
+            <div
+                class="animate-blob animation-delay-2000 absolute bottom-0 right-0 h-64 w-64 rounded-full bg-primary-500 opacity-30 mix-blend-multiply blur-3xl filter">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
             </div>
         </section>
 
@@ -99,8 +106,13 @@
                             @foreach ($row as $company)
                                 <div
                                     class="flex w-full max-w-xs items-center gap-3 rounded-xl bg-gray-50/40 p-4 shadow-sm backdrop-blur-md transition hover:shadow-md dark:bg-gray-800/70">
+<<<<<<< HEAD
                                     @if ($company->logo_url)
                                         <img src="{{ $company->logo_url }}" alt="{{ $company->name }}"
+=======
+                                    @if ($company->logo_path)
+                                        <img src="{{ $company->logo_path }}" alt="{{ $company->name }}"
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                                             class="h-12 w-12 rounded-lg border border-gray-200 bg-white object-contain dark:border-gray-700 dark:bg-gray-700">
                                     @else
                                         @svg('gmdi-corporate-fare-r', 'h-12 w-12 text-gray-800 dark:text-gray-200')
@@ -161,18 +173,30 @@
             </div>
         </section>
 
+<<<<<<< HEAD
         <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-600 text-white">
+=======
+        <section class="relative overflow-hidden bg-gradient-to-br from-primary-600 to-primary-600 text-white">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
             <div
                 class="container relative z-10 mx-auto flex flex-col-reverse items-center justify-between pb-28 pt-20 md:flex-row">
                 <div class="w-full text-center md:w-1/2 md:text-left">
                     <h2 class="mb-4 text-3xl font-bold md:text-4xl">
                         Perusahaan Anda Sedang Mencari Talenta?
                     </h2>
+<<<<<<< HEAD
                     <p class="mb-8 text-lg text-blue-100">
                         Pasang lowongan dan temukan kandidat terbaik untuk perusahaan Anda.
                     </p>
                     <a href="@auth {{ route('job-postings.create') }} @else {{ route('login') }} @endauth"
                         class="inline-block rounded-full bg-white px-6 py-3 font-semibold text-indigo-700 shadow transition duration-300 hover:bg-gray-100">
+=======
+                    <p class="mb-8 text-lg text-primary-100">
+                        Pasang lowongan dan temukan kandidat terbaik untuk perusahaan Anda.
+                    </p>
+                    <a href="@auth {{ route('job-postings.create') }} @else {{ route('login') }} @endauth"
+                        class="inline-block rounded-full bg-white px-6 py-3 font-semibold text-primary-700 shadow transition duration-300 hover:bg-gray-100">
+>>>>>>> b2440328db03d1293dc3f5e3e5ae87ea89e656da
                         Pasang Lowongan Sekarang
                     </a>
                 </div>

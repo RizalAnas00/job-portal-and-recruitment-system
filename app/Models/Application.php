@@ -16,6 +16,7 @@ class Application extends Model
 		'id_job_seeker',
 		'id_job_posting',
 		'application_date',
+		'id_resume',
 		'status',
 		'cover_letter',
 	];
@@ -23,6 +24,22 @@ class Application extends Model
 	protected $casts = [
 		'application_date' => 'datetime',
 	];
+	
+	protected static function booted()
+	{
+		static::addGlobalScope('active', function ($query) {
+			$query->whereNull('deleted_at');
+		});	
+	}
+
+	/**
+	 * Update status lamaran
+	 */
+	public function updateStatus($status)
+	{
+		$this->status = $status;
+		$this->save();
+	}
 
 	public function jobSeeker()
 	{
@@ -32,5 +49,10 @@ class Application extends Model
 	public function jobPosting()
 	{
 		return $this->belongsTo(JobPosting::class, 'id_job_posting');
+	}
+
+	public function resume()
+	{
+		return $this->belongsTo(Resume::class, 'id_resume');
 	}
 }
