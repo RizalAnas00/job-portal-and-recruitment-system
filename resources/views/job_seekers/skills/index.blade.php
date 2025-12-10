@@ -66,7 +66,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                            class="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
+                                            class="inline-flex items-center gap-2 bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-200 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-primary-100 dark:hover:bg-primary-900 transition">
                                             {{ $skill->skill_name }}
                                             <span aria-hidden="true">&times;</span>
                                         </button>

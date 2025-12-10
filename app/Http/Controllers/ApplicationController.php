@@ -81,7 +81,7 @@ class ApplicationController extends Controller
     {
         $userResumes = Auth::user()->jobSeeker?->resumes;
         if (!$userResumes || $userResumes->isEmpty()) {
-            return redirect()->route('resumes.create')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
+            return redirect()->route('user.resume.my-resumes')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
         }
 
         return view('applications.create', compact('jobPosting', 'userResumes'));
@@ -141,7 +141,6 @@ class ApplicationController extends Controller
     public function edit(Application $application)
     {
         return view('applications.edit', compact('application'));
-
     }
 
     /**
@@ -153,11 +152,10 @@ class ApplicationController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('user') && $user->jobSeeker?->id === $application->id_job_seeker) {
-            // User hanya boleh mengupdate cover letter
             $data = $request->validate(['cover_letter' => 'nullable|string']);
             $application->update($data);
+
         } elseif ($user->hasRole('company') && $user->company?->id === $application->jobPosting->id_company) {
-            // Company hanya boleh mengupdate status
             $data = $request->validate([
                 'status' => 'required|in:pending,reviewed,interview_scheduled,interviewing,accepted,rejected',
             ]);
@@ -165,8 +163,18 @@ class ApplicationController extends Controller
             $application->update($data);
 
             $application->loadMissing('jobSeeker', 'jobPosting.company');
-
             $this->maybeSendStatusNotification($application);
+
+           
+            if (
+                in_array($application->status, ['interview_scheduled', 'interviewing']) && 
+                !$application->interview
+            ) {
+                return redirect()
+                    ->route('interviews.create', ['application' => $application->id])
+                    ->with('success', 'Status diperbarui. Silakan lengkapi jadwal wawancara.');
+            }
+
         } else {
             abort(403);
         }

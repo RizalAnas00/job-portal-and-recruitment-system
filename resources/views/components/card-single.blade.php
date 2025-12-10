@@ -85,28 +85,29 @@
 
         <div class="flex items-center gap-1">
 
-            {{-- Tombol Action Company --}}
-            <div x-data="{ open:false }" class="relative mr-2">
-                <button @click="open=!open" 
-                    class="px-4 py-1 text-gray-700 dark:text-gray-300 border rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-xs">
-                    Actions
-                    @svg('carbon-chevron-down', 'inline-block h-4 w-4 ml-1')
-                </button>
+            @if (auth()->user()->hasRole('company'))        
+                <div x-data="{ open:false }" class="relative mr-2">
+                    <button @click="open=!open" 
+                        class="px-4 py-1 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 text-xs">
+                        Actions
+                        @svg('carbon-chevron-down', 'inline-block h-4 w-4 ml-1')
+                    </button>
 
-                <div x-show="open" @click.outside="open=false"
-                    x-transition
-                    class="absolute right-0 bottom-full mb-2 bg-white dark:bg-gray-800 
-                        shadow-md rounded-md overflow-hidden border dark:border-gray-700 text-sm z-50 text-gray-700 dark:text-gray-300">
-                    <a href="{{ route('job-postings.edit',$job) }}" 
-                    class="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        {{ __('Edit') }}
-                    </a>
-                    <a href="{{ route('company.job-postings.applications.index',$job) }}" 
-                    class="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        {{ __('View Applicants') }}
-                    </a>
+                    <div x-show="open" @click.outside="open=false"
+                        x-transition
+                        class="absolute right-0 bottom-full mb-2 bg-white dark:bg-gray-800 
+                            shadow-md rounded-md overflow-hidden border dark:border-gray-700 text-sm z-50 text-gray-700 dark:text-gray-300">
+                        <a href="{{ route('job-postings.edit',$job) }}" 
+                        class="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            {{ __('Edit') }}
+                        </a>
+                        <a href="{{ route('company.job-postings.applications.index',$job) }}" 
+                        class="block px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            {{ __('View Applicants') }}
+                        </a>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             {{-- Default Button --}}
             <a href="{{ route('job-postings.show',$job) }}" 

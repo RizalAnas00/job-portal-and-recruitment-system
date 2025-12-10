@@ -47,7 +47,7 @@
             <div class="mb-6 flex space-x-4">
                 <form action="{{ route('admin.monitoring.queue.retry-all') }}" method="POST" onsubmit="return confirm('Are you sure you want to retry ALL failed jobs?');">
                     @csrf
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-primary-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:ring ring-primary-300 disabled:opacity-25 transition ease-in-out duration-150">
                         Retry All
                     </button>
                 </form>
@@ -108,7 +108,7 @@
                                                 <div class="flex justify-end space-x-2">
                                                     <form action="{{ route('admin.monitoring.queue.retry', $job->id) }}" method="POST">
                                                         @csrf
-                                                        <button type="submit" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Retry</button>
+                                                        <button type="submit" class="text-primary-600 hover:text-primary-900 dark:text-primary-400 dark:hover:text-primary-300">Retry</button>
                                                     </form>
                                                     <form action="{{ route('admin.monitoring.queue.delete', $job->id) }}" method="POST" onsubmit="return confirm('Delete this job?');">
                                                         @csrf

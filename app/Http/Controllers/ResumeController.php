@@ -180,12 +180,12 @@ class ResumeController extends Controller
             abort(403, 'AKSES DITOLAK');
         }
 
-        if (Storage::disk('private')->exists($resume->file_path)) {
-            Storage::disk('private')->delete($resume->file_path);
+        if (Storage::disk('public')->exists($resume->file_path)) {
+            Storage::disk('public')->delete($resume->file_path);
         }
 
         $resume->delete();
 
-        return redirect()->route('resumes.index')->with('success', 'Resume berhasil dihapus.');
+        return redirect()->route('user.resume.my-resumes')->with('success', 'Resume berhasil dihapus.');
     }
 }

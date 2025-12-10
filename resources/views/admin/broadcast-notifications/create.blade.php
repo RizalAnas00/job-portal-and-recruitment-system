@@ -23,13 +23,13 @@
                             <x-input-label for="recipients" :value="__('Recipients')" />
                             <div class="mt-2 space-y-2">
                                 <div class="flex items-center">
-                                    <input id="recipient_job_seekers" name="recipients[]" type="checkbox" value="job_seekers" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <input id="recipient_job_seekers" name="recipients[]" type="checkbox" value="job_seekers" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
                                     <label for="recipient_job_seekers" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                         All Job Seekers
                                     </label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input id="recipient_companies" name="recipients[]" type="checkbox" value="companies" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <input id="recipient_companies" name="recipients[]" type="checkbox" value="companies" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
                                     <label for="recipient_companies" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                         All Companies
                                     </label>
@@ -40,7 +40,7 @@
 
                         <div>
                             <x-input-label for="message" :value="__('Message')" />
-                            <textarea id="message" name="message" rows="4" class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>{{ old('message') }}</textarea>
+                            <textarea id="message" name="message" rows="4" class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-primary-500 dark:focus:border-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 rounded-md shadow-sm" required>{{ old('message') }}</textarea>
                             <p class="mt-1 text-sm text-gray-500">The notification message to be displayed to users.</p>
                             <x-input-error :messages="$errors->get('message')" class="mt-2" />
                         </div>
