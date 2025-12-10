@@ -42,7 +42,7 @@
             <select id="role" name="role"
                 class="block mt-1 w-full border-gray-300 dark:border-gray-700
                     dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm
-                    focus:ring-indigo-500 focus:border-indigo-500">
+                    focus:ring-primary-500 focus:border-primary-500">
                 <option value="user" {{ old('role', 'user') === 'user' ? 'selected' : '' }}>
                     {{ __('Job Seeker (default)') }}
                 </option>
@@ -56,12 +56,12 @@
         <!-- Actions -->
         <div class="flex items-center justify-between mt-6">
             <a href="{{ route('login') }}"
-                class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600
-                    dark:hover:text-indigo-400 underline transition">
+                class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600
+                    dark:hover:text-primary-400 underline transition">
                 {{ __('Already have an account?') }}
             </a>
 
-            <x-ripple-button type="submit" class="ms-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md">
+            <x-ripple-button type="submit" class="ms-4 bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-md">
                 <x-slot name="buttonText">{{ __('Register') }}</x-slot>
             </x-ripple-button>
         </div>

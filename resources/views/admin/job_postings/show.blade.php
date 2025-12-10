@@ -215,7 +215,7 @@
                                     class="h-12 w-12 rounded-full bg-gray-100 object-cover">
                             @else
                                 <div
-                                    class="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-600">
+                                    class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 font-bold text-primary-600">
                                     {{ substr($jobPosting->company->company_name, 0, 1) }}
                                 </div>
                             @endif
@@ -227,7 +227,7 @@
                             </div>
                         </div>
                         <div class="mt-4 border-t border-gray-100 pt-4 dark:border-gray-700">
-                            <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Lihat
+                            <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-500">Lihat
                                 Profil Perusahaan &rarr;</a>
                         </div>
                     </div>

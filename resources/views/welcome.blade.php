@@ -25,10 +25,10 @@
 
             <!-- Decorative Shapes -->
             <div
-                class="animate-blob absolute left-0 top-0 h-64 w-64 rounded-full bg-blue-500 opacity-30 mix-blend-multiply blur-3xl filter">
+                class="animate-blob absolute left-0 top-0 h-64 w-64 rounded-full bg-primary-500 opacity-30 mix-blend-multiply blur-3xl filter">
             </div>
             <div
-                class="animate-blob animation-delay-2000 absolute bottom-0 right-0 h-64 w-64 rounded-full bg-indigo-500 opacity-30 mix-blend-multiply blur-3xl filter">
+                class="animate-blob animation-delay-2000 absolute bottom-0 right-0 h-64 w-64 rounded-full bg-primary-500 opacity-30 mix-blend-multiply blur-3xl filter">
             </div>
         </section>
 
@@ -161,18 +161,18 @@
             </div>
         </section>
 
-        <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-600 text-white">
+        <section class="relative overflow-hidden bg-gradient-to-br from-primary-600 to-primary-600 text-white">
             <div
                 class="container relative z-10 mx-auto flex flex-col-reverse items-center justify-between pb-28 pt-20 md:flex-row">
                 <div class="w-full text-center md:w-1/2 md:text-left">
                     <h2 class="mb-4 text-3xl font-bold md:text-4xl">
                         Perusahaan Anda Sedang Mencari Talenta?
                     </h2>
-                    <p class="mb-8 text-lg text-blue-100">
+                    <p class="mb-8 text-lg text-primary-100">
                         Pasang lowongan dan temukan kandidat terbaik untuk perusahaan Anda.
                     </p>
                     <a href="@auth {{ route('job-postings.create') }} @else {{ route('login') }} @endauth"
-                        class="inline-block rounded-full bg-white px-6 py-3 font-semibold text-indigo-700 shadow transition duration-300 hover:bg-gray-100">
+                        class="inline-block rounded-full bg-white px-6 py-3 font-semibold text-primary-700 shadow transition duration-300 hover:bg-gray-100">
                         Pasang Lowongan Sekarang
                     </a>
                 </div>
