@@ -30,7 +30,7 @@
                     wire:click="openResume({{ $resume->id }})"
                     class="border rounded-lg p-4 cursor-pointer shadow-sm transition 
                         bg-white dark:bg-gray-900
-                        h-36 flex flex-col justify-center items-center text-center
+                        min-h-[9rem] h-full flex flex-col justify-center items-center text-center
 
                         {{ $isActive 
                                 ? 'border-primary-400 shadow-md scale-105 bg-primary-50 dark:bg-primary-900/20' 
@@ -44,7 +44,7 @@
                             d="M7 3h6l5 5v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
                     </svg>
 
-                    <p class="text-sm font-semibold line-clamp-1 text-gray-900 dark:text-gray-100">
+                    <p class="text-sm font-semibold line-clamp-2 break-all text-gray-900 dark:text-gray-100">
                         {{ $resume->resume_title }}
                     </p>
 

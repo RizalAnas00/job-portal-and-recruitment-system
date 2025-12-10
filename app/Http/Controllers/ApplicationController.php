@@ -81,7 +81,7 @@ class ApplicationController extends Controller
     {
         $userResumes = Auth::user()->jobSeeker?->resumes;
         if (!$userResumes || $userResumes->isEmpty()) {
-            return redirect()->route('resumes.create')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
+            return redirect()->route('user.resume.my-resumes')->with('error', 'Silakan unggah resume Anda sebelum melamar.');
         }
 
         return view('applications.create', compact('jobPosting', 'userResumes'));
