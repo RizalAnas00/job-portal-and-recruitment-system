@@ -81,10 +81,10 @@
                                 <x-dropdown-link :href="route('user.resume.my-resumes')">
                                     {{ __('Resume Saya') }}
                                 </x-dropdown-link>
+                                <x-dropdown-link :href="route('profile.edit')">
+                                    {{ __('Profil Saya') }}
+                                </x-dropdown-link>
                             @endif
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profil Saya') }}
-                            </x-dropdown-link>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
